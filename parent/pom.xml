@@ -1,0 +1,57 @@
+<!--
+	this is UCE project parent
+	keeps settings / deps / licenses etc
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.fhkn.in.uce</groupId>
+	<artifactId>parent</artifactId>
+	<version>1.0</version>
+	<packaging>pom</packaging>
+
+	<name>UCE</name>
+	<description>Universal Connection Establishment</description>
+	<url>http://ice.in.htwg-konstanz.de</url>
+
+	<licenses>
+		<license>
+			<name>MIT</name>
+			<comments>The MIT License (MIT)</comments>
+			<url>http://www.opensource.org/licenses/mit-license.html</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>git@github.com:htwg/lib.git</url>
+		<connection>scm:git:git@github.com:htwg/lib.git</connection>
+		<developerConnection>scm:git:git@github.com:htwg/lib.git</developerConnection>
+	</scm>
+
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<!--
+		<dependency>
+			<groupId>de.fhkn</groupId>
+			<artifactId>logger</artifactId>
+			<version>1.0</version>
+		</dependency>
+		-->
+	</dependencies>
+</project>

@@ -1,0 +1,24 @@
+<!-- 
+	this one should inherit from parent/pom
+	which is the projects parent and has als settings / deps
+	this one is used to build the modules and bundles
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>parent</artifactId>
+		<groupId>de.fhkn.in.uce</groupId>
+		<version>1.0</version>
+		<relativePath>./parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>uce</artifactId>
+	<version>1.0</version>
+	<packaging>pom</packaging>
+	
+	<modules>
+		<!-- put all the UCE modules and bundles here -->
+	</modules>
+</project>
