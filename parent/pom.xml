@@ -1,9 +1,28 @@
 <!--
+	Copyright (c) 2012 Thomas Zink, 
+
+	This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!--
 	this is UCE project parent
 	keeps settings / deps / licenses etc
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.fhkn.in.uce</groupId>
@@ -17,22 +36,23 @@
 
 	<licenses>
 		<license>
-			<name>MIT</name>
-			<comments>The MIT License (MIT)</comments>
-			<url>http://www.opensource.org/licenses/mit-license.html</url>
+			<name>GPL-3.0</name>
+			<comments>GNU General Public License, version 3</comments>
+			<url>http://www.opensource.org/licenses/gpl-3.0.html</url>
 		</license>
 	</licenses>
+
+	<properties>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    	<maven.compiler.source>1.6</maven.compiler.source>
+    	<maven.compiler.target>1.6</maven.compiler.target>
+  	</properties>
 
 	<scm>
 		<url>git@github.com:htwg/lib.git</url>
 		<connection>scm:git:git@github.com:htwg/lib.git</connection>
 		<developerConnection>scm:git:git@github.com:htwg/lib.git</developerConnection>
 	</scm>
-
-	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
 	<dependencies>
 		<dependency>
