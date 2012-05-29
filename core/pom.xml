@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- 
-	this one is the builder for UCE.
-	it builds all UCE modules and bundles.
+	the CORE project. this builds all the UCE core modules commonly used
+	by UCE components
 -->
 <project 
 	xmlns="http://maven.apache.org/POM/4.0.0" 
@@ -29,14 +29,14 @@
 		<artifactId>parent</artifactId>
 		<groupId>de.fhkn.in.uce</groupId>
 		<version>1.0</version>
-		<relativePath>./parent/pom.xml</relativePath>
+		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE Builder</name>
-	<artifactId>build</artifactId>
+	<name>UCE Core</name>
+	<artifactId>core</artifactId>
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>core</module>
+		<module>../messages</module>
 	</modules>
 </project>

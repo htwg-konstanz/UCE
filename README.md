@@ -30,29 +30,38 @@ and configuration overhead.
 	The parent project. All modules / bundles inherit this one.
 	It has all settings and dependencies.
 
-*	modules
+*	modules and bundles
 
-	All available modules
+	See below
 
-*	bundles
+## Modules and Bundles
 
-	Bundles are different from modules in the way that they
-	extend and bundle modules to new releases. They are also
-	not essential for functionality of the library but include
-	demonstrations and examples.
+All modules and bundles are located in a flat hierarchy parallel to
+parent. Modules are components of UCE. Bundles are different from modules
+in the way that they extend and bundle modules to new releases. E.g.
+'UCE Messages' is a module that implements all the core messages, while
+'UCE Core' is a bundle that bundles all UCE core functionality to
+one release.
 
-## Modules
+### Modules
 
-*	Core
+*	messages
+	UCE Messages. All core messages commonly used by UCE components.
+	
+### Bundles
 
-	The core of UCE, basically required by all or most other modules.
-
-*	HP-TCP
-
-	HolePunching TCP
-
-*	ConnectionReversal
-
-*	Relay
+*	core
+	all core components:
+	- messages
 
 
+## Credits
+
+*	Lead / Maintainer:
+
+	Thomas Zink, tzink@htwg-konstanz.de
+
+*	Contributors:
+
+	- Daniel Maier
+	- Stefan Lohr

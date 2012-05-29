@@ -50,8 +50,8 @@
 
 	<scm>
 		<url>git@github.com:htwg/lib.git</url>
-		<connection>scm:git:git@github.com:htwg/lib.git</connection>
-		<developerConnection>scm:git:git@github.com:htwg/lib.git</developerConnection>
+		<connection>scm:git:git@github.com:htwg/UCE.git</connection>
+		<developerConnection>scm:git:git@github.com:htwg/UCE.git</developerConnection>
 	</scm>
 
 	<dependencies>
@@ -66,12 +66,5 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>de.fhkn</groupId>
-			<artifactId>logger</artifactId>
-			<version>1.0</version>
-		</dependency>
-		-->
 	</dependencies>
 </project>
