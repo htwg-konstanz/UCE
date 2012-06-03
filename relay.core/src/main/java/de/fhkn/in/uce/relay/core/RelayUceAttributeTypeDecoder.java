@@ -14,19 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.messages;
+package de.fhkn.in.uce.relay.core;
+
+import de.fhkn.in.uce.messages.UceAttributeType;
+import de.fhkn.in.uce.messages.UceAttributeTypeDecoder;
+
 
 /**
- * {@link UceMethodDecoder} to decode {@link UceMethod} that are declared in the
- * enum {@link CommonUceMethod}.
+ * A {@linkplain UceAttributeTypeDecoder} to decode relay uce attribute types
+ * defined in {@link RelayUceAttributeType}.
  * 
  * @author Daniel Maier
  * 
  */
-final class CommonUceMethodDecoder implements UceMethodDecoder {
+final class RelayUceAttributeTypeDecoder implements UceAttributeTypeDecoder {
 
-    public UceMethod decode(int encoded) {
-        return CommonUceMethod.fromEncoded(encoded);
+    public UceAttributeType decode(int encoded) {
+        return RelayUceAttributeType.fromEncoded(encoded);
     }
 
 }

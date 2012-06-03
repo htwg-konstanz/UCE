@@ -14,25 +14,26 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.messages;
+package de.fhkn.in.uce.relay.core;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Enum to represent common uce methods.
- * 
- * @author Daniel Maier
- * 
- */
-public enum CommonUceMethod implements UceMethod {
-    AUTHENTICATE(0x0), LIST(0x1), REGISTER(0x2), DEREGISTER(0x3), CONNECTION_REQUEST(0x4), KEEP_ALIVE(
-            0x5);
+import de.fhkn.in.uce.messages.UceMethod;
 
-    private static final Map<Integer, CommonUceMethod> intToEnum = new HashMap<Integer, CommonUceMethod>();
+/**
+ * Enum for specific relay methods.
+ * @author Daniel Maier
+ *
+ */
+public enum RelayUceMethod implements UceMethod {
+    ALLOCATION(0x33), REFRESH(0x34), CONNECTION_ATTEMPT(0x35), CONNECTION_BIND(0x36);
+
+    private static final Map<Integer, RelayUceMethod> intToEnum = 
+        new HashMap<Integer, RelayUceMethod>();
 
     static {
-        for (CommonUceMethod l : values()) {
+        for (RelayUceMethod l : values()) {
             intToEnum.put(l.encoded, l);
         }
     }
@@ -40,12 +41,11 @@ public enum CommonUceMethod implements UceMethod {
     private final int encoded;
 
     /**
-     * Creates a new {@link CommonUceMethod}.
+     * Creates a new {@link RelayUceMethod}.
      * 
-     * @param encoded
-     *            the encoded representation of the uce method
+     * @param encoded the encoded method
      */
-    private CommonUceMethod(int encoded) {
+    private RelayUceMethod(int encoded) {
         this.encoded = encoded;
     }
 
@@ -54,13 +54,12 @@ public enum CommonUceMethod implements UceMethod {
     }
 
     /**
-     * Decodes the specified byte encoded uce method.
+     * Decodes an encoded relay uce method.
      * 
-     * @param encoded
-     *            the encoded uce method
-     * @return the decoded {@link CommonUceMethod}
+     * @param encoded the encoded relay uce method
+     * @return the decoded relay uce method
      */
-    static CommonUceMethod fromEncoded(int encoded) {
+    public static RelayUceMethod fromEncoded(int encoded) {
         return intToEnum.get(encoded);
     }
 

@@ -46,14 +46,24 @@ one release.
 ### Modules
 
 *	messages
+
 	UCE Messages. All core messages commonly used by UCE components.
+
+*	relay.core
+
+	Core components of the Relay modules
+
 	
 ### Bundles
 
 *	core
+
 	all core components:
 	- messages
 
+* 	relay
+
+	The UCE Relay project. Builds all relay modules
 
 ## Credits
 

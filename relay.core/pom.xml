@@ -15,9 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- 
-	the message project.
-	all basic UCE messages commonly used by UCE components.
-	extensions possible by components.
+	the relay project.
+	Implements turn-like relay messages, server and client.
+	Note: NOT compliant to TURN standard!
 -->
 <project 
 	xmlns="http://maven.apache.org/POM/4.0.0" 
@@ -33,8 +33,9 @@
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE Messages</name>
-	<artifactId>messages</artifactId>
+	<name>UCE Relay Core</name>
+	<artifactId>core</artifactId>
+	<groupId>de.fhkn.in.uce.relay</groupId>
 	<packaging>jar</packaging>
 	
 	<dependencies>
@@ -42,6 +43,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>messages</artifactId>
+			<version>1.0</version>
 		</dependency>
   	</dependencies>
 </project>

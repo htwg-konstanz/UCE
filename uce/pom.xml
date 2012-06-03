@@ -29,14 +29,15 @@
 		<artifactId>parent</artifactId>
 		<groupId>de.fhkn.in.uce</groupId>
 		<version>1.0</version>
-		<relativePath>./parent/pom.xml</relativePath>
+		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 
 	<name>UCE Builder</name>
-	<artifactId>build</artifactId>
+	<artifactId>uce</artifactId>
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>core</module>
+			<module>../core</module>
+			<module>../relay</module>
 	</modules>
 </project>
