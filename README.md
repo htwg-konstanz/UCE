@@ -53,6 +53,10 @@ one release.
 
 	Core components of the Relay modules
 
+*	relay.client
+
+	A relay client to connect to a remote host via a relay server.
+
 	
 ### Bundles
 
@@ -67,7 +71,7 @@ one release.
 
 * 	relay
 
-	The UCE Relay project. Builds all relay modules
+	The UCE Relay project. Builds all relay modules.
 
 ## Credits
 

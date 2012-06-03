@@ -39,5 +39,6 @@
 	
 	<modules>
 		<module>../relay.core</module>
+		<module>../relay.client</module>
 	</modules>
 </project>

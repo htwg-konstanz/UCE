@@ -28,13 +28,31 @@
 
 	<parent>
 		<artifactId>parent</artifactId>
-		<groupId>de.fhkn.in.uce.relay</groupId>
+		<groupId>de.fhkn.in.uce</groupId>
 		<version>1.0</version>
 		<relativePath>../relay.parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE Relay Core</name>
-	<artifactId>core</artifactId>
+	<name>UCE Relay Client</name>
+	<artifactId>client</artifactId>
+	<groupId>de.fhkn.in.uce.relay</groupId>
 	<packaging>jar</packaging>
 	
+	<dependencies>
+		<dependency>
+			<groupId>de.fhkn.in.lib</groupId>
+			<artifactId>concurrent</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce.relay</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0</version>
+		</dependency>		
+	</dependencies>
 </project>
