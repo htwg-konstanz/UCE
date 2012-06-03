@@ -37,6 +37,7 @@
 	<packaging>pom</packaging>
 	
 	<modules>
+			<module>../parent</module>
 			<module>../core</module>
 			<module>../relay</module>
 	</modules>

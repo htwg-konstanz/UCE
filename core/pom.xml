@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- 
-	the CORE project. this builds all the UCE core modules commonly used
-	by UCE components
+	the message project.
+	all basic UCE messages commonly used by UCE components.
+	extensions possible by components.
 -->
 <project 
 	xmlns="http://maven.apache.org/POM/4.0.0" 
@@ -32,11 +33,20 @@
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 
+	<!-- 
+	<name>UCE Messages</name>
+	<artifactId>messages</artifactId>
+	-->
+	
 	<name>UCE Core</name>
 	<artifactId>core</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	
-	<modules>
-		<module>../messages</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+  	</dependencies>
 </project>

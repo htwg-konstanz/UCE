@@ -48,7 +48,7 @@
 		 -->
 		<dependency>
 			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>messages</artifactId>
+			<artifactId>core</artifactId>
 			<version>1.0</version>
 		</dependency>
   	</dependencies>
