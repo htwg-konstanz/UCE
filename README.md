@@ -56,6 +56,10 @@ one release.
 	
 ### Bundles
 
+*	uce
+
+	Builds all UCE modules and bundles
+
 *	core
 
 	all core components:
