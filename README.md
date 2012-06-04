@@ -19,20 +19,51 @@ Universal Connection Establishment (UCE) is a combination of firewall and NAT tr
 techniques that is designed to provide universal IP connectivity with minimal administrative
 and configuration overhead.
 
-## Contents
+## UCE Components
 
-*	pom.xml
+Communication through NATs can basically be achieved using the following
+techniques.
 
-	The builder project, it builds all modules and bundles.
+*	Relaying
 
-*	parent
+	A relay server relays messages between the communicating peers. Always
+	works but requires a publicly available relay server.
 
-	The parent project. All modules / bundles inherit this one.
-	It has all settings and dependencies.
+*	Connection Reversal
 
-*	modules and bundles
+	The source peer that wants to open a connection to the target peer is
+	publicly visible. The target peer connects to the source peer, i.e. the
+	connection is reversed. Requires some sort of rendezvous server.
 
-	See below
+*	Hole Punching
+
+	Both peers open connections to the outside, thus creating a mapping in the
+	NAT, effectively punching a hole. This mapping can then be used to connect
+	to. Requires some sort of rendezvous server to exchange mapping info.
+
+*	Direct connect
+
+	If the target peer is publicly available the source can directly connect
+	to it.
+
+* 	UPnP
+
+	If the NAT box supports UPnP it can be directed to automatically create
+	persistent mappings. The peer behind this NAT box is then effectively
+	visible from the outside.
+
+UCE tries to unify a multitude of NAT traversal techniques in one library
+(and application) that is able to guarantee connectivity in basically any
+network environment, including mobile networks.
+
+An essential part of UCE is exposure to Java RMI. That allows building RMI
+applications over NAT and firewall boundaries.
+
+## State
+
+UCE originates from a BMBF funded research project. It is under active
+development. Most components are in a proof-of-concept or prototype state and
+we are in the process of gradually releasing them to the public.
 
 ## Modules and Bundles
 
@@ -43,36 +74,42 @@ in the way that they extend and bundle modules to new releases. E.g.
 'UCE Core' is a bundle that bundles all UCE core functionality to
 one release.
 
-### Modules
+*	uce/
 
-*	messages
+	The uce project, it builds all modules and bundles.
 
-	UCE Messages. All core messages commonly used by UCE components.
+*	parent/
+
+	The parent project. All modules / bundles inherit this one.
+	It has all common settings and dependencies.
+
+* 	relay/
+
+	The relay project, it builds all the relay modules.
+	
+*	relay.parent
+
+	Relay parent project, inherited by relay modules
 
 *	relay.core
 
-	Core components of the Relay modules
+	Core components of the Relay modules.
 
+*	relay.server
+
+	An implementation of a relay server that relays messages between a client
+	and peers.
+	
 *	relay.client
 
-	A relay client to connect to a remote host via a relay server.
+	A relay client. The client is the host that allocates and directs relay
+	connections on the relay server.
 
+*	relay.rmi
+
+	RMI related socket factories and remote objects to expose relay
+	functionality to RMI.
 	
-### Bundles
-
-*	uce
-
-	Builds all UCE modules and bundles
-
-*	core
-
-	all core components:
-	- messages
-
-* 	relay
-
-	The UCE Relay project. Builds all relay modules.
-
 ## Credits
 
 *	Lead / Maintainer:
