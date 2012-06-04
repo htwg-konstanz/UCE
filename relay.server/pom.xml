@@ -15,8 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- 
-	this one is the builder for UCE.
-	it builds all UCE modules and bundles.
+	the relay project.
+	Implements turn-like relay messages, server and client.
+	Note: NOT compliant to TURN standard!
 -->
 <project 
 	xmlns="http://maven.apache.org/POM/4.0.0" 
@@ -27,18 +28,26 @@
 
 	<parent>
 		<artifactId>parent</artifactId>
-		<groupId>de.fhkn.in.uce</groupId>
+		<groupId>de.fhkn.in.uce.relay</groupId>
 		<version>1.0</version>
-		<relativePath>../parent/pom.xml</relativePath>
+		<relativePath>../relay.parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE</name>
-	<artifactId>uce</artifactId>
-	<packaging>pom</packaging>
+	<name>UCE Relay Server</name>
+	<artifactId>server</artifactId>
+	<packaging>jar</packaging>
 	
-	<modules>
-			<module>../parent</module>
-			<module>../core</module>
-			<module>../relay</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>de.fhkn.in.uce.relay</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.lib</groupId>
+			<artifactId>socketlistener</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+	
 </project>

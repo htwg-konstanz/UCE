@@ -38,7 +38,9 @@
 	<packaging>pom</packaging>
 	
 	<modules>
+		<module>../relay.parent</module>
 		<module>../relay.core</module>
 		<module>../relay.client</module>
+		<module>../relay.server</module>
 	</modules>
 </project>

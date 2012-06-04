@@ -47,7 +47,7 @@ import de.fhkn.in.uce.relay.core.Statics;
  * an allocation peers can establish a connection to the relay server and then
  * all data from the peer is relayed to the client and vice versa.
  * 
- * @author Daniel Maier
+ * @author thomas zink, daniel maier
  * 
  */
 public final class RelayClient {

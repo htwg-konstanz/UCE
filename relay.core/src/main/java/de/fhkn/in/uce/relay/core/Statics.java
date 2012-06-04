@@ -46,5 +46,15 @@ public class Statics {
      * Maximum interval of allocation refresh requests in ms.
      */
     public static final int ALLOCATION_LIFETIME_MAX = 60 * 60 * 1000; // ms
+    
+    /**
+     * Default port for relay server
+     */
+    public static final int RELAYSERVER_DEFAULT_PORT = 10300;
+    
+    /**
+     * Default buffer size
+     */
+    public static final int DEFAULT_BUFFER_SIZE = 768;
 
 }
