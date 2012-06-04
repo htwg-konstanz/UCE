@@ -33,24 +33,8 @@
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE Relay Parent</name>
+	<name>UCE Connection Reversal Parent</name>
 	<artifactId>parent</artifactId>
-	<groupId>de.fhkn.in.uce.relay</groupId>
+	<groupId>de.fhkn.in.uce.reversal</groupId>
 	<packaging>pom</packaging>	
-	
-	<dependencies>
-		<!-- 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.4</version>
-		</dependency>
-		 -->
-		<dependency>
-			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>messages</artifactId>
-			<version>1.0</version>
-		</dependency>
-  	</dependencies>
-	
 </project>

@@ -38,8 +38,8 @@
 	<artifactId>messages</artifactId>
 	-->
 	
-	<name>UCE Core</name>
-	<artifactId>core</artifactId>
+	<name>UCE Messages</name>
+	<artifactId>messages</artifactId>
 	<packaging>jar</packaging>
 	
 	<dependencies>

@@ -65,6 +65,10 @@ UCE originates from a BMBF funded research project. It is under active
 development. Most components are in a proof-of-concept or prototype state and
 we are in the process of gradually releasing them to the public.
 
+See the [project page](http://example.net/) for detailed information, references
+and publications. Some information is outdated and will be updated once the
+project has been released.
+
 ## Modules and Bundles
 
 All modules and bundles are located in a flat hierarchy parallel to
@@ -109,14 +113,22 @@ one release.
 
 	RMI related socket factories and remote objects to expose relay
 	functionality to RMI.
+
+*	reversal
+
+	Connection reversal project
+
+*	reversal.parent
+
+	Connection reversal parent project
 	
 ## Credits
 
 *	Lead / Maintainer:
 
-	Thomas Zink, tzink@htwg-konstanz.de
+	Thomas Zink, tzink {at-sign} htwg-konstanz {a dot} de
 
 *	Contributors:
 
-	- Daniel Maier
-	- Stefan Lohr
+	- Daniel Maier, all initial code
+	- Stefan Lohr, connection reversal, web hole punching, some demos
