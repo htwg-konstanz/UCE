@@ -36,7 +36,7 @@ import de.fhkn.in.uce.messages.UniqueId;
 import de.fhkn.in.uce.relay.core.RelayLifetime;
 import de.fhkn.in.uce.relay.core.RelayMessageReader;
 import de.fhkn.in.uce.relay.core.RelayUceMethod;
-import de.fhkn.in.uce.relay.core.Statics;
+import de.fhkn.in.uce.relay.core.RelayConstants;
 
 
 /**
@@ -117,8 +117,8 @@ final class MessageHandlerTask implements Runnable {
                     int lifetime = message.getAttribute(RelayLifetime.class).getLifeTime();
                     logger.debug("Received lifetime response {}", lifetime);
                     refreshExecutor.schedule(new RefreshAllocationTask(controlConnectionWriter,
-                            lifetime), Math.max(lifetime - Statics.ALLOCATION_LIFETIME_ADVANCE,
-                            Statics.ALLOCATION_LIFETIME_MIN), TimeUnit.SECONDS);
+                            lifetime), Math.max(lifetime - RelayConstants.ALLOCATION_LIFETIME_ADVANCE,
+                            RelayConstants.ALLOCATION_LIFETIME_MIN), TimeUnit.SECONDS);
                 } else {
                     logger.error("Received unexpected message {}", message.getMethod());
                     socketQueue.add(new Socket());

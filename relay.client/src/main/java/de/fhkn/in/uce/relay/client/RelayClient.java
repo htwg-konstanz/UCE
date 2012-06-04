@@ -40,20 +40,29 @@ import de.fhkn.in.uce.messages.UceMessageStaticFactory;
 import de.fhkn.in.uce.relay.core.RelayLifetime;
 import de.fhkn.in.uce.relay.core.RelayMessageReader;
 import de.fhkn.in.uce.relay.core.RelayUceMethod;
-import de.fhkn.in.uce.relay.core.Statics;
+
+import static de.fhkn.in.uce.relay.core.RelayConstants.*;
 
 /**
- * A {@link RelayClient} can request allocations on relay servers. Through such
- * an allocation peers can establish a connection to the relay server and then
- * all data from the peer is relayed to the client and vice versa.
+ * A {@link RelayClient} requests, that another host (the Relay Server) acts
+ * as a relay. Information from the TURN RFC:
+ * The client can arrange for the server to relay packets to and from certain
+ * other hosts (called peers) and can control aspects of how the relaying is
+ * done. The client does this by obtaining an IP address and port on the
+ * server, called the relayed transport address.  When a peer sends a packet
+ * to the relayed transport address, the server relays the packet to the client.
+ * When the client sends a data packet to the server, the server relays it to
+ * the appropriate peer using the relayed transport address as the source.
  * 
- * @author thomas zink, daniel maier
+ * A peer that wants to connect to the client must somehow have obtained the
+ * transport address of the client.
  * 
+ * @author thomas zink, daniel maier 
  */
 public final class RelayClient {
 
     private static final Logger logger = LoggerFactory.getLogger(RelayClient.class);
-    private final InetSocketAddress relayServerEndpoint;
+    private final InetSocketAddress relayServerSocketAddress;
     private final InetAddress localAddress;
     private final int localPort;
     private final BlockingQueue<Socket> socketQueue;
@@ -66,29 +75,29 @@ public final class RelayClient {
     /**
      * Creates a new {@link RelayClient}.
      * 
-     * @param relayServerEndpoint
+     * @param relayServerSocketAddress
      *            the endpoint of the relay server
      */
-    public RelayClient(InetSocketAddress relayServerEndpoint) {
-        this(relayServerEndpoint, null, 0);
+    public RelayClient(InetSocketAddress relayServerSocketAddress) {
+        this(relayServerSocketAddress, null, 0);
     }
 
     /**
      * Creates a new {@link RelayClient}.
      * 
-     * @param relayServerEndpoint
+     * @param relayServerSocketAddress
      *            the endpoint of the relay server
      * @param port
      *            the local port of the control connection to the relay server
      */
-    public RelayClient(InetSocketAddress relayServerEndpoint, int port) {
-        this(relayServerEndpoint, null, port);
+    public RelayClient(InetSocketAddress relayServerSocketAddress, int port) {
+        this(relayServerSocketAddress, null, port);
     }
 
     /**
      * Creates a new {@link RelayClient}.
      * 
-     * @param relayServerEndpoint
+     * @param relayServerSocketAddress
      *            the endpoint of the relay server
      * @param localAddress
      *            the local address of the control connection to the relay
@@ -96,9 +105,9 @@ public final class RelayClient {
      * @param localPort
      *            the local port of the control connection to the relay server
      */
-    public RelayClient(InetSocketAddress relayServerEndpoint, InetAddress localAddress,
+    public RelayClient(InetSocketAddress relayServerSocketAddress, InetAddress localAddress,
             int localPort) {
-        this.relayServerEndpoint = relayServerEndpoint;
+        this.relayServerSocketAddress = relayServerSocketAddress;
         this.localAddress = localAddress;
         this.localPort = localPort;
         this.socketQueue = new LinkedBlockingQueue<Socket>();
@@ -124,11 +133,11 @@ public final class RelayClient {
         }
         controlConnection = new Socket();
         controlConnection.bind(new InetSocketAddress(localAddress, localPort));
-        controlConnection.connect(relayServerEndpoint);
+        controlConnection.connect(relayServerSocketAddress);
         controlConnectionWriter = new MessageWriter(controlConnection.getOutputStream());
         UceMessage allocationRequestMessage = UceMessageStaticFactory.newUceMessageInstance(
                 RelayUceMethod.ALLOCATION, SemanticLevel.REQUEST, UUID.randomUUID());
-        allocationRequestMessage.addAttribute(new RelayLifetime(Statics.ALLOCATION_LIFETIME));
+        allocationRequestMessage.addAttribute(new RelayLifetime(ALLOCATION_LIFETIME));
         controlConnectionWriter.writeMessage(allocationRequestMessage);
         UceMessage response = RelayMessageReader.read(controlConnection.getInputStream());
         if (!response.isMethod(RelayUceMethod.ALLOCATION) || !response.isSuccessResponse()
@@ -142,10 +151,10 @@ public final class RelayClient {
         ScheduledExecutorService refreshExecutor = Executors
                 .newSingleThreadScheduledExecutor(specialThreadsFactory);
         refreshExecutor.schedule(new RefreshAllocationTask(controlConnectionWriter, lifetime), Math
-                .max(lifetime - Statics.ALLOCATION_LIFETIME_ADVANCE,
-                        Statics.ALLOCATION_LIFETIME_MIN), TimeUnit.SECONDS);
+                .max(lifetime - ALLOCATION_LIFETIME_ADVANCE,
+                        ALLOCATION_LIFETIME_MIN), TimeUnit.SECONDS);
         messageHandlerTask = new MessageHandlerTask(controlConnection, controlConnectionWriter,
-                relayServerEndpoint, socketQueue, refreshExecutor);
+                relayServerSocketAddress, socketQueue, refreshExecutor);
         specialThreadsFactory.newThread(messageHandlerTask).start();
         InetSocketAddress peerRelayAddress = response.getAttribute(SocketEndpoint.class)
                 .getEndpoint();

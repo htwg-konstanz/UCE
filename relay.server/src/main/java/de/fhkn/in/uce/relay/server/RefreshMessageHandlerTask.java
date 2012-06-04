@@ -30,7 +30,7 @@ import de.fhkn.in.uce.messages.UceMessage;
 import de.fhkn.in.uce.relay.core.RelayLifetime;
 import de.fhkn.in.uce.relay.core.RelayMessageReader;
 import de.fhkn.in.uce.relay.core.RelayUceMethod;
-import de.fhkn.in.uce.relay.core.Statics;
+import de.fhkn.in.uce.relay.core.RelayConstants;
 
 /**
  * Task that handles refresh messages of client.
@@ -71,10 +71,10 @@ public class RefreshMessageHandlerTask implements Runnable {
         this.controlConnectionWriter = controlConnectionWriter;
         this.peerListener = peerListener;
         if (lifetime == 0) {
-            this.initRefreshInterval = Statics.DEFAULT_ALLOCATION_REFRESH_INTERVAL;
+            this.initRefreshInterval = RelayConstants.DEFAULT_ALLOCATION_REFRESH_INTERVAL;
         } else {
-            this.initRefreshInterval = (lifetime < Statics.ALLOCATION_LIFETIME_MAX) ? lifetime
-                    : Statics.ALLOCATION_LIFETIME_MAX;
+            this.initRefreshInterval = (lifetime < RelayConstants.ALLOCATION_LIFETIME_MAX) ? lifetime
+                    : RelayConstants.ALLOCATION_LIFETIME_MAX;
         }
     }
 
@@ -102,8 +102,8 @@ public class RefreshMessageHandlerTask implements Runnable {
                     int lifetime = message.getAttribute(RelayLifetime.class).getLifeTime();
                     logger.info("Received refresh request with lifetime {}", lifetime);
                     if (lifetime > 0) {
-                        refreshInterval = (lifetime < Statics.ALLOCATION_LIFETIME_MAX) ? lifetime
-                                : Statics.ALLOCATION_LIFETIME_MAX;
+                        refreshInterval = (lifetime < RelayConstants.ALLOCATION_LIFETIME_MAX) ? lifetime
+                                : RelayConstants.ALLOCATION_LIFETIME_MAX;
                         // send refresh response
                         UceMessage successResponse = message.buildSuccessResponse();
                         successResponse.addAttribute(new RelayLifetime(refreshInterval));

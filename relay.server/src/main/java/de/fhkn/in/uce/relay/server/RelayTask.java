@@ -24,7 +24,7 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.uce.relay.core.Statics;
+import static de.fhkn.in.uce.relay.core.RelayConstants.DEFAULT_BUFFER_SIZE;;
 
 /**
  * Task that relays data between one client and one peer. One instance of this task transports
@@ -67,11 +67,11 @@ public class RelayTask implements Runnable {
             return;
         }
 
-        byte[] buf = new byte[Statics.DEFAULT_BUFFER_SIZE];
+        byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
         int len = 0;
 
         try {
-            while ((len = bufferedIn.read(buf, 0, Statics.DEFAULT_BUFFER_SIZE)) > -1) {
+            while ((len = bufferedIn.read(buf, 0, DEFAULT_BUFFER_SIZE)) > -1) {
                 bufferedOut.write(buf, 0, len);
                 bufferedOut.flush();
             }

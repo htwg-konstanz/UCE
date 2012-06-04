@@ -21,7 +21,7 @@ package de.fhkn.in.uce.relay.core;
  * 
  * @author thomas zink, daniel maier
  */
-public class Statics {
+public class RelayConstants {
     public static final int DEFAULT_ALLOCATION_REFRESH_INTERVAL = 10 * 60 * 1000; // ms
         
     /**

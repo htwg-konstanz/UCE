@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.net.SocketListener;
+import static de.fhkn.in.uce.relay.core.RelayConstants.RELAYSERVER_DEFAULT_PORT;
 
 /**
  * A Server that implements TURN-like behavior, to relay TCP data. But it is NOT
@@ -50,7 +51,6 @@ import de.fhkn.in.net.SocketListener;
  */
 public class RelayServer {
     private static final Logger logger = LoggerFactory.getLogger(RelayServer.class);
-    public static final int RELAYSERVER_PORT = 10300;
     private final Thread socketListener;
 
     /**
@@ -104,7 +104,7 @@ public class RelayServer {
      *             if args[0] is set and it is not an integer value
      */
     public static void main(String[] args) throws IOException {
-        int port = RELAYSERVER_PORT;
+        int port = RELAYSERVER_DEFAULT_PORT;
 
         if (args.length > 0) {
             try {

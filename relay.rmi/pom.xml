@@ -28,20 +28,20 @@
 
 	<parent>
 		<artifactId>parent</artifactId>
-		<groupId>de.fhkn.in.uce</groupId>
+		<groupId>de.fhkn.in.uce.relay</groupId>
 		<version>1.0</version>
-		<relativePath>../parent/pom.xml</relativePath>
+		<relativePath>../relay.parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE Relay</name>
-	<artifactId>relay</artifactId>
-	<packaging>pom</packaging>
+	<name>UCE Relay RMI</name>
+	<artifactId>rmi</artifactId>
+	<packaging>jar</packaging>
 	
-	<modules>
-		<module>../relay.parent</module>
-		<module>../relay.core</module>
-		<module>../relay.client</module>
-		<module>../relay.server</module>
-		<module>../relay.rmi</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>de.fhkn.in.uce.relay</groupId>
+			<artifactId>client</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
 </project>
