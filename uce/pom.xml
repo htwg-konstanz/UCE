@@ -40,5 +40,6 @@
 			<module>../parent</module>
 			<module>../messages</module>
 			<module>../relay</module>
+			<module>../reversal</module>
 	</modules>
 </project>

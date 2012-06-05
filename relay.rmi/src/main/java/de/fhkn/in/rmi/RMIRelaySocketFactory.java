@@ -69,7 +69,8 @@ public class RMIRelaySocketFactory implements RMIClientSocketFactory,
 	public ServerSocket createServerSocket(int port) throws IOException {
 		if (this.clientSocket == null) {
 			this.clientSocket = new RelayServerSocket(relayServer);
-			this.peerAddress = this.clientSocket.createAllocation();
+			//this.peerAddress = this.clientSocket.createAllocation();
+			this.peerAddress = this.clientSocket.getPeerAddress();
 		}
 		return this.clientSocket;
 	}

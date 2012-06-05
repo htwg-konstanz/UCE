@@ -37,4 +37,12 @@
 	<artifactId>parent</artifactId>
 	<groupId>de.fhkn.in.uce.reversal</groupId>
 	<packaging>pom</packaging>	
+	
+	<dependencies>
+	    <dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>messages</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
 </project>

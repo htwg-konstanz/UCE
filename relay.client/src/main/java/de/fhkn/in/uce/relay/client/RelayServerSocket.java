@@ -29,13 +29,14 @@ import java.net.Socket;
  */
 public class RelayServerSocket extends ServerSocket {
 	private final RelayClient relayClient;
+	private InetSocketAddress peerAddress = null; 
 	
 	/**
 	 * Creates a new {@link RelayServerSocket} using the specified
 	 * Relay server.
 	 * 
-	 * @param	hostname the Host name
-     * @param	port	The port number
+	 * @param	hostname  the relay server host name
+     * @param	port  the relay server port number
 	 */
 	public RelayServerSocket(String hostname, int port) throws IOException {
 		this(new InetSocketAddress(hostname, port));
@@ -63,8 +64,12 @@ public class RelayServerSocket extends ServerSocket {
      */
     public RelayServerSocket(RelayClient relayClient) throws IOException {
         this.relayClient = relayClient;
+        this.peerAddress = this.relayClient.createAllocation();
     }
-
+    
+    public InetSocketAddress getPeerAddress() {
+    	return this.peerAddress;
+    }
     /**
      * Creates a new allocation on the relay server by using the given
      * {@link #relayClient}.
@@ -73,10 +78,10 @@ public class RelayServerSocket extends ServerSocket {
      * @throws IOException
      *             if an I/O error occurs
      */
-    public InetSocketAddress createAllocation() throws IOException {
-        // TODO state check
+    /*public InetSocketAddress createAllocation() throws IOException {
+    	// TODO state check
         return relayClient.createAllocation();
-    }
+    }*/
 
     /**
      * Returns sockets that are connected to the relay server to relay data
@@ -85,7 +90,6 @@ public class RelayServerSocket extends ServerSocket {
     @Override
     public Socket accept() throws IOException {
         try {
-        	relayClient.createAllocation();
             return relayClient.accept();
         } catch (InterruptedException e) {
             throw new IOException(e);

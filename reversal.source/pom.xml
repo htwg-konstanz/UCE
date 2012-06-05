@@ -28,16 +28,20 @@
 
 	<parent>
 		<artifactId>parent</artifactId>
-		<groupId>de.fhkn.in.uce</groupId>
+		<groupId>de.fhkn.in.uce.reversal</groupId>
 		<version>1.0</version>
-		<relativePath>../parent/pom.xml</relativePath>
+		<relativePath>../reversal.parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE Connection Reversal</name>
-	<artifactId>reversal</artifactId>
-	<packaging>pom</packaging>
+	<name>UCE Reversal Source</name>
+	<artifactId>source</artifactId>
+	<packaging>jar</packaging>
 	
-	<modules>
-		<module>../reversal.source</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+	</dependencies>
 </project>
