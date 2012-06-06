@@ -67,7 +67,7 @@ development. Most components are in a proof-of-concept or prototype state and
 we are in the process of gradually releasing them to the public. During this
 transition phase, the version of all modules is fixed to 1.0.
 
-See the [project page](http://example.net/) for detailed information, references
+See the [project page](http://ice.in.htwg-konstanz.de/) for detailed information, references
 and publications. Some information is outdated and will be updated once the
 project has been fully released and a new maven repository is up and running.
 
