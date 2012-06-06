@@ -13,7 +13,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# UCE - Universal Connection Establishment
+# [UCE - Universal Connection Establishment](http://ice.in.htwg-konstanz.de/)
 
 Universal Connection Establishment (UCE) is a combination of firewall and NAT traversal
 techniques that is designed to provide universal IP connectivity with minimal administrative
