@@ -28,18 +28,31 @@
 
 	<parent>
 		<artifactId>parent</artifactId>
-		<groupId>de.fhkn.in.uce</groupId>
+		<groupId>de.fhkn.in.uce.reversal</groupId>
 		<version>1.0</version>
-		<relativePath>../parent/pom.xml</relativePath>
+		<relativePath>../reversal.parent/pom.xml</relativePath>
 	</parent>
 
-	<name>UCE Reversal</name>
-	<artifactId>reversal</artifactId>
-	<packaging>pom</packaging>
+	<name>UCE Reversal Target</name>
+	<artifactId>target</artifactId>
+	<packaging>jar</packaging>
 	
-	<modules>
-		<module>../reversal.source</module>
-		<module>../reversal.target</module>
-		<module>../reversal.mediator</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>messages</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+      		<groupId>de.fhkn.in.lib</groupId>
+      		<artifactId>test</artifactId>
+      		<version>1.0</version>
+      		<scope>test</scope>
+    	</dependency>
+	</dependencies>
 </project>

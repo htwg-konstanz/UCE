@@ -19,7 +19,7 @@ Universal Connection Establishment (UCE) is a combination of firewall and NAT tr
 techniques that is designed to provide universal IP connectivity with minimal administrative
 and configuration overhead.
 
-## UCE Components
+## NAT Traversal Components
 
 Communication through NATs can basically be achieved using the following
 techniques.
@@ -41,16 +41,17 @@ techniques.
 	NAT, effectively punching a hole. This mapping can then be used to connect
 	to. Requires some sort of rendezvous server to exchange mapping info.
 
-*	Direct connect
-
-	If the target peer is publicly available the source can directly connect
-	to it.
-
 * 	UPnP
 
 	If the NAT box supports UPnP it can be directed to automatically create
 	persistent mappings. The peer behind this NAT box is then effectively
 	visible from the outside.
+
+*	Direct connect
+
+	If the target peer is publicly available the source can directly connect
+	to it.
+
 
 UCE tries to unify a multitude of NAT traversal techniques in one library
 (and application) that is able to guarantee connectivity in basically any
@@ -63,13 +64,14 @@ applications over NAT and firewall boundaries.
 
 UCE originates from a BMBF funded research project. It is under active
 development. Most components are in a proof-of-concept or prototype state and
-we are in the process of gradually releasing them to the public.
+we are in the process of gradually releasing them to the public. During this
+transition phase, the version of all modules is fixed to 1.0.
 
 See the [project page](http://example.net/) for detailed information, references
 and publications. Some information is outdated and will be updated once the
-project has been released.
+project has been fully released and a new maven repository is up and running.
 
-## Modules and Bundles
+## UCE Modules and Bundles
 
 All modules and bundles are located in a flat hierarchy parallel to
 parent. Modules are components of UCE. Bundles are different from modules
@@ -121,6 +123,25 @@ one release.
 *	reversal.parent
 
 	Connection reversal parent project
+	
+*	reversal.source
+
+	The source of a connection, i.e. the public client that wants to connect
+	to a service behind NAT
+	
+* 	reversal.target
+
+	The target service that is behind NAT. It reverses the connection back to
+	the source.
+	
+*	reversal.mediator
+
+	Rendezvous server that negotiates connection reversal parameters between
+	source and target.
+
+*	reversal.rmi
+
+	RMI socket factories and remote objects for connection reversal.
 	
 ## Credits
 

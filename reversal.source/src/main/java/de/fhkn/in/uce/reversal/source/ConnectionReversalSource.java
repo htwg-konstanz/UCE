@@ -82,7 +82,7 @@ public class ConnectionReversalSource {
 	 * @return ServerSocket the target connects to.
 	 * @throws Exception
 	 */
-	public ServerSocket requestConnection(String uniqueUserName) throws SocketTimeoutException, IOException {
+	private ServerSocket requestConnection(String uniqueUserName) throws SocketTimeoutException, IOException {
 		return requestConnection(uniqueUserName, 0);
 	}
 	
@@ -96,7 +96,7 @@ public class ConnectionReversalSource {
 	 * @throws IOException
 	 * @throws SocketTimeoutException
 	 */
-	public ServerSocket requestConnection(String uniqueUserName, int port) throws SocketTimeoutException, IOException {
+	private ServerSocket requestConnection(String uniqueUserName, int port) throws SocketTimeoutException, IOException {
 		//if (requested) throw new IllegalStateException("already requested");
 		//else requested = true;
 		
@@ -169,22 +169,17 @@ public class ConnectionReversalSource {
 		Socket socket;
 		
 		try {
-			
 			socket = serverSocket.accept();
 		}
 		catch (SocketTimeoutException e) {
-			
 			serverSocket.setSoTimeout(0);
-			
 			throw new SocketTimeoutException();
 		}
 		finally {
-			
 			serverSocket.close();
 		}
 		
 		logger.info("connection established");
-		
 		return socket;
 	}*/
 	
@@ -242,7 +237,6 @@ public class ConnectionReversalSource {
 		Set<String> userList = new HashSet<String>();
 		
 		for (UniqueUserName uniqueUserName : uniqueUserNameList) {
-			
 			userList.add(uniqueUserName.getUniqueUserName());
 		}
 		
