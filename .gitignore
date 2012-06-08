@@ -7,7 +7,7 @@
 *.ear
 
 # OS stuff
-.swp
+*.swp
 ._.*
 .DS_Store
 
