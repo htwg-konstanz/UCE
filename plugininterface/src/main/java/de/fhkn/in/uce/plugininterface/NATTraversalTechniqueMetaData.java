@@ -18,6 +18,8 @@ package de.fhkn.in.uce.plugininterface;
 
 import java.util.Set;
 
+import de.fhkn.in.uce.stun.attribute.Attribute;
+
 /**
  * {@link NATTraversalTechniqueMetaData} delivers meta data of a
  * {@link NATTraversalTechnique}. To differentiate {@link NATTraversalTechnique}
@@ -85,4 +87,12 @@ public interface NATTraversalTechniqueMetaData {
      * @return the timeout in milliseconds for the connection establishment
      */
     long getTimeout();
+
+    /**
+     * Returns the {@link Attribute} for the NAT traversal technique. It
+     * contains the unique encoding for the technique.
+     * 
+     * @return the {@link Attribute} for the NAT traversal technique
+     */
+    Attribute getAttribute();
 }
