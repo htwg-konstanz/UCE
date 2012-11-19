@@ -1,18 +1,18 @@
 /*
-    Copyright (c) 2012 Thomas Zink, 
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (c) 2012 Thomas Zink,
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.fhkn.in.uce.relay.server;
 
@@ -46,8 +46,8 @@ import de.fhkn.in.uce.relay.core.RelayLifetime;
  */
 final class RelayAllocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(RelayAllocationHandler.class);
-    public static final int MIN_PORT = 10301;
-    public static final int MAX_PORT = 10401;
+    public static final int MIN_PORT = 10150;
+    public static final int MAX_PORT = 10160;
 
     private final Socket controlConnection;
     private final MessageWriter controlConnectionWriter;
@@ -105,23 +105,21 @@ final class RelayAllocationHandler {
             ServerSocket peerSS = createServerSocketWithinPortRange();
             if (peerSS == null) {
                 logger.info("Insufficient Capacity");
-                UceMessage errorResponse = relayAllocationMessage.buildErrorResponse(
-                        ErrorCodes.INSUFFICIENT_CAPACITY, "Insufficient Capacity");
+                UceMessage errorResponse = relayAllocationMessage.buildErrorResponse(ErrorCodes.INSUFFICIENT_CAPACITY,
+                        "Insufficient Capacity");
                 controlConnectionWriter.writeMessage(errorResponse);
             } else {
                 // TODO listener tasks in threadpool, listener also in pool?
                 logger.info("Created allocation on {}", peerSS.getLocalSocketAddress());
-                SocketListener peerSocketListener = new SocketListener(peerSS,
-                        Executors.newCachedThreadPool(), new PeerHandlerTaskFactory(connIDToQueue,
-                                controlConnectionWriter, relayExecutor));
-                controlConnectionHandlerExecutor.execute(new RefreshMessageHandlerTask(
-                        controlConnection, controlConnectionWriter, lifetime, peerSocketListener));
+                SocketListener peerSocketListener = new SocketListener(peerSS, Executors.newCachedThreadPool(),
+                        new PeerHandlerTaskFactory(connIDToQueue, controlConnectionWriter, relayExecutor));
+                controlConnectionHandlerExecutor.execute(new RefreshMessageHandlerTask(controlConnection,
+                        controlConnectionWriter, lifetime, peerSocketListener));
                 peerSocketListener.start();
                 UceMessage successResponse = relayAllocationMessage.buildSuccessResponse();
                 successResponse.addAttribute(
-                        new SocketEndpoint(new InetSocketAddress(peerSS.getInetAddress(), peerSS
-                                .getLocalPort()), EndpointClass.RELAY)).addAttribute(
-                        new RelayLifetime(lifetime));
+                        new SocketEndpoint(new InetSocketAddress(peerSS.getInetAddress(), peerSS.getLocalPort()),
+                                EndpointClass.RELAY)).addAttribute(new RelayLifetime(lifetime));
                 controlConnectionWriter.writeMessage(successResponse);
             }
         } catch (IOException e) {

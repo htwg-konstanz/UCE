@@ -20,119 +20,130 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Class which implements a list of all registered users.
- * Each user is mapped as a UserData-Object.
- * This class is for the managing the registered users
- * and provides all relevant methods therefore.
- * The class is implemented as Singleton.
+ * Class which implements a list of all registered users. Each user is mapped as
+ * a UserData-Object. This class is for the managing the registered users and
+ * provides all relevant methods therefore. The class is implemented as
+ * Singleton.
  * 
  * @author thomas zink, stefan lohr
  */
 public class UserList {
-	
-	/**
-	 * Initializes the instance for the Singleton
-	 */
-	private static final UserList instance = new UserList();
-	private ConcurrentHashMap<String, UserData> userMap;
-	
-	/**
-	 * Constructor, creates ConcurrentHashMap for UserData Objects
-	 */
-	private UserList() {
-		userMap = new ConcurrentHashMap<String, UserData>();
-	}
-	
-	/**
-	 * Returns the instance of the Singleton
-	 * 
-	 * @return UserList instance of the Singleton
-	 */
-	public static UserList getInstance() {
-		return instance;
-	}
-	
-	/**
-	 * Method to get the UserData-Object by its unique userName.
-	 * 
-	 * @param userName String of the unique userName
-	 * @return UserData Object of the unique UserName
-	 */
-	public UserData getUser(String userName) {
-		return userMap.get(userName);
-	}
-	
-	/**
-	 * Method updates the handed over UserData Object
-	 * 
-	 * @param userData UserData Object to update
-	 * @return updated UserData Object
-	 */
-	public UserData updateUser(UserData userData) {
-		return userMap.put(userData.getUserName(), userData);
-	}
-	
-	/**
-	 * Method adds the handed over UserData Object to UserList
-	 * 
-	 * @param userData UserData Object to add
-	 * @return added UserData Object
-	 */
-	public UserData addUser(UserData userData) {
-		return userMap.put(userData.getUserName(), userData);
-	}
-	
-	/**
-	 * Method removes the handed over UserData Object from UserList
-	 * 
-	 * @param userName unique userName of the UserData Object
-	 * @return removed UserData Object
-	 */
-	public UserData removeUser(String userName) {
-		return userMap.remove(userName);
-	}
-	
-	/**
-	 * Removes all of the mappings from this UserList
-	 */
-	public void clearUserList() {
-		userMap.clear();
-	}
-	
-	/**
-	 * Method returns a set of the unique userNames which are registered on the Mediator
-	 * 
-	 * @return Set of Strings with the unique userNames of the registered users on the Mediator
-	 */
-	public Set<String> getUserNames() {
-		return userMap.keySet();
-	}
-	
-	/**
-	 * Method refreshes the TimeStamp of the handed over unique userName
-	 * 
-	 * @param userName unique UserName
-	 */
-	public void refreshUserTimeStamp(String userName) {
-		UserData userData = userMap.get(userName);
-		userData.refreshTimeStamp();
-		userMap.replace(userName, userData, userData);
-	}
-	
-	/**
-	 * Method removes users with timeStamps older than the handed over parameter
-	 * 
-	 * @param timeStamp milliseconds since 1970-01-01 
-	 */
-	public synchronized void removeUsersByTimestamp(long timeStamp) {
-		Iterator<UserData> userMapIterator = userMap.values().iterator();
-		while (userMapIterator.hasNext()) {
-			UserData userData = userMapIterator.next();
-			if (userData.getTimeStamp() <= timeStamp) {
-				System.out.println("remove idle user " + userData.getUserName() + " from UserList");
-				userMapIterator.remove();
-			}
-		}
-	}
+
+    /**
+     * Initializes the instance for the Singleton
+     */
+    private static final UserList instance = new UserList();
+    private ConcurrentHashMap<String, UserData> userMap;
+    private static final Logger logger = LoggerFactory.getLogger(UserList.class);
+
+    /**
+     * Constructor, creates ConcurrentHashMap for UserData Objects
+     */
+    private UserList() {
+        userMap = new ConcurrentHashMap<String, UserData>();
+    }
+
+    /**
+     * Returns the instance of the Singleton
+     * 
+     * @return UserList instance of the Singleton
+     */
+    public static UserList getInstance() {
+        return instance;
+    }
+
+    /**
+     * Method to get the UserData-Object by its unique userName.
+     * 
+     * @param userName
+     *            String of the unique userName
+     * @return UserData Object of the unique UserName
+     */
+    public UserData getUser(String userName) {
+        return userMap.get(userName);
+    }
+
+    /**
+     * Method updates the handed over UserData Object
+     * 
+     * @param userData
+     *            UserData Object to update
+     * @return updated UserData Object
+     */
+    public UserData updateUser(UserData userData) {
+        return userMap.put(userData.getUserName(), userData);
+    }
+
+    /**
+     * Method adds the handed over UserData Object to UserList
+     * 
+     * @param userData
+     *            UserData Object to add
+     * @return added UserData Object
+     */
+    public UserData addUser(UserData userData) {
+        return userMap.put(userData.getUserName(), userData);
+    }
+
+    /**
+     * Method removes the handed over UserData Object from UserList
+     * 
+     * @param userName
+     *            unique userName of the UserData Object
+     * @return removed UserData Object
+     */
+    public UserData removeUser(String userName) {
+        return userMap.remove(userName);
+    }
+
+    /**
+     * Removes all of the mappings from this UserList
+     */
+    public void clearUserList() {
+        userMap.clear();
+    }
+
+    /**
+     * Method returns a set of the unique userNames which are registered on the
+     * Mediator
+     * 
+     * @return Set of Strings with the unique userNames of the registered users
+     *         on the Mediator
+     */
+    public Set<String> getUserNames() {
+        return userMap.keySet();
+    }
+
+    /**
+     * Method refreshes the TimeStamp of the handed over unique userName
+     * 
+     * @param userName
+     *            unique UserName
+     */
+    public void refreshUserTimeStamp(String userName) {
+        UserData userData = userMap.get(userName);
+        userData.refreshTimeStamp();
+        userMap.replace(userName, userData, userData);
+    }
+
+    /**
+     * Method removes users with timeStamps older than the handed over parameter
+     * 
+     * @param timeStamp
+     *            milliseconds since 1970-01-01
+     */
+    public synchronized void removeUsersByTimestamp(long timeStamp) {
+        Iterator<UserData> userMapIterator = userMap.values().iterator();
+        while (userMapIterator.hasNext()) {
+            UserData userData = userMapIterator.next();
+            if (userData.getTimeStamp() <= timeStamp) {
+                logger.info("remove idle user {} from UserList", userData.getUserName()); //$NON-NLS-1$
+                userMapIterator.remove();
+            }
+        }
+    }
 }
