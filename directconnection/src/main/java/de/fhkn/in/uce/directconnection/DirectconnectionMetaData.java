@@ -20,9 +20,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.jcip.annotations.Immutable;
+import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
 import de.fhkn.in.uce.plugininterface.NATSituation;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
 import de.fhkn.in.uce.plugininterface.util.NATTraversalTechniqueUtil;
+import de.fhkn.in.uce.stun.attribute.Attribute;
 
 /**
  * Implementation of {@link NATTraversalTechniqueMetaData} for
@@ -50,32 +52,44 @@ public final class DirectconnectionMetaData implements NATTraversalTechniqueMeta
         this.traversaledNATSituations = toCopy.traversaledNATSituations;
     }
 
+    @Override
     public String getTraversalTechniqueName() {
         return this.name;
     }
 
+    @Override
     public String getVersion() {
         return this.version;
     }
 
+    @Override
     public int getMinConnectionSetupTime() {
         return this.connectionSetupTime;
     }
 
+    @Override
     public int getMaxConnectionSetupTime() {
         return this.connectionSetupTime;
     }
 
+    @Override
     public boolean isFallbackTechnique() {
         return false;
     }
 
+    @Override
     public Set<NATSituation> getTraversaledNATSituations() {
         return Collections.unmodifiableSet(this.traversaledNATSituations);
     }
 
+    @Override
     public long getTimeout() {
         return this.timoutInSeconds * 1000;
+    }
+
+    @Override
+    public Attribute getAttribute() {
+        return new DirectconnectionAttribute();
     }
 
     @Override

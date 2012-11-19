@@ -28,16 +28,16 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.uce.messages.CommonUceMethod;
-import de.fhkn.in.uce.messages.SemanticLevel;
-import de.fhkn.in.uce.messages.SocketEndpoint;
-import de.fhkn.in.uce.messages.UceMessage;
-import de.fhkn.in.uce.messages.UceMessageReader;
-import de.fhkn.in.uce.messages.UceMessageStaticFactory;
-import de.fhkn.in.uce.messages.UniqueUserName;
 import de.fhkn.in.uce.plugininterface.ConnectionNotEstablishedException;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
+import de.fhkn.in.uce.stun.attribute.Username;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
+import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
+import de.fhkn.in.uce.stun.message.Message;
+import de.fhkn.in.uce.stun.message.MessageReader;
+import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
  * Implementation of {@link NATTraversalTechnique} which establishes a direct
@@ -105,21 +105,22 @@ public final class Directconnection implements NATTraversalTechnique {
     }
 
     private Socket establishSourceSideConnection(final String targetId) throws Exception {
-        final UceMessage requestConnectionMessage = UceMessageStaticFactory.newUceMessageInstance(
-                CommonUceMethod.CONNECTION_REQUEST, SemanticLevel.REQUEST);
-        requestConnectionMessage.addAttribute(new UniqueUserName(targetId));
+        final Message requestConnectionMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                STUNMessageMethod.CONNECTION_REQUEST);
+        requestConnectionMessage.addAttribute(new Username(targetId));
         requestConnectionMessage.writeTo(this.controlConnection.getOutputStream());
 
-        final UceMessageReader messageReader = new UceMessageReader();
-        final UceMessage responseMessage = messageReader.readUceMessage(this.controlConnection.getInputStream());
+        final MessageReader messageReader = MessageReader.createMessageReader();
+        final Message responseMessage = messageReader.readSTUNMessage(this.controlConnection.getInputStream());
 
-        if (responseMessage.hasAttribute(SocketEndpoint.class)) {
-            final SocketEndpoint targetEndpoint = responseMessage.getAttribute(SocketEndpoint.class);
-            logger.debug("Connecting to target {}", targetEndpoint.getEndpoint()); //$NON-NLS-1$
+        if (responseMessage.hasAttribute(XorMappedAddress.class)) {
+            final XorMappedAddress xorMappedAddress = responseMessage.getAttribute(XorMappedAddress.class);
+            final InetSocketAddress targetEndpoint = xorMappedAddress.getEndpoint();
+            logger.debug("Connecting to target {}", targetEndpoint); //$NON-NLS-1$
             final Socket socket = new Socket();
             socket.setReuseAddress(true);
             socket.bind(new InetSocketAddress(this.controlConnection.getLocalPort()));
-            socket.connect(targetEndpoint.getEndpoint());
+            socket.connect(targetEndpoint);
             return socket;
         } else {
             throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
@@ -166,9 +167,9 @@ public final class Directconnection implements NATTraversalTechnique {
     }
 
     private void sendRegisterMessage(final String targetId, final InetSocketAddress mediatorAddress) throws Exception {
-        final UceMessage registerMessage = UceMessageStaticFactory.newUceMessageInstance(CommonUceMethod.REGISTER,
-                SemanticLevel.REQUEST);
-        final UniqueUserName userName = new UniqueUserName(targetId);
+        final Message registerMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                STUNMessageMethod.REGISTER);
+        final Username userName = new Username(targetId);
         registerMessage.addAttribute(userName);
         this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
         registerMessage.writeTo(this.controlConnection.getOutputStream());
@@ -184,10 +185,10 @@ public final class Directconnection implements NATTraversalTechnique {
     @Override
     public void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
             throws ConnectionNotEstablishedException {
-        final UceMessage deregisterMessage = UceMessageStaticFactory.newUceMessageInstance(CommonUceMethod.DEREGISTER,
-                SemanticLevel.REQUEST);
+        final Message deregisterMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                STUNMessageMethod.DEREGISTER);
         try {
-            deregisterMessage.addAttribute(new UniqueUserName(targetId));
+            deregisterMessage.addAttribute(new Username(targetId));
             this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
             deregisterMessage.writeTo(this.controlConnection.getOutputStream());
             // TODO check for success response

@@ -21,11 +21,11 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.uce.messages.CommonUceMethod;
-import de.fhkn.in.uce.messages.SemanticLevel;
-import de.fhkn.in.uce.messages.UceMessage;
-import de.fhkn.in.uce.messages.UceMessageStaticFactory;
-import de.fhkn.in.uce.messages.UniqueUserName;
+import de.fhkn.in.uce.stun.attribute.Username;
+import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
+import de.fhkn.in.uce.stun.message.Message;
+import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
  * Task which keeps the binding of a target alive.
@@ -55,10 +55,10 @@ public final class KeepAliveTask implements Runnable {
     @Override
     public void run() {
         try {
-            final UceMessage keepAliveMessage = UceMessageStaticFactory.newUceMessageInstance(
-                    CommonUceMethod.KEEP_ALIVE, SemanticLevel.REQUEST);
-            final UniqueUserName userNameAttribute = new UniqueUserName(this.targetId);
-            keepAliveMessage.addAttribute(userNameAttribute);
+            final Message keepAliveMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                    STUNMessageMethod.KEEP_ALIVE);
+            final Username username = new Username(this.targetId);
+            keepAliveMessage.addAttribute(username);
             keepAliveMessage.writeTo(this.controlConnection.getOutputStream());
         } catch (final Exception e) {
             logger.error("Exception while sending keep-alive message: {}", e.getMessage()); //$NON-NLS-1$
