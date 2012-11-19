@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.fhkn.in.uce.messages.CommonUceAttributeType;
-import de.fhkn.in.uce.messages.MessageFormatException;
-import de.fhkn.in.uce.messages.UceAttribute;
-import de.fhkn.in.uce.messages.UceAttributeHeader;
-import de.fhkn.in.uce.messages.UceAttributeType;
 import de.fhkn.in.uce.plugininterface.NATBehavior;
+import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.attribute.Attribute;
+import de.fhkn.in.uce.stun.attribute.AttributeHeader;
+import de.fhkn.in.uce.stun.attribute.AttributeType;
+import de.fhkn.in.uce.stun.header.MessageHeader;
 
 /**
  * Defines a {@link UceAttributeType} for NAT behavior.
@@ -33,23 +33,36 @@ import de.fhkn.in.uce.plugininterface.NATBehavior;
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
  */
-public enum NATUCEAttributeType implements UceAttributeType {
+public enum NATSTUNAttributeType implements AttributeType {
 
     /**
      * Encoding for the {@link NATBehavior} attribute type.
      */
     NAT_BEHAVIOR(0x1000) {
 
-        public UceAttribute fromBytes(byte[] encoded, UceAttributeHeader header) throws MessageFormatException,
-                IOException {
+        @Override
+        public Attribute fromBytes(byte[] encoded, AttributeHeader header, MessageHeader messageHeader)
+                throws MessageFormatException, IOException {
             return NATBehavior.fromBytes(encoded, header);
         }
+
+    },
+
+    NAT_TRAVERSAL_TECHNIQUE(0x1002) {
+
+        @Override
+        public Attribute fromBytes(byte[] encoded, AttributeHeader header, MessageHeader messageHeader)
+                throws MessageFormatException, IOException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
     };
 
-    private static final Map<Integer, NATUCEAttributeType> intToEnum = new HashMap<Integer, NATUCEAttributeType>();
+    private static final Map<Integer, NATSTUNAttributeType> intToEnum = new HashMap<Integer, NATSTUNAttributeType>();
 
     static {
-        for (NATUCEAttributeType l : values()) {
+        for (NATSTUNAttributeType l : values()) {
             intToEnum.put(l.encoded, l);
         }
     }
@@ -62,7 +75,7 @@ public enum NATUCEAttributeType implements UceAttributeType {
      * @param encoded
      *            the byte encoded uce attribute type
      */
-    private NATUCEAttributeType(int encoded) {
+    private NATSTUNAttributeType(int encoded) {
         this.encoded = encoded;
     }
 
@@ -72,13 +85,13 @@ public enum NATUCEAttributeType implements UceAttributeType {
     }
 
     /**
-     * Returns the {@link NATUCEAttributeType} for the given encoding.
+     * Returns the {@link NATSTUNAttributeType} for the given encoding.
      * 
      * @param encoded
-     *            the encoded {@link NATUCEAttributeType}
-     * @return the {@link NATUCEAttributeType} for the encoding
+     *            the encoded {@link NATSTUNAttributeType}
+     * @return the {@link NATSTUNAttributeType} for the encoding
      */
-    public static NATUCEAttributeType fromEncoded(int encoded) {
+    public static NATSTUNAttributeType fromEncoded(int encoded) {
         return intToEnum.get(encoded);
     }
 }

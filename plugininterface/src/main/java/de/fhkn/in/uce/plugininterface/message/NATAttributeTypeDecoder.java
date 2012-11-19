@@ -16,21 +16,21 @@
  */
 package de.fhkn.in.uce.plugininterface.message;
 
-import de.fhkn.in.uce.messages.UceAttributeType;
-import de.fhkn.in.uce.messages.UceAttributeTypeDecoder;
+import de.fhkn.in.uce.stun.attribute.AttributeType;
+import de.fhkn.in.uce.stun.attribute.AttributeTypeDecoder;
 
 /**
  * Implementation of {@link UceAttributeTypeDecoder} which decodes
- * {@link NATUCEAttributeType}s.
+ * {@link NATSTUNAttributeType}s.
  * 
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
  */
-public class NATAttributeTypeDecoder implements UceAttributeTypeDecoder {
+public class NATAttributeTypeDecoder implements AttributeTypeDecoder {
 
     @Override
-    public UceAttributeType decode(int encoded) {
-        return NATUCEAttributeType.fromEncoded(encoded);
+    public AttributeType decode(int encoded) {
+        return NATSTUNAttributeType.fromEncoded(encoded);
     }
 
 }

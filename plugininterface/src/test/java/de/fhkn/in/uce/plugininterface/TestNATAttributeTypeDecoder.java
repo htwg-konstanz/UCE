@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.fhkn.in.uce.plugininterface.message.NATAttributeTypeDecoder;
-import de.fhkn.in.uce.plugininterface.message.NATUCEAttributeType;
+import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
 
 public final class TestNATAttributeTypeDecoder {
     private NATAttributeTypeDecoder decoder;
@@ -35,6 +35,6 @@ public final class TestNATAttributeTypeDecoder {
 
     @Test
     public void testDecode() {
-        assertEquals(NATUCEAttributeType.NAT_BEHAVIOR, this.decoder.decode(encoding));
+        assertEquals(NATSTUNAttributeType.NAT_BEHAVIOR, this.decoder.decode(encoding));
     }
 }

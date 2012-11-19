@@ -34,7 +34,7 @@ import java.util.concurrent.Future;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.fhkn.in.uce.plugininterface.message.NATUCEAttributeType;
+import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
 
 public final class TestNATBehavior {
     private NATBehavior behavior;
@@ -51,7 +51,7 @@ public final class TestNATBehavior {
 
     @Test
     public void testGetAttributeType() {
-        assertEquals("Type must be correct.", this.behavior.getType(), NATUCEAttributeType.NAT_BEHAVIOR);
+        assertEquals("Type must be correct.", this.behavior.getType(), NATSTUNAttributeType.NAT_BEHAVIOR);
     }
 
     @Test
