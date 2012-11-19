@@ -24,10 +24,11 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.fhkn.in.uce.directconnection.Directconnection;
+import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
 import de.fhkn.in.uce.plugininterface.NATFeatureRealization;
 import de.fhkn.in.uce.plugininterface.NATSituation;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
+import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 
 public final class DirectconnectionMetaDataTest {
     private NATTraversalTechniqueMetaData metaData;
@@ -70,5 +71,11 @@ public final class DirectconnectionMetaDataTest {
         final Set<NATSituation> actualResult = this.metaData.getTraversaledNATSituations();
 
         assertEquals("The traversaled NAT behavior should be parsed correctly.", expectedResult, actualResult);
+    }
+
+    @Test
+    public void testGetEncoded() {
+        NATTraversalTechniqueAttribute attr = new DirectconnectionAttribute();
+        assertEquals(attr, this.metaData.getAttribute());
     }
 }
