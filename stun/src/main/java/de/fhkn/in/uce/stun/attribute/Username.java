@@ -62,6 +62,26 @@ public final class Username implements Attribute {
         return this.username.length;
     }
 
+    /**
+     * Returns the username as byte array.
+     * 
+     * @return the username as byte array
+     */
+    public byte[] getUsername() {
+        return this.username;
+    }
+
+    /**
+     * Returns the username as string.
+     * 
+     * @return the username as string
+     * @throws UnsupportedEncodingException
+     *             if an encoding exception occurs
+     */
+    public String getUsernameAsString() throws UnsupportedEncodingException {
+        return new String(this.username, STRING_ENCODING);
+    }
+
     @Override
     public void writeTo(final OutputStream out) throws IOException {
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
