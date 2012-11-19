@@ -19,12 +19,13 @@ package de.fhkn.in.uce.plugininterface;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import de.fhkn.in.uce.plugininterface.message.TestNATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.plugininterface.util.TestNATTraversalTechniqueUtil;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestNATTraversalTechniqueUtil.class, TestNATFeatureRealization.class, TestNATFeature.class,
         TestNATSituation.class, TestConnectionNotEstablishedException.class, TestNATBehavior.class,
-        TestNATUCEAttributeType.class, TestNATAttributeTypeDecoder.class })
+        TestNATUCEAttributeType.class, TestNATAttributeTypeDecoder.class, TestNATTraversalTechniqueAttribute.class })
 public final class PluginInterfaceTestSuite {
     private PluginInterfaceTestSuite() {
         throw new AssertionError();
