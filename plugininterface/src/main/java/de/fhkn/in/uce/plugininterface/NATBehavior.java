@@ -28,11 +28,11 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.Immutable;
-import de.fhkn.in.uce.messages.MessageFormatException;
-import de.fhkn.in.uce.messages.UceAttribute;
-import de.fhkn.in.uce.messages.UceAttributeHeader;
-import de.fhkn.in.uce.messages.UceAttributeType;
-import de.fhkn.in.uce.plugininterface.message.NATUCEAttributeType;
+import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
+import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.attribute.Attribute;
+import de.fhkn.in.uce.stun.attribute.AttributeHeader;
+import de.fhkn.in.uce.stun.attribute.AttributeType;
 
 /**
  * A NAT behavior represents a NAT device. The NAT devices is characterized by
@@ -42,9 +42,9 @@ import de.fhkn.in.uce.plugininterface.message.NATUCEAttributeType;
  * 
  */
 @Immutable
-public final class NATBehavior implements UceAttribute {
+public final class NATBehavior implements Attribute {
     private final Map<NATFeature, NATFeatureRealization> behavior;
-    private final int length = 4;
+    private static final int LENGTH = 4;
 
     /**
      * Creates a unknown {@link NATBehavior}. In this case all
@@ -144,7 +144,7 @@ public final class NATBehavior implements UceAttribute {
      * @throws MessageFormatException
      *             if the {@code encoded} is malformed
      */
-    public static NATBehavior fromBytes(final byte[] encoded, final UceAttributeHeader header) throws IOException,
+    public static NATBehavior fromBytes(final byte[] encoded, final AttributeHeader header) throws IOException,
             MessageFormatException {
 
         final ByteArrayInputStream bin = new ByteArrayInputStream(encoded);
@@ -176,13 +176,13 @@ public final class NATBehavior implements UceAttribute {
     }
 
     @Override
-    public UceAttributeType getType() {
-        return NATUCEAttributeType.NAT_BEHAVIOR;
+    public AttributeType getType() {
+        return NATSTUNAttributeType.NAT_BEHAVIOR;
     }
 
     @Override
     public int getLength() {
-        return this.length;
+        return LENGTH;
     }
 
     @Override

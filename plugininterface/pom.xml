@@ -37,7 +37,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		</dependency>
 		<dependency>
 			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>messages</artifactId>
+			<artifactId>stun</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>

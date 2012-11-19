@@ -20,10 +20,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import de.fhkn.in.uce.plugininterface.message.NATUCEAttributeType;
+import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
 
 public final class TestNATUCEAttributeType {
-    private final NATUCEAttributeType attribute = NATUCEAttributeType.NAT_BEHAVIOR;
+    private final NATSTUNAttributeType attribute = NATSTUNAttributeType.NAT_BEHAVIOR;
     private final int encoding = 0x1000;
 
     @Test
@@ -34,6 +34,6 @@ public final class TestNATUCEAttributeType {
     @Test
     public void testDecoding() {
         assertEquals("The decoded attribute must be correct.", this.attribute,
-                NATUCEAttributeType.fromEncoded(this.encoding));
+                NATSTUNAttributeType.fromEncoded(this.encoding));
     }
 }
