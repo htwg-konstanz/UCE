@@ -155,14 +155,13 @@ public final class Directconnection implements NATTraversalTechnique {
 
     @Override
     public void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException {
+            throws Exception {
         try {
             this.sendRegisterMessage(targetId, mediatorAddress);
             this.startKeepAliveThread(targetId);
         } catch (final Exception e) {
-            final String errorMessage = "Target {} could not be registered successfully."; //$NON-NLS-1$
-            logger.error(errorMessage, targetId);
-            throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(), errorMessage, e);
+            logger.error("Target {} could not be registered successfully.", targetId); //$NON-NLS-1$
+            throw new Exception("Target could not be registered successfully", e); //$NON-NLS-1$
         }
     }
 
@@ -184,7 +183,7 @@ public final class Directconnection implements NATTraversalTechnique {
 
     @Override
     public void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException {
+            throws Exception {
         final Message deregisterMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.DEREGISTER);
         try {
@@ -193,9 +192,8 @@ public final class Directconnection implements NATTraversalTechnique {
             deregisterMessage.writeTo(this.controlConnection.getOutputStream());
             // TODO check for success response
         } catch (final Exception e) {
-            final String errorMessage = "Exception while deregistering target: {}"; //$NON-NLS-1$
-            logger.error(errorMessage, e.getMessage());
-            throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(), errorMessage, e);
+            logger.error("Exception while deregistering target: {}", e.getMessage()); //$NON-NLS-1$
+            throw new Exception("Exception while deregistering target", e); //$NON-NLS-1$
         }
     }
 
