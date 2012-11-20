@@ -81,11 +81,10 @@ public interface NATTraversalTechnique {
      *            the unique name of the target
      * @param mediatorAddress
      *            the mediator address to register the target
-     * @throws ConnectionNotEstablishedException
+     * @throws Exception
      *             if the target could not be registered
      */
-    void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException;
+    void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress) throws Exception;
 
     /**
      * Deregisters a target.
@@ -94,10 +93,10 @@ public interface NATTraversalTechnique {
      *            the if of the service which should be deregistered
      * @param mediatorAddress
      *            the {@link InetSocketAddress} of the mediator
-     * @throws ConnectionNotEstablishedException
+     * @throws Exception
+     *             if an exception occurs while deregistering the target
      */
-    void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException;
+    void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress) throws Exception;
 
     /**
      * Returns a copy of the {@link NATTraversalTechnique}.
