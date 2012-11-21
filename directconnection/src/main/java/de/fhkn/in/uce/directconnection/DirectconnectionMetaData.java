@@ -35,7 +35,7 @@ import de.fhkn.in.uce.stun.attribute.Attribute;
  */
 @Immutable
 public final class DirectconnectionMetaData implements NATTraversalTechniqueMetaData {
-    private static final String RESOURCE_TRAVERSALED_SITUATIONS = "de/fhkn/in/uce/directconnection/traversal/traversaledNATSituations"; //$NON-NLS-1$
+    private static final String RESOURCE_TRAVERSALED_SITUATIONS = "de/fhkn/in/uce/directconnection/traversaledNATSituations"; //$NON-NLS-1$
     private final String name = "DirectConnection"; //$NON-NLS-1$
     private final String version = "1.0"; //$NON-NLS-1$
     private final int connectionSetupTime = 3;
