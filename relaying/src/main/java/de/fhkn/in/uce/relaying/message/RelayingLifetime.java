@@ -59,6 +59,7 @@ public final class RelayingLifetime implements Attribute {
     public void writeTo(OutputStream out) throws IOException {
         DataOutputStream dout = new DataOutputStream(out);
         dout.writeInt(lifetime);
+        dout.flush();
     }
 
     /**
