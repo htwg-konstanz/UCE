@@ -25,7 +25,7 @@ import de.fhkn.in.uce.stun.header.MessageMethodDecoder;
  * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
  * 
  */
-final class RelayingMethodDecoder implements MessageMethodDecoder {
+public final class RelayingMethodDecoder implements MessageMethodDecoder {
 
     public MessageMethod decode(int encoded) {
         return RelayingMethod.fromEncoded(encoded);

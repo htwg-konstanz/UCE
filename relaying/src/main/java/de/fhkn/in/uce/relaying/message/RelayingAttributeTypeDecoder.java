@@ -26,7 +26,7 @@ import de.fhkn.in.uce.stun.attribute.AttributeTypeDecoder;
  * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
  * 
  */
-final class RelayingAttributeTypeDecoder implements AttributeTypeDecoder {
+public final class RelayingAttributeTypeDecoder implements AttributeTypeDecoder {
 
     public AttributeType decode(int encoded) {
         return RelayingAttributeType.fromEncoded(encoded);
