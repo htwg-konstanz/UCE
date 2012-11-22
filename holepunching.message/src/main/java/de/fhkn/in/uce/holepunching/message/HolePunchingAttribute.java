@@ -16,7 +16,6 @@
  */
 package de.fhkn.in.uce.holepunching.message;
 
-import de.fhkn.in.uce.holepunching.HolePunching;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 
 /**
