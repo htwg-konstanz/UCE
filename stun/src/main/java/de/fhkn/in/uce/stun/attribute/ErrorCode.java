@@ -219,7 +219,9 @@ public final class ErrorCode implements Attribute {
 
         STALE_NONCE(438),
 
-        SERVER_ERROR(500);
+        SERVER_ERROR(500),
+
+        INSUFFICIENT_CAPACITY(600);
 
         private static final Map<Integer, STUNErrorCode> intToEnum = new HashMap<Integer, STUNErrorCode>();
 
