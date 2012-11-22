@@ -69,8 +69,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<dependencies>
 		<dependency>
 			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>plugininterface</artifactId>
-			<version>1.1</version>
+			<artifactId>stun</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 </project>
