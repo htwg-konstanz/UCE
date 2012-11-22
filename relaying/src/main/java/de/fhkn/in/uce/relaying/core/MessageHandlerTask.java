@@ -32,7 +32,7 @@ import de.fhkn.in.uce.relaying.message.RelayingConstants;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
 import de.fhkn.in.uce.relaying.message.RelayingMessageReader;
 import de.fhkn.in.uce.relaying.message.RelayingMethod;
-import de.fhkn.in.uce.stun.attribute.Username;
+import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
@@ -107,8 +107,7 @@ final class MessageHandlerTask implements Runnable {
                     MessageWriter dataConnectionWriter = new MessageWriter(s.getOutputStream());
                     Message connectionBindRequestMessage = MessageStaticFactory.newSTUNMessageInstance(
                             STUNMessageClass.REQUEST, RelayingMethod.CONNECTION_BIND);
-                    connectionBindRequestMessage.addAttribute(new Username(message.getAttribute(Username.class)
-                            .getUsernameAsString()));
+                    connectionBindRequestMessage.addAttribute(new Token(message.getAttribute(Token.class).getToken()));
                     dataConnectionWriter.writeMessage(connectionBindRequestMessage);
                     // TODO erfolgs oder fehlermeldung abwarten
                     socketQueue.add(s);
