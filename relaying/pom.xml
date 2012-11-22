@@ -72,6 +72,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         	<artifactId>concurrent</artifactId>
         	<version>1.0</version>
         </dependency>
+        <dependency>
+        	<groupId>de.fhkn.in.uce</groupId>
+        	<artifactId>relaying.message</artifactId>
+        	<version>1.0</version>
+        </dependency>
     </dependencies>
     <parent>
         <groupId>de.fhkn.in.uce</groupId>
