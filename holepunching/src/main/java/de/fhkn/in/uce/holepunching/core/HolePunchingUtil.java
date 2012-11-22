@@ -16,15 +16,10 @@
  */
 package de.fhkn.in.uce.holepunching.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import net.jcip.annotations.Immutable;
-import de.fhkn.in.uce.holepunching.message.HolePunchingAttributeTypeDecoder;
 import de.fhkn.in.uce.holepunching.message.HolePunchingMethodDecoder;
-import de.fhkn.in.uce.stun.attribute.AttributeTypeDecoder;
-import de.fhkn.in.uce.stun.header.MessageMethodDecoder;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
@@ -48,11 +43,16 @@ public final class HolePunchingUtil {
      * @return the customized {@link MessageReader} for hole punching
      */
     public MessageReader getCustomHolePunchingMessageReader() {
-        final List<MessageMethodDecoder> hpMethodDecoders = new ArrayList<MessageMethodDecoder>();
-        hpMethodDecoders.add(new HolePunchingMethodDecoder());
-        final List<AttributeTypeDecoder> hpAttrTypeDecoders = new ArrayList<AttributeTypeDecoder>();
-        hpAttrTypeDecoders.add(new HolePunchingAttributeTypeDecoder());
-        return MessageReader.createMessageReaderWithCustomDecoderLists(hpMethodDecoders, hpAttrTypeDecoders);
+        // final List<MessageMethodDecoder> hpMethodDecoders = new
+        // ArrayList<MessageMethodDecoder>();
+        // hpMethodDecoders.add(new HolePunchingMethodDecoder());
+        // final List<AttributeTypeDecoder> hpAttrTypeDecoders = new
+        // ArrayList<AttributeTypeDecoder>();
+        // hpAttrTypeDecoders.add(new HolePunchingAttributeTypeDecoder());
+        // return
+        // MessageReader.createMessageReaderWithCustomDecoderLists(hpMethodDecoders,
+        // hpAttrTypeDecoders);
+        return MessageReader.createMessageReader();
     }
 
     /**

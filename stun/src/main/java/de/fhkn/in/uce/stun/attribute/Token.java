@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.holepunching.message;
+package de.fhkn.in.uce.stun.attribute;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -22,9 +22,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
-
-import de.fhkn.in.uce.stun.attribute.Attribute;
-import de.fhkn.in.uce.stun.attribute.AttributeType;
 
 /**
  * Attribute which carries a 128 bit token.
@@ -57,7 +54,7 @@ public final class Token implements Attribute {
 
     @Override
     public AttributeType getType() {
-        return HolePunchingAttributeType.TOKEN;
+        return STUNAttributeType.TOKEN;
     }
 
     @Override

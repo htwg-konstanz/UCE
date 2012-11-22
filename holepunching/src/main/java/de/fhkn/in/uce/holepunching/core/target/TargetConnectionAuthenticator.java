@@ -28,8 +28,7 @@ import de.fhkn.in.uce.holepunching.core.CancelableTask;
 import de.fhkn.in.uce.holepunching.core.ConnectionAuthenticator;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
 import de.fhkn.in.uce.holepunching.core.source.SourceConnectionAuthenticator;
-import de.fhkn.in.uce.holepunching.message.HolePunchingAttributeTypeDecoder;
-import de.fhkn.in.uce.holepunching.message.Token;
+import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
@@ -71,8 +70,7 @@ public class TargetConnectionAuthenticator implements ConnectionAuthenticator {
         boolean result = false;
         logger.info("Trying to authenticate socket: {}", toBeAuthenticated); //$NON-NLS-1$
         final MessageWriter messageWriter = new MessageWriter(toBeAuthenticated.getOutputStream());
-        final MessageReader messageReader = MessageReader
-                .createMessageReaderWithCustomAttributeTypeDecoder(new HolePunchingAttributeTypeDecoder());
+        final MessageReader messageReader = this.hpUtil.getCustomHolePunchingMessageReader();
         final Message receivedMessage = messageReader.readSTUNMessage(toBeAuthenticated.getInputStream());
         if (receivedMessage.getMessageMethod() == STUNMessageMethod.AUTHENTICATE
                 && receivedMessage.hasAttribute(Token.class)) {

@@ -114,6 +114,14 @@ public enum STUNAttributeType implements AttributeType {
         }
     },
 
+    TOKEN(0x1002) {
+        @Override
+        public Attribute fromBytes(final byte[] encoded, final AttributeHeader header, final MessageHeader messageHeader)
+                throws MessageFormatException, IOException {
+            return Token.fromBytes(encoded);
+        }
+    },
+
     SOFTWARE(0x8022) {
         @Override
         public Attribute fromBytes(final byte[] encoded, final AttributeHeader header, final MessageHeader messageHeader)

@@ -27,8 +27,7 @@ import org.slf4j.LoggerFactory;
 import de.fhkn.in.uce.holepunching.core.CancelableTask;
 import de.fhkn.in.uce.holepunching.core.ConnectionAuthenticator;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
-import de.fhkn.in.uce.holepunching.message.HolePunchingAttributeTypeDecoder;
-import de.fhkn.in.uce.holepunching.message.Token;
+import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
@@ -65,8 +64,7 @@ public class SourceConnectionAuthenticator implements ConnectionAuthenticator {
         boolean result = false;
         logger.info("Trying to authenticate socket: {}", toBeAuthenticated); //$NON-NLS-1$
         final MessageWriter messageWriter = new MessageWriter(toBeAuthenticated.getOutputStream());
-        final MessageReader messageReader = MessageReader
-                .createMessageReaderWithCustomAttributeTypeDecoder(new HolePunchingAttributeTypeDecoder());
+        final MessageReader messageReader = this.hpUtil.getCustomHolePunchingMessageReader();
         // sending authentication message
         final Message authenticationMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.AUTHENTICATE);

@@ -31,8 +31,8 @@ import de.fhkn.in.uce.holepunching.core.ConnectionListener;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
 import de.fhkn.in.uce.holepunching.message.HolePunchingMethod;
-import de.fhkn.in.uce.holepunching.message.Token;
 import de.fhkn.in.uce.stun.attribute.MappedAddress;
+import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
 
