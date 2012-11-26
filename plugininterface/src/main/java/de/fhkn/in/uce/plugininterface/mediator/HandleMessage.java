@@ -14,30 +14,15 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.reversal.message;
+package de.fhkn.in.uce.plugininterface.mediator;
+
+import java.net.Socket;
 
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
+import de.fhkn.in.uce.stun.message.Message;
 
-/**
- * Subclass of {@link NATTraversalTechniqueAttribute} for Connection Reversal.
- * This class holds the unique encoding for identifying the nat traversal
- * technique.
- * 
- * @author Alexander Diener (aldiener@htwg-konstanz.de)
- * 
- */
-public final class ReversalAttribute extends NATTraversalTechniqueAttribute {
-    private static final int ENCODED = 0x1;
+public interface HandleMessage {
+    void handleMessage(Message message, Socket controlConnection) throws Exception;
 
-    /**
-     * Creates a {@link ReversalAttribute} with the unique encoding.
-     */
-    public ReversalAttribute() {
-        this(ENCODED);
-    }
-
-    private ReversalAttribute(int encoded) {
-        super(encoded);
-    }
-
+    NATTraversalTechniqueAttribute getAttributeForTraversalTechnique();
 }

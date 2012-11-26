@@ -47,16 +47,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>plugininterface</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>de.fhkn.in.lib</groupId>
-			<artifactId>concurrent</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.fhkn.in.uce</groupId>
 			<artifactId>holepunching.message</artifactId>
 			<version>1.0</version>
 		</dependency>

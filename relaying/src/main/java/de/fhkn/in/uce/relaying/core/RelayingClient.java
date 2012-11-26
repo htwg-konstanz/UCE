@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.concurrent.ThreadGroupFactory;
+import de.fhkn.in.uce.core.concurrent.ThreadGroupFactory;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
 import de.fhkn.in.uce.relaying.message.RelayingMessageReader;
 import de.fhkn.in.uce.relaying.message.RelayingMethod;
