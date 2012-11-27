@@ -1,30 +1,92 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <artifactId>mediator</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+	<artifactId>mediator</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
 
-    <name>UCEMediator</name>
-    <description>Extensible mediator for UCE</description>
+	<name>UCEAIOMediator</name>
+	<description>Extensible all-in-one mediator for UCE</description>
+	
+	<properties>
+	   <finalName>${project.name}-${project.version}</finalName>
+	</properties>
 
-    <parent>
-        <relativePath>../parent/pom.xml</relativePath>
-        <groupId>de.fhkn.in.uce</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0</version>
-    </parent>
-    <dependencies>
-    	<dependency>
-    		<groupId>de.fhkn.in.uce</groupId>
-    		<artifactId>plugininterface</artifactId>
-    		<version>1.1</version>
-    	</dependency>
-    	<dependency>
-    		<groupId>de.fhkn.in.uce</groupId>
-    		<artifactId>core</artifactId>
-    		<version>0.0.1-SNAPSHOT</version>
-    	</dependency>
-    </dependencies>
+	<build>
+		<finalName>${finalName}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<finalName>${finalName}</finalName>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>de.fhkn.in.uce.mediator.Mediator</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<descriptors>
+						<descriptor>config/assembly-bin.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<parent>
+		<relativePath>../parent/pom.xml</relativePath>
+		<groupId>de.fhkn.in.uce</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0</version>
+	</parent>
+	<dependencies>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>plugininterface</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+	</dependencies>
 </project>
