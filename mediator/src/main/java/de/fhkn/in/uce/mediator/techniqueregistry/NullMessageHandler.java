@@ -14,42 +14,45 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.mediator.connectionhandling;
+package de.fhkn.in.uce.mediator.techniqueregistry;
 
 import java.net.Socket;
 
-import de.fhkn.in.uce.mediator.peerregistry.UserList;
-import de.fhkn.in.uce.mediator.util.MediatorUtil;
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
-import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.message.Message;
 
 /**
- * Handles deregister messages and removes the user from the {@link UserList}.
- * After handling the message no response will be sent.
+ * Singleton implementation of {@link HandleMessage} which does nothing. It can
+ * be used to avoid null.
  * 
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
  */
-public final class DefaultDeregisterHandling implements HandleMessage {
-    private final UserList userList;
-    private final MediatorUtil mediatorUtil;
-
-    public DefaultDeregisterHandling() {
-        this.userList = UserList.INSTANCE;
-        this.mediatorUtil = MediatorUtil.INSTANCE;
-    }
+public final class NullMessageHandler implements HandleMessage {
+    private static final NullMessageHandler INSTANCE = new NullMessageHandler();
 
     @Override
-    public void handleMessage(final Message deregisterMessage, final Socket controlConnection) throws Exception {
-        this.mediatorUtil.checkForAttribute(deregisterMessage, Username.class);
-        final Username username = deregisterMessage.getAttribute(Username.class);
-        this.userList.removeUser(username.getUsernameAsString());
+    public void handleMessage(final Message message, final Socket controlConnection) throws Exception {
+        // do nothing
     }
 
     @Override
     public NATTraversalTechniqueAttribute getAttributeForTraversalTechnique() {
+        // return attribute with non-existing encoding
         return new NATTraversalTechniqueAttribute(Integer.MAX_VALUE);
+    }
+
+    private NullMessageHandler() {
+        // private constructor
+    }
+
+    /**
+     * Returns the sole instance of {@link NullMessageHandler}.
+     * 
+     * @return the sole instance of {@link NullMessageHandler}
+     */
+    public static NullMessageHandler getInstance() {
+        return INSTANCE;
     }
 }

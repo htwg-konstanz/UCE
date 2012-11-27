@@ -42,8 +42,13 @@ import de.fhkn.in.uce.stun.message.Message;
  * 
  */
 public final class DefaultRegisterHandling implements HandleMessage {
-    private final UserList userList = UserList.INSTANCE;
-    private final MediatorUtil mediatorUtil = MediatorUtil.INSTANCE;
+    private final UserList userList;
+    private final MediatorUtil mediatorUtil;
+
+    public DefaultRegisterHandling() {
+        this.userList = UserList.INSTANCE;
+        this.mediatorUtil = MediatorUtil.INSTANCE;
+    }
 
     @Override
     public void handleMessage(final Message registerMessage, final Socket controlConnection) throws Exception {
