@@ -33,10 +33,9 @@ import de.fhkn.in.uce.stun.MessageFormatException;
  * 
  */
 public final class ChangeRequest implements Attribute {
-
-    private static final int CHANGE_IP = 0x00000004;
-    private static final int CHANGE_PORT = 0x00000002;
-    private static final int FLAGS_NOT_SET = 0x0;
+    public static final int CHANGE_IP = 0x00000004;
+    public static final int CHANGE_PORT = 0x00000002;
+    public static final int FLAGS_NOT_SET = 0x0;
 
     private final int length;
     private final int flag;
@@ -74,6 +73,24 @@ public final class ChangeRequest implements Attribute {
      */
     public int getFlag() {
         return this.flag;
+    }
+
+    /**
+     * Indicates whether the change IP flag is set or not.
+     * 
+     * @return true if the change IP flag is set, false else
+     */
+    public boolean isChangeIp() {
+        return this.flag == CHANGE_IP;
+    }
+
+    /**
+     * Indicates whether the change port flag is set.
+     * 
+     * @return true if the change port flag is set, false else
+     */
+    public boolean isChangePort() {
+        return this.flag == CHANGE_PORT;
     }
 
     @Override
