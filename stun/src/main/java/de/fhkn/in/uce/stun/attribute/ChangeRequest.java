@@ -33,8 +33,9 @@ import de.fhkn.in.uce.stun.MessageFormatException;
  * 
  */
 public final class ChangeRequest implements Attribute {
-    public static final int CHANGE_IP = 0x00000004;
-    public static final int CHANGE_PORT = 0x00000002;
+    public static final int CHANGE_IP = 0x4;
+    public static final int CHANGE_PORT = 0x2;
+    public static final int CHANGE_IP_AND_PORT = 0x6;
     public static final int FLAGS_NOT_SET = 0x0;
 
     private final int length;
@@ -61,7 +62,7 @@ public final class ChangeRequest implements Attribute {
     }
 
     private static void checkFlagValidity(final int toCheck) {
-        if (toCheck != FLAGS_NOT_SET && toCheck != CHANGE_IP && toCheck != CHANGE_PORT) {
+        if (toCheck != FLAGS_NOT_SET && toCheck != CHANGE_IP && toCheck != CHANGE_PORT && toCheck != CHANGE_IP_AND_PORT) {
             throw new IllegalArgumentException("Invalid flag: " + toCheck); //$NON-NLS-1$
         }
     }
