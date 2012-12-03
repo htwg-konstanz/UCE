@@ -28,8 +28,8 @@ import de.fhkn.in.uce.plugininterface.ConnectionNotEstablishedException;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
 import de.fhkn.in.uce.relaying.core.RelayingClient;
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
 import de.fhkn.in.uce.stun.attribute.Username;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
@@ -114,8 +114,8 @@ public final class Relaying implements NATTraversalTechnique {
 
     private InetSocketAddress getEndpointFromMessage(final Message msg) throws Exception {
         InetSocketAddress result = null;
-        if (msg.hasAttribute(MappedAddress.class)) {
-            result = msg.getAttribute(MappedAddress.class).getEndpoint();
+        if (msg.hasAttribute(XorMappedAddress.class)) {
+            result = msg.getAttribute(XorMappedAddress.class).getEndpoint();
         } else {
             final String errorMessage = "The target endpoint at relay is not returned by the mediator."; //$NON-NLS-1$
             logger.debug(errorMessage);
@@ -200,7 +200,7 @@ public final class Relaying implements NATTraversalTechnique {
                 STUNMessageMethod.REGISTER);
         final Username userName = new Username(targetId);
         registerMessage.addAttribute(userName);
-        registerMessage.addAttribute(new MappedAddress(endpointAtRelay));
+        registerMessage.addAttribute(new XorMappedAddress(endpointAtRelay));
         registerMessage.writeTo(this.controlConnection.getOutputStream());
     }
 

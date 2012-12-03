@@ -38,7 +38,7 @@ import de.fhkn.in.uce.core.concurrent.ThreadGroupFactory;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
 import de.fhkn.in.uce.relaying.message.RelayingMessageReader;
 import de.fhkn.in.uce.relaying.message.RelayingMethod;
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
@@ -158,7 +158,7 @@ public final class RelayingClient {
     private synchronized Message receiveAllocationResponse() throws IOException {
         final Message allocationResponse = RelayingMessageReader.read(this.controlConnection.getInputStream());
         if (!allocationResponse.isMethod(RelayingMethod.ALLOCATION) || !allocationResponse.isSuccessResponse()
-                || !allocationResponse.hasAttribute(MappedAddress.class)
+                || !allocationResponse.hasAttribute(XorMappedAddress.class)
                 || !allocationResponse.hasAttribute(RelayingLifetime.class)) {
             throw new IOException("Unexpected response from Relay server"); //$NON-NLS-1$
         }
@@ -166,7 +166,7 @@ public final class RelayingClient {
     }
 
     private InetSocketAddress getAddressAtRelayFromMessage(final Message msg) {
-        final InetSocketAddress addressAtRelayServer = msg.getAttribute(MappedAddress.class).getEndpoint();
+        final InetSocketAddress addressAtRelayServer = msg.getAttribute(XorMappedAddress.class).getEndpoint();
         this.successfullAllocation = true;
         return addressAtRelayServer;
     }

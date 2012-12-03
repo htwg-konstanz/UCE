@@ -31,8 +31,8 @@ import de.fhkn.in.uce.holepunching.core.ConnectionListener;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
 import de.fhkn.in.uce.holepunching.message.HolePunchingMethod;
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
 import de.fhkn.in.uce.stun.attribute.Token;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
@@ -83,7 +83,7 @@ public final class HolePunchingSource {
         final Message receivedMessage = this.receiveMessage();
         if (this.isForwardedEndpointsMessage(receivedMessage)) {
             logger.debug("Received forwarding endpoints message"); //$NON-NLS-1$
-            final List<MappedAddress> addresses = receivedMessage.getAttributes(MappedAddress.class);
+            final List<XorMappedAddress> addresses = receivedMessage.getAttributes(XorMappedAddress.class);
             final BlockingQueue<Socket> socketQueue = new ArrayBlockingQueue<Socket>(1);
             final InetSocketAddress localAddress = (InetSocketAddress) this.controlConnection.getLocalSocketAddress();
             final ConnectionListener connectionListener = new ConnectionListener(localAddress.getAddress(),
@@ -133,7 +133,7 @@ public final class HolePunchingSource {
         final Message connectionRequestMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.CONNECTION_REQUEST);
         final InetSocketAddress localAddress = (InetSocketAddress) this.controlConnection.getLocalSocketAddress();
-        connectionRequestMessage.addAttribute(new MappedAddress(localAddress));
+        connectionRequestMessage.addAttribute(new XorMappedAddress(localAddress));
         messageWriter.writeMessage(connectionRequestMessage);
     }
 
@@ -143,11 +143,11 @@ public final class HolePunchingSource {
     }
 
     private boolean isForwardedEndpointsMessage(final Message toCheck) {
-        return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) && toCheck.hasAttribute(MappedAddress.class)
+        return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) && toCheck.hasAttribute(XorMappedAddress.class)
                 && toCheck.hasAttribute(Token.class);
     }
 
-    private void startHolePunching(final List<MappedAddress> endpoints,
+    private void startHolePunching(final List<XorMappedAddress> endpoints,
             final SourceConnectionAuthenticator authentification, final HolePuncher hp) {
         // hole puncher expects exactly two endpoints, if more
         // endpoints are provided use the first two

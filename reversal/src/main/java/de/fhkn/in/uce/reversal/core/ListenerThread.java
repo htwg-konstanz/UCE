@@ -23,7 +23,7 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
@@ -107,7 +107,7 @@ public final class ListenerThread extends Thread {
      * Private method for handling connection requests
      */
     private void handleConnectionRequestMessage(final Message connectionRequestMessage) {
-        final MappedAddress targetAddress = connectionRequestMessage.getAttribute(MappedAddress.class);
+        final XorMappedAddress targetAddress = connectionRequestMessage.getAttribute(XorMappedAddress.class);
         logger.info("ConnectionRequest message from {} with id {}", targetAddress.getEndpoint().toString(), //$NON-NLS-1$
                 connectionRequestMessage.getTransactionId());
         try {

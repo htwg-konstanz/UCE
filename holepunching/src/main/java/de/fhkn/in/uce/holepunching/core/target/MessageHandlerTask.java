@@ -31,8 +31,8 @@ import de.fhkn.in.uce.holepunching.core.ConnectionListener;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
 import de.fhkn.in.uce.holepunching.message.HolePunchingMethod;
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
 import de.fhkn.in.uce.stun.attribute.Token;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
 
@@ -87,7 +87,7 @@ public final class MessageHandlerTask implements CancelableTask {
                     logger.info("New ForwardedEndpointsMessage, starting hole punching"); //$NON-NLS-1$
                     final TargetConnectionAuthenticator authentification = new TargetConnectionAuthenticator(
                             receivedMessage.getAttribute(Token.class).getToken());
-                    final List<MappedAddress> addresses = receivedMessage.getAttributes(MappedAddress.class);
+                    final List<XorMappedAddress> addresses = receivedMessage.getAttributes(XorMappedAddress.class);
                     this.startHolePunching(addresses, authentification);
                 }
             } catch (final IOException e) {
@@ -97,11 +97,11 @@ public final class MessageHandlerTask implements CancelableTask {
     }
 
     private boolean isForwardedEndpointsMessage(final Message toCheck) {
-        return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) && toCheck.hasAttribute(MappedAddress.class)
+        return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) && toCheck.hasAttribute(XorMappedAddress.class)
                 && toCheck.hasAttribute(Token.class);
     }
 
-    private void startHolePunching(final List<MappedAddress> endpoints,
+    private void startHolePunching(final List<XorMappedAddress> endpoints,
             final TargetConnectionAuthenticator authentification) {
         // hole puncher expects exactly two endpoints, if more
         // endpoints are provided use the first two

@@ -17,9 +17,12 @@
 package de.fhkn.in.uce.holepunching.core.target;
 
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -28,8 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.ThreadGroupThreadFactory;
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
 import de.fhkn.in.uce.stun.attribute.Username;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
@@ -112,8 +115,15 @@ public final class HolePunchingTarget {
         // target id
         registerMessage.addAttribute(new Username(this.targetId));
         // private endpoint
-        registerMessage.addAttribute(new MappedAddress(new InetSocketAddress(this.socketToMediator.getLocalAddress(),
-                this.socketToMediator.getLocalPort())));
+        final InetAddress privateAddress = this.socketToMediator.getLocalAddress();
+        if (privateAddress instanceof Inet6Address) {
+            registerMessage.addAttribute(new XorMappedAddress(new InetSocketAddress(this.socketToMediator
+                    .getLocalAddress(), this.socketToMediator.getLocalPort()), ByteBuffer.wrap(
+                    registerMessage.getHeader().getTransactionId()).getInt()));
+        } else {
+            registerMessage.addAttribute(new XorMappedAddress(new InetSocketAddress(this.socketToMediator
+                    .getLocalAddress(), this.socketToMediator.getLocalPort())));
+        }
         final MessageWriter messageWriter = new MessageWriter(this.socketToMediator.getOutputStream());
         logger.info("Sending RegisterMessage for {}", this.targetId); //$NON-NLS-1$
         messageWriter.writeMessage(registerMessage);
