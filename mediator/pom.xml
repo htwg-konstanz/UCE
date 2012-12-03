@@ -22,8 +22,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<version>1.0</version>
 	<packaging>jar</packaging>
 
-	<name>UCEAIOMediator</name>
-	<description>Extensible all-in-one mediator for UCE</description>
+    <name>UCEAIOMediator</name>
+    <description>Extensible all-in-one mediator for UCE</description>
 	
 	<properties>
 	   <finalName>${project.name}-${project.version}</finalName>

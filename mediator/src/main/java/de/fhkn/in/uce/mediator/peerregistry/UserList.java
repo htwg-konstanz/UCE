@@ -59,7 +59,8 @@ public enum UserList {
     }
 
     /**
-     * Returns the {@link UserData} for the requested user.
+     * Returns the {@link UserData} for the requested user. If no user exists,
+     * null is returned.
      * 
      * @param userId
      *            the id of the user
