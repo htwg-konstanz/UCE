@@ -41,6 +41,16 @@ final class PluginLoaderImpl implements PluginLoader {
         final URL[] pluginUrls = this.getUrlsFromFiles(plugins);
         this.addUrlsToClasspath(pluginUrls);
         this.serviceLoader = ServiceLoader.load(HandleMessage.class);
+        this.checkLoadedPlugins();
+    }
+
+    private void checkLoadedPlugins() {
+        Iterator<HandleMessage> iterator = this.serviceLoader.iterator();
+        while (iterator.hasNext()) {
+            HandleMessage handleMessage = (HandleMessage) iterator.next();
+            logger.debug("Found plugin for handling connection requests for encoding {}", handleMessage //$NON-NLS-1$
+                    .getAttributeForTraversalTechnique().getEncoded());
+        }
     }
 
     private File[] getPluginFiles() {
