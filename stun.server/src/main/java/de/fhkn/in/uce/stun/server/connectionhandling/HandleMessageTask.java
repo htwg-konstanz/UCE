@@ -28,16 +28,18 @@ import org.slf4j.LoggerFactory;
 import de.fhkn.in.uce.stun.attribute.ChangeRequest;
 import de.fhkn.in.uce.stun.attribute.OtherAddress;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
+import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
+import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
  * The {@link HandleMessageTask} handles STUN messages according to RFC 5780 to
- * examine the behavior of a NAT-device. But it is not completely complaint to
- * that RFC. The server only handles TCP connections and instantiates
- * connections to examine the filtering behavior of a NAT which is forbidden in
- * RFC 5389 7.2.2.
+ * examine the behavior of a NAT-device. The server only handles TCP connections
+ * and instantiates connections to examine the filtering behavior of a NAT. For
+ * this purpose the stun server sends indications to the stun client because it
+ * is forbidden to send a response via a new connection.
  * 
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
@@ -95,18 +97,18 @@ public final class HandleMessageTask implements Runnable {
     }
 
     private final void handleMessage(final Message toHandle) throws Exception {
-        if (toHandle.isRequest() && toHandle.isMethod(STUNMessageMethod.BINDING)) {
-            this.handleBindingRequest(toHandle);
+        if (toHandle.isMethod(STUNMessageMethod.BINDING)) {
+            this.handleBindingMessage(toHandle);
         } else {
             logger.debug("Can not handle message with method {}", toHandle.getMessageMethod()); //$NON-NLS-1$
         }
     }
 
-    private void handleBindingRequest(final Message toHandle) throws Exception {
-        if (this.isPrimaryAddress() && this.isChangeRequest(toHandle)) {
-            this.handleChangeRequest(toHandle);
-        } else {
+    private void handleBindingMessage(final Message toHandle) throws Exception {
+        if (toHandle.isRequest() && toHandle.isMethod(STUNMessageMethod.BINDING)) {
             this.handleSimpleBindingRequest(toHandle);
+        } else if (this.isPrimaryAddress() && toHandle.hasAttribute(ChangeRequest.class)) {
+            this.handleMessageWithChangeRequestAttribute(toHandle);
         }
     }
 
@@ -119,38 +121,35 @@ public final class HandleMessageTask implements Runnable {
         response.writeTo(this.socket.getOutputStream());
     }
 
-    private void handleChangeRequest(final Message toHandle) throws Exception {
+    private void handleMessageWithChangeRequestAttribute(final Message toHandle) throws Exception {
         final ChangeRequest changeRequest = toHandle.getAttribute(ChangeRequest.class);
         if (changeRequest.isChangeIp() && changeRequest.isChangePort()) {
-            this.sendResponseViaNewSocket(this.secondaryAddress, toHandle);
+            this.sendIndicationViaNewSocket(this.secondaryAddress, toHandle);
         } else if (!changeRequest.isChangeIp() && changeRequest.isChangePort()) {
-            this.sendResponseViaNewSocket(
-                    new InetSocketAddress(this.primaryAddress.getAddress(), this.secondaryAddress.getPort()), toHandle);
+            this.sendIndicationViaNewSocket(new InetSocketAddress(this.primaryAddress.getAddress(),
+                    this.secondaryAddress.getPort()), toHandle);
         } else if (!changeRequest.isChangeIp() && !changeRequest.isChangePort()) {
             // for checking connection dependent filtering, not part of RFC 5780
-            this.sendResponseViaNewSocket(this.primaryAddress, toHandle);
+            this.sendIndicationViaNewSocket(this.primaryAddress, toHandle);
         }
     }
 
-    private void sendResponseViaNewSocket(final InetSocketAddress bindAddress, final Message toRespond)
+    private void sendIndicationViaNewSocket(final InetSocketAddress bindAddress, final Message message)
             throws Exception {
-        final Message response = toRespond.buildSuccessResponse();
-        response.addAttribute(this.getPublicClientAddressAsAttribute(toRespond));
+        final Message indication = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.INDICATION,
+                STUNMessageMethod.BINDING);
+        indication.addAttribute(this.getPublicClientAddressAsAttribute(message));
         final Socket newSocket = new Socket();
         newSocket.bind(new InetSocketAddress(this.primaryAddress.getAddress(), this.secondaryAddress.getPort()));
         newSocket.setReuseAddress(true);
         newSocket.connect(this.socket.getRemoteSocketAddress());
-        response.writeTo(newSocket.getOutputStream());
+        indication.writeTo(newSocket.getOutputStream());
         newSocket.close();
     }
 
     private boolean isPrimaryAddress() {
         return this.socket.getLocalAddress().equals(this.primaryAddress.getAddress())
                 && this.socket.getLocalPort() == this.primaryAddress.getPort();
-    }
-
-    private boolean isChangeRequest(final Message toCheck) {
-        return toCheck.isRequest() && toCheck.hasAttribute(ChangeRequest.class);
     }
 
     private XorMappedAddress getPublicClientAddressAsAttribute(final Message message) {
