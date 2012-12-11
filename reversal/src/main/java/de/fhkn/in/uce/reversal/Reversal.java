@@ -17,7 +17,6 @@
 package de.fhkn.in.uce.reversal;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
 import de.fhkn.in.uce.reversal.core.ReversalSource;
 import de.fhkn.in.uce.reversal.core.ReversalTarget;
+import de.fhkn.in.uce.stun.message.Message;
 
 /**
  * Implementation of {@link NATTraversalTechnique} for Connection Reversal.
@@ -38,8 +38,8 @@ import de.fhkn.in.uce.reversal.core.ReversalTarget;
 public final class Reversal implements NATTraversalTechnique {
     private static final Logger logger = LoggerFactory.getLogger(Reversal.class);
     private final NATTraversalTechniqueMetaData metaData;
-    private final Socket controlConnection;
-    private ReversalTarget target;
+    private final ReversalTarget target;
+    private final ReversalSource source;
 
     /**
      * Creates a {@link Reversal} object.
@@ -47,8 +47,8 @@ public final class Reversal implements NATTraversalTechnique {
     public Reversal() {
         try {
             this.metaData = new ReversalMetaData();
-            this.controlConnection = new Socket();
-            this.controlConnection.setReuseAddress(true);
+            this.source = new ReversalSource();
+            this.target = new ReversalTarget();
         } catch (final Exception e) {
             logger.error("Exception occured while creating reversal connection object.", e); //$NON-NLS-1$
             throw new RuntimeException("Could not create reversal connection object.", e); //$NON-NLS-1$
@@ -64,8 +64,8 @@ public final class Reversal implements NATTraversalTechnique {
     public Reversal(final Reversal toCopy) {
         try {
             this.metaData = new ReversalMetaData((ReversalMetaData) toCopy.getMetaData());
-            this.controlConnection = new Socket();
-            this.controlConnection.setReuseAddress(true);
+            this.source = new ReversalSource();
+            this.target = new ReversalTarget();
         } catch (final Exception e) {
             logger.error("Exception occured while creating reversal connection object.", e); //$NON-NLS-1$
             throw new RuntimeException("Could not create reversal connection object.", e); //$NON-NLS-1$
@@ -78,12 +78,11 @@ public final class Reversal implements NATTraversalTechnique {
     }
 
     @Override
-    public Socket createSourceSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
+    public Socket createSourceSideConnection(final String targetId, final Socket controlConnection)
             throws ConnectionNotEstablishedException {
         Socket result = null;
-        final ReversalSource source = new ReversalSource(mediatorAddress);
         try {
-            result = source.connect(targetId);
+            result = this.source.establishSourceSideConnection(targetId, controlConnection);
         } catch (final IOException e) {
             final String errorMessage = "Source-side connection could not be established"; //$NON-NLS-1$
             logger.error(errorMessage, e);
@@ -93,37 +92,36 @@ public final class Reversal implements NATTraversalTechnique {
     }
 
     @Override
-    public Socket createTargetSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException {
-        Socket result = null;
+    public Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
+            final Message connectionRequestMessage) throws ConnectionNotEstablishedException {
+        // Socket result = null;
+        // try {
+        // result = this.target.establishTargetSideConnection();
+        // } catch (final InterruptedException e) {
+        //            final String errorMessage = "Target-side connection could not be established"; //$NON-NLS-1$
+        // logger.error(errorMessage, e);
+        // throw new
+        // ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
+        // errorMessage, e);
+        // }
+        // return result;
         try {
-            result = this.target.accept();
-        } catch (final InterruptedException e) {
+            return this.target.establishTargetSideConnection(controlConnection, connectionRequestMessage);
+        } catch (final Exception e) {
             final String errorMessage = "Target-side connection could not be established"; //$NON-NLS-1$
             logger.error(errorMessage, e);
             throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(), errorMessage, e);
         }
-        return result;
     }
 
     @Override
-    public void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws Exception {
-        this.initializeReversalTarget(mediatorAddress);
-        this.target.register(targetId);
+    public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // this.target.register(targetId, controlConnection);
     }
 
     @Override
-    public void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws Exception {
-        this.initializeReversalTarget(mediatorAddress);
-        this.target.deregister(targetId);
-    }
-
-    private synchronized void initializeReversalTarget(final InetSocketAddress mediatorAddress) {
-        if (this.target == null) {
-            this.target = new ReversalTarget(mediatorAddress);
-        }
+    public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // this.target.deregister(targetId, controlConnection);
     }
 
     @Override

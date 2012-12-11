@@ -21,6 +21,12 @@ import java.net.Socket;
 
 import de.fhkn.in.uce.core.socketlistener.SocketTaskFactory;
 
+/**
+ * The task factory creates {@link Runnable}s of type {@link HandleMessageTask}.
+ * 
+ * @author Alexander Diener (aldiener@htwg-konstanz.de)
+ * 
+ */
 public final class HandleMessageTaskFactory implements SocketTaskFactory {
 
     @Override

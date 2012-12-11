@@ -17,14 +17,13 @@
 package de.fhkn.in.uce.directconnection.mediator;
 
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
-import de.fhkn.in.uce.mediator.peerregistry.Endpoint;
 import de.fhkn.in.uce.mediator.peerregistry.UserData;
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
@@ -35,12 +34,17 @@ import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
+import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
+import de.fhkn.in.uce.stun.message.MessageReader;
+import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
  * Handles custom connection request messages for direct connection. For every
- * connection request the public endpoint of the requested user returned. If the
- * user does not exist a failure response is sent.
+ * connection request the public endpoint of the requested user is returned to
+ * the source. Furthermore the target is asked to start the target-side
+ * behavior.
  * 
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
@@ -60,25 +64,35 @@ public final class DirectconnConnRequestHandler implements HandleMessage {
             this.sendFailureResponse(message, errorMessage, STUNErrorCode.BAD_REQUEST,
                     controlConnection.getOutputStream());
         } else {
+            this.callTarget(userData);
             this.sendConnectionRequestSuccessReponse(userData, message, controlConnection);
         }
     }
 
     private void sendConnectionRequestSuccessReponse(final UserData userData, final Message requestMessage,
             final Socket controlConnection) throws Exception {
-        final List<Endpoint> targetEndpoints = userData.getEndpointsForCategory(EndpointCategory.PUBLIC);
-        if (!targetEndpoints.isEmpty()) {
-            final Message successResponse = requestMessage.buildSuccessResponse();
-            // TODO what if several public endpoints are registered, should not
-            // matter which one is used. Is it possible that more than one
-            // public EP is registered?
-            successResponse.addAttribute(new XorMappedAddress(targetEndpoints.get(0).getEndpointAddress()));
-            successResponse.addAttribute(new EndpointClass(EndpointCategory.PUBLIC));
-            successResponse.writeTo(controlConnection.getOutputStream());
-        } else {
-            final String errorMessage = "No public endpoint registered for user " + userData.getUserId(); //$NON-NLS-1$
-            this.sendFailureResponse(requestMessage, errorMessage, STUNErrorCode.BAD_REQUEST,
-                    controlConnection.getOutputStream());
+        final Message successResponse = requestMessage.buildSuccessResponse();
+        final InetSocketAddress targetEndpoint = new InetSocketAddress(userData.getSocketToUser().getInetAddress(),
+                userData.getSocketToUser().getPort());
+        successResponse.addAttribute(new XorMappedAddress(targetEndpoint));
+        successResponse.addAttribute(new EndpointClass(EndpointCategory.PUBLIC));
+        successResponse.writeTo(controlConnection.getOutputStream());
+    }
+
+    private void callTarget(final UserData target) throws Exception {
+        final Socket toTarget = target.getSocketToUser();
+        final Message connectionRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                STUNMessageMethod.CONNECTION_REQUEST);
+        connectionRequest.addAttribute(new DirectconnectionAttribute());
+        connectionRequest.writeTo(toTarget.getOutputStream());
+        this.waitForTarget(toTarget);
+    }
+
+    private void waitForTarget(final Socket toTarget) throws Exception {
+        final Message responseFromTarget = MessageReader.createMessageReader().readSTUNMessage(
+                toTarget.getInputStream());
+        if (responseFromTarget.isFailureResponse()) {
+            throw new Exception("Target could not be started"); //$NON-NLS-1$
         }
     }
 

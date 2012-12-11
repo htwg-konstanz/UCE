@@ -29,6 +29,15 @@ import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 
+/**
+ * Singleton implementation of {@link PluginLoader} which uses the
+ * {@link ServiceLoader}. The directory which is defined by a property file is
+ * used to extend the classpath with the plugins. The plugins which implement
+ * {@link HandleMessage} are accessible with this class.
+ * 
+ * @author Alexander Diener (aldiener@htwg-konstanz.de)
+ * 
+ */
 final class PluginLoaderImpl implements PluginLoader {
     private static final PluginLoaderImpl INSTANCE = new PluginLoaderImpl();
     private static final String RESOURCE_PLUGIN_DIRECTORY = "de.fhkn.in.uce.mediator.techniqueregistry"; //$NON-NLS-1$

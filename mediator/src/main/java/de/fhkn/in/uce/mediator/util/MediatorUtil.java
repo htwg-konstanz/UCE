@@ -19,9 +19,25 @@ package de.fhkn.in.uce.mediator.util;
 import de.fhkn.in.uce.stun.attribute.Attribute;
 import de.fhkn.in.uce.stun.message.Message;
 
+/**
+ * Utility for common mediator functionality. It is implemented as singleton.
+ * 
+ * @author Alexander Diener (aldiener@htwg-konstanz.de)
+ * 
+ */
 public enum MediatorUtil {
     INSTANCE;
 
+    /**
+     * Checks if a message has the requested attibute.
+     * 
+     * @param message
+     *            the message to check
+     * @param attributeClass
+     *            the attribute which should be included in the message
+     * @throws Exception
+     *             if the requested attribute is not included in the message
+     */
     public <T extends Attribute> void checkForAttribute(final Message message, final Class<T> attributeClass)
             throws Exception {
         if (!message.hasAttribute(attributeClass)) {

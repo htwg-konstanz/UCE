@@ -16,7 +16,10 @@
  */
 package de.fhkn.in.uce.mediator.peerregistry;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,7 +47,25 @@ public enum UserList {
      *            the {@link UserData} to add
      */
     public void addOrUpdateUser(final UserData newUser) {
-        this.users.putIfAbsent(newUser.getUserId(), newUser);
+        if (!this.users.contains(newUser.getUserId())) {
+            this.users.put(newUser.getUserId(), newUser);
+        } else {
+            this.updateUser(newUser);
+        }
+        this.refreshUserTimestamp(newUser.getUserId());
+    }
+
+    private void updateUser(final UserData newUser) {
+        final UserData toUpdate = this.users.get(newUser.getUserId());
+        toUpdate.changeUserNat(newUser.getUserNat());
+        for (final Endpoint newEndpoint : newUser.getAllEndpoints()) {
+            final List<Endpoint> existingEndpoints = new ArrayList<Endpoint>();
+            Collections.copy(toUpdate.getEndpointsForCategory(newEndpoint.getCategory()), existingEndpoints);
+            for (Endpoint toRemove : existingEndpoints) {
+                toUpdate.removeEndpoint(toRemove);
+            }
+            toUpdate.addEndpoint(newEndpoint);
+        }
     }
 
     /**
@@ -70,17 +91,17 @@ public enum UserList {
         return this.users.get(userId);
     }
 
-    /**
-     * Updates the given user id with the new {@link UserData}.
-     * 
-     * @param userId
-     *            the id of the user to update
-     * @param newUserData
-     *            the updated {@link UserData}
-     */
-    public void updateUser(final String userId, final UserData newUserData) {
-        this.users.replace(userId, newUserData);
-    }
+    // /**
+    // * Updates the given user id with the new {@link UserData}.
+    // *
+    // * @param userId
+    // * the id of the user to update
+    // * @param newUserData
+    // * the updated {@link UserData}
+    // */
+    // public void updateUser(final String userId, final UserData newUserData) {
+    // this.users.replace(userId, newUserData);
+    // }
 
     /**
      * Refreshs the timestamp of the given user.

@@ -21,7 +21,6 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -52,7 +51,7 @@ import de.fhkn.in.uce.stun.message.MessageWriter;
  */
 public final class HolePunchingTarget {
     private final static Logger logger = LoggerFactory.getLogger(HolePunchingTarget.class);
-    private final SocketAddress mediatorSocketAddress;
+    // private final SocketAddress mediatorSocketAddress;
     private final String targetId;
     private final BlockingQueue<Socket> socketQueue;
     private final ThreadGroupThreadFactory threadFactory;
@@ -69,8 +68,9 @@ public final class HolePunchingTarget {
      * @param registrationId
      *            the ID under that the target should get registered.
      */
-    public HolePunchingTarget(final SocketAddress mediatorSocketAddress, final String targetId) {
-        this.mediatorSocketAddress = mediatorSocketAddress;
+    public HolePunchingTarget(final Socket controlConnection, final String targetId) {
+        // this.mediatorSocketAddress = mediatorSocketAddress;
+        this.socketToMediator = controlConnection;
         this.targetId = targetId;
         this.socketQueue = new LinkedBlockingQueue<Socket>();
         this.threadFactory = new ThreadGroupThreadFactory();
@@ -91,7 +91,7 @@ public final class HolePunchingTarget {
             throw new IllegalStateException("Target is already started"); //$NON-NLS-1$
         }
         this.started = true;
-        this.connectToMediator();
+        // this.connectToMediator();
         this.sendRegisterMessage();
         final Message receivedMessage = this.receiveMessage();
         if (receivedMessage.isMethod(STUNMessageMethod.REGISTER) && receivedMessage.isSuccessResponse()) {
@@ -103,11 +103,11 @@ public final class HolePunchingTarget {
         }
     }
 
-    private void connectToMediator() throws IOException {
-        this.socketToMediator = new Socket();
-        this.socketToMediator.setReuseAddress(true);
-        this.socketToMediator.connect(this.mediatorSocketAddress);
-    }
+    // private void connectToMediator() throws IOException {
+    // this.socketToMediator = new Socket();
+    // this.socketToMediator.setReuseAddress(true);
+    // this.socketToMediator.connect(this.mediatorSocketAddress);
+    // }
 
     private void sendRegisterMessage() throws IOException {
         final Message registerMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
@@ -160,7 +160,8 @@ public final class HolePunchingTarget {
                 STUNMessageMethod.DEREGISTER);
         // we need a new socket to deregister
         final Socket s = new Socket();
-        s.connect(this.mediatorSocketAddress);
+        // s.connect(this.mediatorSocketAddress);
+        s.connect(new InetSocketAddress(this.socketToMediator.getInetAddress(), this.socketToMediator.getPort()));
         deregisterMessage.writeTo(s.getOutputStream());
         s.close();
         this.socketToMediator.close();

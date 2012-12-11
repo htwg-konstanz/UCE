@@ -62,18 +62,13 @@ public final class RelayingMetaData implements NATTraversalTechniqueMetaData {
     }
 
     @Override
-    public int getMinConnectionSetupTime() {
-        return this.connectionSetupTime;
-    }
-
-    @Override
     public int getMaxConnectionSetupTime() {
         return this.connectionSetupTime;
     }
 
     @Override
-    public boolean isFallbackTechnique() {
-        return true;
+    public boolean providesDirectConnection() {
+        return false;
     }
 
     @Override
@@ -94,49 +89,44 @@ public final class RelayingMetaData implements NATTraversalTechniqueMetaData {
     }
 
     @Override
+    public Attribute getAttribute() {
+        return new RelayingAttribute();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + this.connectionSetupTime;
-        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
+        result = prime * result + connectionSetupTime;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + timeoutInSeconds;
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (this.getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-        final RelayingMetaData other = (RelayingMetaData) obj;
-        if (this.connectionSetupTime != other.connectionSetupTime) {
+        RelayingMetaData other = (RelayingMetaData) obj;
+        if (connectionSetupTime != other.connectionSetupTime)
             return false;
-        }
-        if (this.name == null) {
-            if (other.name != null) {
+        if (name == null) {
+            if (other.name != null)
                 return false;
-            }
-        } else if (!this.name.equals(other.name)) {
+        } else if (!name.equals(other.name))
             return false;
-        }
-        if (this.version == null) {
-            if (other.version != null) {
+        if (timeoutInSeconds != other.timeoutInSeconds)
+            return false;
+        if (version == null) {
+            if (other.version != null)
                 return false;
-            }
-        } else if (!this.version.equals(other.version)) {
+        } else if (!version.equals(other.version))
             return false;
-        }
         return true;
-    }
-
-    @Override
-    public Attribute getAttribute() {
-        return new RelayingAttribute();
     }
 }

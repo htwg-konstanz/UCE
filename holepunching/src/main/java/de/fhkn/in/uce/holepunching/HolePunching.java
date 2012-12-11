@@ -17,8 +17,11 @@
 package de.fhkn.in.uce.holepunching;
 
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +31,11 @@ import de.fhkn.in.uce.holepunching.core.target.HolePunchingTarget;
 import de.fhkn.in.uce.plugininterface.ConnectionNotEstablishedException;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
+import de.fhkn.in.uce.stun.message.Message;
 
 /**
- * Implementation of {@link NATTraversalTechnique} for hole punching.
+ * Implementation of {@link NATTraversalTechnique} for parallel hole punching.
  * 
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
@@ -38,7 +43,8 @@ import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
 public final class HolePunching implements NATTraversalTechnique {
     private static final Logger logger = LoggerFactory.getLogger(HolePunching.class);
     private final NATTraversalTechniqueMetaData metaData;
-    private HolePunchingTarget target;
+
+    // private HolePunchingTarget target;
 
     /**
      * Creates a new {@link HolePunching} object.
@@ -69,12 +75,12 @@ public final class HolePunching implements NATTraversalTechnique {
     }
 
     @Override
-    public Socket createSourceSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
+    public Socket createSourceSideConnection(final String targetId, final Socket controlConnection)
             throws ConnectionNotEstablishedException {
         Socket result = null;
         final HolePunchingSource source = new HolePunchingSource();
         try {
-            result = source.getSocket(targetId, mediatorAddress);
+            result = source.establishSourceSideConnection(targetId, controlConnection);
         } catch (final IOException e) {
             final String errorMessage = "Could not create source-side onnection"; //$NON-NLS-1$
             logger.error(errorMessage, e);
@@ -84,11 +90,14 @@ public final class HolePunching implements NATTraversalTechnique {
     }
 
     @Override
-    public Socket createTargetSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException {
-        this.checkIfTargetIsInitialized();
+    public Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
+            final Message connectionRequestMessage) throws ConnectionNotEstablishedException {
+        // this.checkIfTargetIsInitialized();
         try {
-            return this.target.accept();
+            HolePunchingTarget target = new HolePunchingTarget(controlConnection, targetId);
+            target.start();
+            this.sendConnectionRequestResponse(controlConnection, connectionRequestMessage);
+            return target.accept();
         } catch (final Exception e) {
             final String errorMessage = "Could not create target-side connection"; //$NON-NLS-1$
             logger.error(errorMessage, e);
@@ -96,18 +105,32 @@ public final class HolePunching implements NATTraversalTechnique {
         }
     }
 
-    @Override
-    public void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
+    private void sendConnectionRequestResponse(final Socket controlConnection, final Message connectionRequest)
             throws Exception {
-        this.target = new HolePunchingTarget(mediatorAddress, targetId);
-        this.target.start();
+        final Message response = connectionRequest.buildSuccessResponse();
+        // add private endpoint
+        final InetAddress privateAddress = controlConnection.getLocalAddress();
+        if (privateAddress instanceof Inet6Address) {
+            response.addAttribute(new XorMappedAddress(new InetSocketAddress(controlConnection.getLocalAddress(),
+                    controlConnection.getLocalPort()), ByteBuffer.wrap(response.getHeader().getTransactionId())
+                    .getInt()));
+        } else {
+            response.addAttribute(new XorMappedAddress(new InetSocketAddress(controlConnection.getLocalAddress(),
+                    controlConnection.getLocalPort())));
+        }
+        response.writeTo(controlConnection.getOutputStream());
     }
 
     @Override
-    public void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws Exception {
-        this.checkIfTargetIsInitialized();
-        this.target.stop();
+    public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // this.target = new HolePunchingTarget(mediatorAddress, targetId);
+        // this.target.start();
+    }
+
+    @Override
+    public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // this.checkIfTargetIsInitialized();
+        // this.target.stop();
     }
 
     @Override
@@ -115,11 +138,11 @@ public final class HolePunching implements NATTraversalTechnique {
         return new HolePunching(this);
     }
 
-    private void checkIfTargetIsInitialized() throws IllegalStateException {
-        if (this.target == null) {
-            throw new IllegalStateException("Target has be be registed first"); //$NON-NLS-1$
-        }
-    }
+    // private void checkIfTargetIsInitialized() throws IllegalStateException {
+    // if (this.target == null) {
+    //            throw new IllegalStateException("Target has be be registed first"); //$NON-NLS-1$
+    // }
+    // }
 
     @Override
     public int hashCode() {

@@ -18,14 +18,13 @@ package de.fhkn.in.uce.relaying.mediator;
 
 import java.io.OutputStream;
 import java.net.Inet6Address;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.uce.mediator.peerregistry.Endpoint;
 import de.fhkn.in.uce.mediator.peerregistry.UserData;
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
@@ -37,7 +36,11 @@ import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
+import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
+import de.fhkn.in.uce.stun.message.MessageReader;
+import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
  * Plugin for handling relaying connection requests. The handler sends a
@@ -62,29 +65,47 @@ public final class RelayingConnRequestHandler implements HandleMessage {
             this.sendFailureResponse(message, errorMessage, STUNErrorCode.BAD_REQUEST,
                     controlConnection.getOutputStream());
         } else {
-            this.sendRelayEndpointToSource(message, user, controlConnection);
+            try {
+                final InetSocketAddress endpointAtRelay = this.callTarget(user);
+                this.sendRelayEndpointToSource(message, endpointAtRelay, controlConnection);
+            } catch (final Exception e) {
+                final String errorMessage = "No relay endpoint registered for user " + user.getUserId(); //$NON-NLS-1$
+                this.sendFailureResponse(message, errorMessage, STUNErrorCode.BAD_REQUEST,
+                        controlConnection.getOutputStream());
+            }
         }
     }
 
-    private void sendRelayEndpointToSource(final Message requestMessage, final UserData user,
+    private void sendRelayEndpointToSource(final Message requestMessage, final InetSocketAddress endpointAtRelay,
             final Socket controlConnection) throws Exception {
-        final List<Endpoint> endpointsAtRelay = user.getEndpointsForCategory(EndpointCategory.RELAY);
-        // TODO what if there are several endpoints? is this possible?
-        if (!endpointsAtRelay.isEmpty()) {
-            final Message responseMessage = requestMessage.buildSuccessResponse();
-            final Endpoint epAtRelay = endpointsAtRelay.get(0);
-            if (epAtRelay.getEndpointAddress().getAddress() instanceof Inet6Address) {
-                responseMessage.addAttribute(new XorMappedAddress(epAtRelay.getEndpointAddress(), ByteBuffer.wrap(
-                        responseMessage.getHeader().getTransactionId()).getInt()));
-            } else {
-                responseMessage.addAttribute(new XorMappedAddress(epAtRelay.getEndpointAddress()));
-            }
-            responseMessage.addAttribute(new EndpointClass(EndpointCategory.RELAY));
-            responseMessage.writeTo(controlConnection.getOutputStream());
+        final Message responseMessage = requestMessage.buildSuccessResponse();
+        if (endpointAtRelay.getAddress() instanceof Inet6Address) {
+            responseMessage.addAttribute(new XorMappedAddress(endpointAtRelay, ByteBuffer.wrap(
+                    responseMessage.getHeader().getTransactionId()).getInt()));
         } else {
-            final String errorMessage = "No relay endpoint registered for user " + user.getUserId(); //$NON-NLS-1$
-            this.sendFailureResponse(requestMessage, errorMessage, STUNErrorCode.BAD_REQUEST,
-                    controlConnection.getOutputStream());
+            responseMessage.addAttribute(new XorMappedAddress(endpointAtRelay));
+        }
+        responseMessage.addAttribute(new EndpointClass(EndpointCategory.RELAY));
+        responseMessage.writeTo(controlConnection.getOutputStream());
+    }
+
+    private InetSocketAddress callTarget(final UserData target) throws Exception {
+        final Socket toTarget = target.getSocketToUser();
+        final Message connectionRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                STUNMessageMethod.CONNECTION_REQUEST);
+        connectionRequest.addAttribute(new RelayingAttribute());
+        connectionRequest.writeTo(toTarget.getOutputStream());
+        return this.waitForTarget(toTarget);
+    }
+
+    private InetSocketAddress waitForTarget(final Socket toTarget) throws Exception {
+        final Message responseFromTarget = MessageReader.createMessageReader().readSTUNMessage(
+                toTarget.getInputStream());
+        if (responseFromTarget.isFailureResponse() || !responseFromTarget.hasAttribute(XorMappedAddress.class)) {
+            throw new Exception("Target could not be started correctly"); //$NON-NLS-1$
+        } else {
+            final XorMappedAddress endpointAtRelay = responseFromTarget.getAttribute(XorMappedAddress.class);
+            return endpointAtRelay.getEndpoint();
         }
     }
 

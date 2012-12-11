@@ -30,6 +30,13 @@ import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageWriter;
 
+/**
+ * Handles STUN messages of different types like register or connection request.
+ * Handlers are used to process these messages.
+ * 
+ * @author Alexander Diener (aldiener@htwg-konstanz.de)
+ * 
+ */
 public final class HandleMessageTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(HandleMessageTask.class);
     private final MessageReader messageReader;
@@ -40,6 +47,14 @@ public final class HandleMessageTask implements Runnable {
     private final HandleMessage keepAliveMessageHandler;
     private final HandleMessage connectionRequestMessageHandler;
 
+    /**
+     * Creates a {@link HandleMessageTask} which processes messages of the given
+     * socket.
+     * 
+     * @param socket
+     *            the socket to the peer
+     * @throws IOException
+     */
     public HandleMessageTask(final Socket socket) throws IOException {
         this.messageReader = MessageReader
                 .createMessageReaderWithCustomAttributeTypeDecoder(new NATAttributeTypeDecoder());

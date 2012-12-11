@@ -69,17 +69,18 @@ public final class ReversalConnRequestHandler implements HandleMessage {
         }
     }
 
-    private void sendReversalRequestToTarget(final Socket toClient, final UserData user) throws IOException {
+    private void sendReversalRequestToTarget(final Socket toSource, final UserData user) throws IOException {
         final Message connectionRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.CONNECTION_REQUEST);
         XorMappedAddress clientAddress;
-        if (toClient.getInetAddress() instanceof Inet6Address) {
-            clientAddress = new XorMappedAddress(new InetSocketAddress(toClient.getInetAddress(), toClient.getPort()),
+        if (toSource.getInetAddress() instanceof Inet6Address) {
+            clientAddress = new XorMappedAddress(new InetSocketAddress(toSource.getInetAddress(), toSource.getPort()),
                     ByteBuffer.wrap(connectionRequest.getHeader().getTransactionId()).getInt());
         } else {
-            clientAddress = new XorMappedAddress(new InetSocketAddress(toClient.getInetAddress(), toClient.getPort()));
+            clientAddress = new XorMappedAddress(new InetSocketAddress(toSource.getInetAddress(), toSource.getPort()));
         }
         connectionRequest.addAttribute(clientAddress);
+        connectionRequest.addAttribute(new ReversalAttribute());
         final Socket toTarget = user.getSocketToUser();
         connectionRequest.writeTo(toTarget.getOutputStream());
     }

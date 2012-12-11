@@ -36,7 +36,6 @@ public final class HolePunchingMetaData implements NATTraversalTechniqueMetaData
     private static final String RESOURCE_TRAVERSALED_SITUATIONS = "de/fhkn/in/uce/holepunching/traversaledNATSituations"; //$NON-NLS-1$
     private final String name = "HolePunching"; //$NON-NLS-1$
     private final String version = "1.0"; //$NON-NLS-1$
-    private final int minConnectionSetupTime = 7;
     private final int maxConnectionSetupTime = Integer.MAX_VALUE;
     private final int timeoutInSeconds = 60;
     private final NATTraversalTechniqueUtil util = NATTraversalTechniqueUtil.getInstance();
@@ -68,11 +67,6 @@ public final class HolePunchingMetaData implements NATTraversalTechniqueMetaData
     }
 
     @Override
-    public int getMinConnectionSetupTime() {
-        return this.minConnectionSetupTime;
-    }
-
-    @Override
     public String getTraversalTechniqueName() {
         return this.name;
     }
@@ -88,8 +82,8 @@ public final class HolePunchingMetaData implements NATTraversalTechniqueMetaData
     }
 
     @Override
-    public boolean isFallbackTechnique() {
-        return false;
+    public boolean providesDirectConnection() {
+        return true;
     }
 
     @Override
@@ -107,8 +101,8 @@ public final class HolePunchingMetaData implements NATTraversalTechniqueMetaData
         final int prime = 31;
         int result = 1;
         result = prime * result + maxConnectionSetupTime;
-        result = prime * result + minConnectionSetupTime;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + timeoutInSeconds;
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
     }
@@ -124,12 +118,12 @@ public final class HolePunchingMetaData implements NATTraversalTechniqueMetaData
         HolePunchingMetaData other = (HolePunchingMetaData) obj;
         if (maxConnectionSetupTime != other.maxConnectionSetupTime)
             return false;
-        if (minConnectionSetupTime != other.minConnectionSetupTime)
-            return false;
         if (name == null) {
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
+            return false;
+        if (timeoutInSeconds != other.timeoutInSeconds)
             return false;
         if (version == null) {
             if (other.version != null)

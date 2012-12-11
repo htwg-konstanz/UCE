@@ -35,17 +35,20 @@ import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
-import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
+import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
  * This custom handler handles connection request messages for hole punching. It
- * sends the private and public endpoints to the source and the target.
+ * calls the target which starts the hole punching target and returns the
+ * private endpoint. The handler sends the private and public endpoints of the
+ * peers to the other party.
  * 
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
@@ -69,14 +72,34 @@ public final class HolePunchingConnRequestHandler implements HandleMessage {
         }
     }
 
+    private InetSocketAddress callTarget(final UserData target) throws Exception {
+        final Socket toTarget = target.getSocketToUser();
+        final Message connectionRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                STUNMessageMethod.CONNECTION_REQUEST);
+        connectionRequest.addAttribute(new HolePunchingAttribute());
+        connectionRequest.writeTo(toTarget.getOutputStream());
+        return this.waitForTarget(toTarget);
+    }
+
+    private InetSocketAddress waitForTarget(final Socket toTarget) throws Exception {
+        final Message responseFromTarget = MessageReader.createMessageReader().readSTUNMessage(
+                toTarget.getInputStream());
+        if (responseFromTarget.isSuccessResponse() && responseFromTarget.hasAttribute(XorMappedAddress.class)) {
+            return responseFromTarget.getAttribute(XorMappedAddress.class).getEndpoint();
+        } else {
+            throw new Exception("Target could not be started"); //$NON-NLS-1$
+        }
+    }
+
     private void sendHPMessagesToPeers(final UserData user, final Message requestMessage, final Socket socketToSource)
-            throws IOException {
+            throws Exception {
         final List<InetSocketAddress> addressesOfSource = new ArrayList<InetSocketAddress>();
         addressesOfSource.add(requestMessage.getAttribute(XorMappedAddress.class).getEndpoint());
         addressesOfSource.add(new InetSocketAddress(socketToSource.getInetAddress(), socketToSource.getPort()));
         final Message toTarget = this.createHPMessageWithAddresses(addressesOfSource);
+        final InetSocketAddress privateAddressOfTarget = this.callTarget(user);
         final List<InetSocketAddress> addressesOfTarget = new ArrayList<InetSocketAddress>();
-        addressesOfTarget.add(user.getEndpointsForCategory(EndpointCategory.PRIVATE).get(0).getEndpointAddress());
+        addressesOfTarget.add(privateAddressOfTarget);
         addressesOfTarget.add(new InetSocketAddress(user.getSocketToUser().getInetAddress(), user.getSocketToUser()
                 .getPort()));
         final Message toSource = this.createHPMessageWithAddresses(addressesOfTarget);

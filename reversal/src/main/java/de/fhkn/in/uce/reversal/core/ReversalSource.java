@@ -24,6 +24,7 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fhkn.in.uce.reversal.message.ReversalAttribute;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
@@ -38,61 +39,51 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  */
 public final class ReversalSource {
     private static final Logger logger = LoggerFactory.getLogger(ReversalSource.class);
-    private final Socket controlConnection;
-    private final int socketTimeoutInMillis = 10000;
+    private final int socketTimeoutInMillis = 20 * 1000;
 
     /**
-     * Creates a {@link ReversalSource} with the given mediator address.
-     * 
-     * @param mediatorAddress
-     *            the mediator address
+     * Creates a {@link ReversalSource} object.
      */
-    public ReversalSource(final InetSocketAddress mediatorAddress) {
-        try {
-            this.controlConnection = new Socket();
-            this.controlConnection.setReuseAddress(true);
-            this.controlConnection.connect(mediatorAddress);
-        } catch (final Exception e) {
-            logger.error("Exception occured while creating connection reversal source object.", e); //$NON-NLS-1$
-            throw new RuntimeException("Could not create connection reversal source object.", e); //$NON-NLS-1$
-        }
+    public ReversalSource() {
+        super();
     }
 
     /**
-     * Method to request a connection. Creates a server socket the source
-     * listens and waits for a connection.
-     * 
-     * @param uniqueUserName
-     *            the name of the target
-     * @return the server socket the target connects to
-     * @throws IOException
-     */
-    private ServerSocket requestConnection(final String uniqueUserName) throws IOException {
-        final ServerSocket serverSocket = new ServerSocket();
-        serverSocket.setReuseAddress(true);
-        serverSocket.bind(new InetSocketAddress(this.controlConnection.getLocalPort()));
-        final Message requestMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.CONNECTION_REQUEST);
-        requestMessage.addAttribute(new Username(uniqueUserName));
-        logger.info("send connection request for target {}", uniqueUserName); //$NON-NLS-1$
-        requestMessage.writeTo(this.controlConnection.getOutputStream());
-        serverSocket.setSoTimeout(this.socketTimeoutInMillis);
-        return serverSocket;
-    }
-
-    /**
-     * Connects to the given target name and returns the according socket.
+     * Connects to the given target name and returns the according socket. A
+     * server socket is created which listens to incoming connections from the
+     * target. To initiate a connection, a connection request is sent over the
+     * control connection.
      * 
      * @param uniqueUserName
      *            the name of the target
      * @return the socket to the target
      * @throws IOException
      */
-    public Socket connect(final String uniqueUserName) throws IOException {
-        final ServerSocket serverSocket = this.requestConnection(uniqueUserName);
+    public Socket establishSourceSideConnection(final String uniqueUserName, final Socket controlConnection)
+            throws IOException {
+        final ServerSocket serverSocket = this.createBoundServerSocket(uniqueUserName, controlConnection);
         logger.info("listen on serverSocket {}", serverSocket); //$NON-NLS-1$
+        this.sendConnectionRequest(uniqueUserName, controlConnection);
         final Socket socket = serverSocket.accept();
         serverSocket.close();
         return socket;
+    }
+
+    private ServerSocket createBoundServerSocket(final String uniqueUserName, final Socket controlConnection)
+            throws IOException {
+        final ServerSocket serverSocket = new ServerSocket();
+        serverSocket.setReuseAddress(true);
+        serverSocket.bind(new InetSocketAddress(controlConnection.getLocalAddress(), controlConnection.getLocalPort()));
+        serverSocket.setSoTimeout(this.socketTimeoutInMillis);
+        return serverSocket;
+    }
+
+    private void sendConnectionRequest(final String targetId, final Socket controlConnection) throws IOException {
+        final Message requestMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+                STUNMessageMethod.CONNECTION_REQUEST);
+        requestMessage.addAttribute(new Username(targetId));
+        requestMessage.addAttribute(new ReversalAttribute());
+        logger.info("send connection request for target {}", targetId); //$NON-NLS-1$
+        requestMessage.writeTo(controlConnection.getOutputStream());
     }
 }

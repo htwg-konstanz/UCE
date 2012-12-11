@@ -16,28 +16,17 @@
  */
 package de.fhkn.in.uce.directconnection;
 
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fhkn.in.uce.directconnection.core.DirectconnectionSource;
+import de.fhkn.in.uce.directconnection.core.DirectconnectionTarget;
 import de.fhkn.in.uce.plugininterface.ConnectionNotEstablishedException;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
-import de.fhkn.in.uce.stun.attribute.Username;
-import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
-import de.fhkn.in.uce.stun.header.STUNMessageClass;
-import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
-import de.fhkn.in.uce.stun.message.MessageReader;
-import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
  * Implementation of {@link NATTraversalTechnique} which establishes a direct
@@ -47,11 +36,10 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  * 
  */
 public final class Directconnection implements NATTraversalTechnique {
-    private final NATTraversalTechniqueMetaData metaData;
-    private final Socket controlConnection;
-    private final ScheduledExecutorService keepAliveExecutor = Executors.newSingleThreadScheduledExecutor();
-    private static final int ITERATION_TIME_IN_SECONDS = 60;
     private static final Logger logger = LoggerFactory.getLogger(Directconnection.class);
+    private final NATTraversalTechniqueMetaData metaData;
+    private final DirectconnectionSource source;
+    private final DirectconnectionTarget target;
 
     /**
      * Creates a {@link Directconnection} object with the corresponding
@@ -60,11 +48,8 @@ public final class Directconnection implements NATTraversalTechnique {
     public Directconnection() {
         try {
             this.metaData = new DirectconnectionMetaData();
-            this.controlConnection = new Socket();
-            this.controlConnection.setReuseAddress(true);
-        } catch (final SocketException e) {
-            logger.error("Socket option could not be set.", e); //$NON-NLS-1$
-            throw new RuntimeException("Socket option could not be set.", e); //$NON-NLS-1$
+            this.source = new DirectconnectionSource();
+            this.target = new DirectconnectionTarget();
         } catch (final Exception e) {
             logger.error("Exception occured while creating direct connection object.", e); //$NON-NLS-1$
             throw new RuntimeException("Could not create direct connection object.", e); //$NON-NLS-1$
@@ -80,11 +65,8 @@ public final class Directconnection implements NATTraversalTechnique {
     public Directconnection(final Directconnection toCopy) {
         try {
             this.metaData = new DirectconnectionMetaData((DirectconnectionMetaData) toCopy.metaData);
-            this.controlConnection = new Socket();
-            this.controlConnection.setReuseAddress(true);
-        } catch (final SocketException e) {
-            logger.error("Socket option could not be set.", e); //$NON-NLS-1$
-            throw new RuntimeException("Socket option could not be set.", e); //$NON-NLS-1$
+            this.source = new DirectconnectionSource();
+            this.target = new DirectconnectionTarget();
         } catch (final Exception e) {
             logger.error("Exception occured while creating direct connection object.", e); //$NON-NLS-1$
             throw new RuntimeException("Could not create direct connection object.", e); //$NON-NLS-1$
@@ -92,11 +74,10 @@ public final class Directconnection implements NATTraversalTechnique {
     }
 
     @Override
-    public Socket createSourceSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
+    public Socket createSourceSideConnection(final String targetId, final Socket controlConnection)
             throws ConnectionNotEstablishedException {
         try {
-            this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
-            return this.establishSourceSideConnection(targetId);
+            return this.source.establishSourceSideConnection(targetId, controlConnection);
         } catch (final Exception e) {
             logger.error(e.getMessage());
             throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
@@ -104,37 +85,11 @@ public final class Directconnection implements NATTraversalTechnique {
         }
     }
 
-    private Socket establishSourceSideConnection(final String targetId) throws Exception {
-        final Message requestConnectionMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.CONNECTION_REQUEST);
-        requestConnectionMessage.addAttribute(new Username(targetId));
-        requestConnectionMessage.writeTo(this.controlConnection.getOutputStream());
-
-        final MessageReader messageReader = MessageReader.createMessageReader();
-        final Message responseMessage = messageReader.readSTUNMessage(this.controlConnection.getInputStream());
-
-        if (responseMessage.hasAttribute(XorMappedAddress.class)) {
-            final XorMappedAddress xorMappedAddress = responseMessage.getAttribute(XorMappedAddress.class);
-            final InetSocketAddress targetEndpoint = xorMappedAddress.getEndpoint();
-            logger.debug("Connecting to target {}", targetEndpoint); //$NON-NLS-1$
-            final Socket socket = new Socket();
-            socket.setReuseAddress(true);
-            socket.bind(new InetSocketAddress(this.controlConnection.getLocalPort()));
-            socket.connect(targetEndpoint);
-            return socket;
-        } else {
-            throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
-                    "The target endpoint is not returned by the mediator.", //$NON-NLS-1$
-                    null);
-        }
-    }
-
     @Override
-    public Socket createTargetSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException {
+    public Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
+            final Message connectionRequestMessage) throws ConnectionNotEstablishedException {
         try {
-            this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
-            return this.establishTargetSideConnection(targetId);
+            return this.target.establishTargetSideConnection(controlConnection, connectionRequestMessage);
         } catch (final Exception e) {
             logger.error(e.getMessage());
             throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
@@ -142,59 +97,24 @@ public final class Directconnection implements NATTraversalTechnique {
         }
     }
 
-    private Socket establishTargetSideConnection(final String targetId) throws Exception {
-        Socket socket = null;
-        final ServerSocket serverSocket = new ServerSocket();
-        serverSocket.setReuseAddress(true);
-        final SocketAddress localAddress = new InetSocketAddress(this.controlConnection.getLocalPort());
-        serverSocket.bind(localAddress);
-        logger.info("Waiting for incoming connections on {}", localAddress.toString()); //$NON-NLS-1$
-        socket = serverSocket.accept();
-        return socket;
+    @Override
+    public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // try {
+        // this.target.registerTarget(targetId, controlConnection);
+        // } catch (final Exception e) {
+        //            logger.error("Target {} could not be registered successfully.", targetId); //$NON-NLS-1$
+        //            throw new Exception("Target could not be registered successfully", e); //$NON-NLS-1$
+        // }
     }
 
     @Override
-    public void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws Exception {
-        try {
-            this.sendRegisterMessage(targetId, mediatorAddress);
-            this.startKeepAliveThread(targetId);
-        } catch (final Exception e) {
-            logger.error("Target {} could not be registered successfully.", targetId); //$NON-NLS-1$
-            throw new Exception("Target could not be registered successfully", e); //$NON-NLS-1$
-        }
-    }
-
-    private void sendRegisterMessage(final String targetId, final InetSocketAddress mediatorAddress) throws Exception {
-        final Message registerMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.REGISTER);
-        final Username userName = new Username(targetId);
-        registerMessage.addAttribute(userName);
-        this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
-        registerMessage.writeTo(this.controlConnection.getOutputStream());
-        // TODO check for success response
-    }
-
-    private void startKeepAliveThread(final String targetId) {
-        logger.info("Starting keep-alive thread for {}.", this.metaData.getTraversalTechniqueName()); //$NON-NLS-1$
-        this.keepAliveExecutor.scheduleAtFixedRate(new KeepAliveTask(targetId, this.controlConnection),
-                ITERATION_TIME_IN_SECONDS, ITERATION_TIME_IN_SECONDS, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws Exception {
-        final Message deregisterMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.DEREGISTER);
-        try {
-            deregisterMessage.addAttribute(new Username(targetId));
-            this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
-            deregisterMessage.writeTo(this.controlConnection.getOutputStream());
-            // TODO check for success response
-        } catch (final Exception e) {
-            logger.error("Exception while deregistering target: {}", e.getMessage()); //$NON-NLS-1$
-            throw new Exception("Exception while deregistering target", e); //$NON-NLS-1$
-        }
+    public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // try {
+        // this.target.deregisterTarget(targetId, controlConnection);
+        // } catch (final Exception e) {
+        //            logger.error("Target {} could not be deregistered successfully.", targetId); //$NON-NLS-1$
+        //            throw new Exception("Target could not be deregistered successfully", e); //$NON-NLS-1$
+        // }
     }
 
     @Override
@@ -205,20 +125,6 @@ public final class Directconnection implements NATTraversalTechnique {
     @Override
     public NATTraversalTechnique copy() {
         return new Directconnection(this);
-    }
-
-    private void connectToMediatorIfNotAlreadyConnected(final InetSocketAddress mediatorAddress, final int localPort)
-            throws ConnectionNotEstablishedException {
-        if (!this.controlConnection.isConnected()) {
-            try {
-                this.controlConnection.bind(new InetSocketAddress(localPort));
-                this.controlConnection.connect(mediatorAddress);
-            } catch (final Exception e) {
-                final String errorMessage = "Control connection to {}:{} could not be established."; //$NON-NLS-1$
-                logger.error(errorMessage, mediatorAddress.getHostName(), mediatorAddress.getPort());
-                throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(), errorMessage, e);
-            }
-        }
     }
 
     @Override

@@ -45,31 +45,26 @@ public interface NATTraversalTechniqueMetaData {
     String getVersion();
 
     /**
-     * Returns the number of messages which are minimal send to establish a
-     * connection.
-     * 
-     * @return the minimal number of messages for establishing a connection
-     */
-    int getMinConnectionSetupTime();
-
-    /**
-     * Returns the number of messages which are maximal send to establish a
-     * connection. If this number of messages is theoretically infinite,
-     * {@code Integer.MAX_VLAUE} can be returned.
+     * Returns the number of messages which are maximal sent to establish a
+     * connection. Thus the returned number specifies the worst case.If this
+     * number of messages is theoretically infinite, {@code Integer.MAX_VLAUE}
+     * can be returned.
      * 
      * @return the maximal number of message for establishing a connection
      */
     int getMaxConnectionSetupTime();
 
     /**
-     * Returns {@code true} if the {@link NATTraversalTechnique} is a fallback
-     * technique. A fallback technique establishes a connection in each
-     * {@link NATSituation}, but can provide a indirect connection.
+     * Indicates if a NAT traversal technique provides a direct connection
+     * without any third party instance like a relay server which forwards
+     * messages between the peers. After establishing the connection with the
+     * NAT traversal technique, a direct connection between client and server is
+     * made.
      * 
-     * @return {@code true} if the traversal technique is a fallback technique,
-     *         {@code false} else
+     * @return true if the traversal technique provides a direct connection
+     *         without any third party instance, false else
      */
-    boolean isFallbackTechnique();
+    boolean providesDirectConnection();
 
     /**
      * Returns a set of {@link NATSituation} which can be traversaled by this

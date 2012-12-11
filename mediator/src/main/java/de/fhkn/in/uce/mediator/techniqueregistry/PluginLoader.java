@@ -20,8 +20,26 @@ import java.util.Iterator;
 
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 
+/**
+ * Defines methods for loading and handling plugins. The plugins which are
+ * loaded must implement the interface {@link HandleMessage}.
+ * 
+ * @author Alexander Diener (aldiener@htwg-konstanz.de)
+ * 
+ */
 interface PluginLoader {
+    /**
+     * Loads and initializes the plugins of type {@link HandleMessage}.
+     * 
+     * @throws Exception
+     */
     void loadPlugins() throws Exception;
 
+    /**
+     * Returns an {@link Iterator} to access the {@link HandleMessage}
+     * implementations. The implementations are delivered by the plugins.
+     * 
+     * @return
+     */
     Iterator<HandleMessage> getPluginIterator();
 }

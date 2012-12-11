@@ -73,18 +73,13 @@ public final class ReversalMetaData implements NATTraversalTechniqueMetaData {
     }
 
     @Override
-    public int getMinConnectionSetupTime() {
-        return this.connectionSetupTime;
-    }
-
-    @Override
     public int getMaxConnectionSetupTime() {
         return this.connectionSetupTime;
     }
 
     @Override
-    public boolean isFallbackTechnique() {
-        return false;
+    public boolean providesDirectConnection() {
+        return true;
     }
 
     @Override
@@ -108,6 +103,7 @@ public final class ReversalMetaData implements NATTraversalTechniqueMetaData {
         int result = 1;
         result = prime * result + connectionSetupTime;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + timeoutInSeconds;
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
     }
@@ -127,6 +123,8 @@ public final class ReversalMetaData implements NATTraversalTechniqueMetaData {
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
+            return false;
+        if (timeoutInSeconds != other.timeoutInSeconds)
             return false;
         if (version == null) {
             if (other.version != null)

@@ -27,16 +27,33 @@ import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
+/**
+ * Task which keeps the binding of a target alive. A message with the given
+ * target id is sent via the control connection.
+ * 
+ * @author Alexander Diener (aldiener@htwg-konstanz.de)
+ * 
+ */
 public final class KeepAliveTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(KeepAliveTask.class);
     private final String targetId;
     private final Socket controlConnection;
 
+    /**
+     * Creates a {@link KeepAliveTask} with the given target and mediator
+     * connection.
+     * 
+     * @param targetId
+     *            the id of the target
+     * @param controlConnection
+     *            the connection to the mediator
+     */
     public KeepAliveTask(final String targetId, final Socket controlConnection) {
         this.targetId = targetId;
         this.controlConnection = controlConnection;
     }
 
+    @Override
     public void run() {
         try {
             final Message keepAliveMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,

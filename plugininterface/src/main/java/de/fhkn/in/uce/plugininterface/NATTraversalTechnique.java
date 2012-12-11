@@ -16,8 +16,9 @@
  */
 package de.fhkn.in.uce.plugininterface;
 
-import java.net.InetSocketAddress;
 import java.net.Socket;
+
+import de.fhkn.in.uce.stun.message.Message;
 
 /**
  * A {@link NATTraversalTechnique} is a technique to traverses a NAT device.
@@ -48,13 +49,13 @@ public interface NATTraversalTechnique {
      * 
      * @param targetId
      *            the target id of the server
-     * @param mediatorAddress
-     *            the mediator which delivers the target endpoint
+     * @param controlConnection
+     *            the control connection to the mediator
      * @return the socket which is connected to the {@code targetId}
      * @throws ConnectionNotEstablishedException
      *             if the connection could not be established
      */
-    Socket createSourceSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
+    Socket createSourceSideConnection(final String targetId, final Socket controlConnection)
             throws ConnectionNotEstablishedException;
 
     /**
@@ -65,38 +66,38 @@ public interface NATTraversalTechnique {
      * 
      * @param targetId
      *            the id of the server
-     * @param mediatorAddress
-     *            the mediator for registering the {@code targetId}
+     * @param controlConnection
+     *            the control connection to the mediator
      * @return the socket which is connected to a client
      * @throws ConnectionNotEstablishedException
      *             if the connection could not be established
      */
-    Socket createTargetSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException;
+    Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
+            final Message connectionRequestMessage) throws ConnectionNotEstablishedException;
 
     /**
      * Registers a target with a {@code targetId} at the given mediator.
      * 
      * @param targetId
      *            the unique name of the target
-     * @param mediatorAddress
-     *            the mediator address to register the target
+     * @param controlConnection
+     *            the control connection to the mediator
      * @throws Exception
      *             if the target could not be registered
      */
-    void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress) throws Exception;
+    void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception;
 
     /**
      * Deregisters a target.
      * 
      * @param targetId
      *            the if of the service which should be deregistered
-     * @param mediatorAddress
-     *            the {@link InetSocketAddress} of the mediator
+     * @param controlConnection
+     *            the control connection to the mediator
      * @throws Exception
      *             if an exception occurs while deregistering the target
      */
-    void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress) throws Exception;
+    void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception;
 
     /**
      * Returns a copy of the {@link NATTraversalTechnique}.

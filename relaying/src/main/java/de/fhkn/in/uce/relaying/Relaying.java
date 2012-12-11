@@ -17,8 +17,10 @@
 package de.fhkn.in.uce.relaying;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -46,18 +48,17 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 public final class Relaying implements NATTraversalTechnique {
     private static final Logger logger = LoggerFactory.getLogger(Relaying.class);
     private final NATTraversalTechniqueMetaData metaData;
-    private final Socket controlConnection;
     private final InetSocketAddress relayAddress;
     private final ResourceBundle bundle = ResourceBundle.getBundle("de.fhkn.in.uce.relay.traversal.relaying"); //$NON-NLS-1$
-    private RelayingClient targetRelayClient = null;
-    private volatile boolean isRegistered = false;
+
+    // private RelayingClient targetRelayClient = null;
+
+    // private volatile boolean isRegistered = false;
 
     public Relaying() {
         try {
             this.metaData = new RelayingMetaData();
             this.relayAddress = this.getRelayServerAddressFromBundle();
-            this.controlConnection = new Socket();
-            this.controlConnection.setReuseAddress(true);
         } catch (final Exception e) {
             logger.error("Exception occured while creating relaying connection object.", e); //$NON-NLS-1$
             throw new RuntimeException("Could not create relaying connection object.", e); //$NON-NLS-1$
@@ -68,8 +69,6 @@ public final class Relaying implements NATTraversalTechnique {
         try {
             this.metaData = new RelayingMetaData((RelayingMetaData) toCopy.getMetaData());
             this.relayAddress = toCopy.relayAddress;
-            this.controlConnection = new Socket();
-            this.controlConnection.setReuseAddress(true);
         } catch (final Exception e) {
             logger.error("Exception occured while creating relaying connection object.", e); //$NON-NLS-1$
             throw new RuntimeException("Could not create relaying connection object.", e); //$NON-NLS-1$
@@ -83,13 +82,11 @@ public final class Relaying implements NATTraversalTechnique {
     }
 
     @Override
-    public Socket createSourceSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
+    public Socket createSourceSideConnection(final String targetId, final Socket controlConnection)
             throws ConnectionNotEstablishedException {
-        logger.debug("creating source-side connection via relaying, mediator={}", mediatorAddress); //$NON-NLS-1$
         try {
-            this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
-            this.sendConnectionRequest(targetId);
-            final Message responseMessage = this.receiveConnectionResponse();
+            this.sendConnectionRequest(targetId, controlConnection);
+            final Message responseMessage = this.receiveConnectionResponse(controlConnection);
             final InetSocketAddress endpointAtRelayServer = this.getEndpointFromMessage(responseMessage);
             return this.connectToTargetEndpoint(endpointAtRelayServer);
         } catch (final Exception e) {
@@ -99,17 +96,17 @@ public final class Relaying implements NATTraversalTechnique {
         }
     }
 
-    private void sendConnectionRequest(final String targetId) throws Exception {
+    private void sendConnectionRequest(final String targetId, final Socket controlConnection) throws Exception {
         logger.debug("Sending connection request"); //$NON-NLS-1$
         final Message requestConnectionMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.CONNECTION_REQUEST);
         requestConnectionMessage.addAttribute(new Username(targetId));
-        requestConnectionMessage.writeTo(this.controlConnection.getOutputStream());
+        requestConnectionMessage.writeTo(controlConnection.getOutputStream());
     }
 
-    private Message receiveConnectionResponse() throws IOException {
+    private Message receiveConnectionResponse(final Socket controlConnection) throws IOException {
         final MessageReader messageReader = MessageReader.createMessageReader();
-        return messageReader.readSTUNMessage(this.controlConnection.getInputStream());
+        return messageReader.readSTUNMessage(controlConnection.getInputStream());
     }
 
     private InetSocketAddress getEndpointFromMessage(final Message msg) throws Exception {
@@ -132,15 +129,19 @@ public final class Relaying implements NATTraversalTechnique {
     }
 
     @Override
-    public Socket createTargetSideConnection(final String targetId, final InetSocketAddress mediatorAddress)
-            throws ConnectionNotEstablishedException {
-        if (!this.isRegistered) {
-            throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
-                    "Target must be registered before creating target-side connection.", null); //$NON-NLS-1$
-        }
+    public Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
+            final Message connectioRequestMessage) throws ConnectionNotEstablishedException {
+        // if (!this.isRegistered) {
+        // throw new
+        // ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
+        //                    "Target must be registered before creating target-side connection.", null); //$NON-NLS-1$
+        // }
         Socket socket = new Socket();
         try {
-            socket = this.targetRelayClient.accept();
+            final RelayingClient targetRelayClient = new RelayingClient(this.relayAddress);
+            final InetSocketAddress endpointAtRelay = this.createAllocationAtRelayServer(targetRelayClient);
+            this.sendConnectionRequestResponse(controlConnection, connectioRequestMessage, endpointAtRelay);
+            socket = targetRelayClient.accept();
         } catch (final Exception e) {
             logger.error(e.getMessage());
             throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
@@ -149,79 +150,78 @@ public final class Relaying implements NATTraversalTechnique {
         return socket;
     }
 
-    @Override
-    public void registerTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws Exception {
-        try {
-            this.connectToMediatorIfNotAlreadyConnected(mediatorAddress, 0);
-            this.targetRelayClient = new RelayingClient(this.relayAddress);
-            final InetSocketAddress endpointAtRelay = this.createAllocationAtRelayServer();
-            logger.debug("created endpoint at relay server: {}", endpointAtRelay.toString()); //$NON-NLS-1$
-            this.registerRelayEndpointAtMediator(targetId, endpointAtRelay);
-            this.isRegistered = true;
-        } catch (final Exception e) {
-            logger.error(e.getMessage());
-            throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
-                    "Target could not be registered.", e); //$NON-NLS-1$
-        }
-    }
-
-    private void connectToMediatorIfNotAlreadyConnected(final InetSocketAddress mediatorAddress, final int localport)
-            throws ConnectionNotEstablishedException {
-        logger.debug("checking connection with mediator {}", mediatorAddress); //$NON-NLS-1$
-        if (!this.controlConnection.isConnected()) {
-            logger.debug("control connection not established, trying to connect"); //$NON-NLS-1$
-            try {
-                logger.debug("trying to connect to {}", mediatorAddress); //$NON-NLS-1$
-                this.controlConnection.connect(mediatorAddress);
-                logger.debug("control connection established"); //$NON-NLS-1$
-            } catch (final Exception e) {
-                logger.error("Exception while connecting to mediator", e); //$NON-NLS-1$
-                throw new ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
-                        "Control connection could not be established.", e); //$NON-NLS-1$
-            }
+    private void sendConnectionRequestResponse(final Socket controlConnection, final Message connectionRequest,
+            final InetSocketAddress endpointAtRelay) throws IOException {
+        final Message response = connectionRequest.buildSuccessResponse();
+        XorMappedAddress endpointAtRelayAttribute;
+        if (endpointAtRelay.getAddress() instanceof Inet6Address) {
+            endpointAtRelayAttribute = new XorMappedAddress(endpointAtRelay, ByteBuffer.wrap(
+                    response.getHeader().getTransactionId()).getInt());
         } else {
-            logger.debug("control connection already established"); //$NON-NLS-1$
+            endpointAtRelayAttribute = new XorMappedAddress(endpointAtRelay);
         }
+        response.addAttribute(endpointAtRelayAttribute);
+        response.writeTo(controlConnection.getOutputStream());
     }
 
-    private InetSocketAddress createAllocationAtRelayServer() throws Exception {
-        InetSocketAddress result = null;
-        result = this.targetRelayClient.createAllocation();
+    @Override
+    public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // try {
+        // this.targetRelayClient = new RelayingClient(this.relayAddress);
+        // final InetSocketAddress endpointAtRelay =
+        // this.createAllocationAtRelayServer();
+        //            logger.debug("created endpoint at relay server: {}", endpointAtRelay.toString()); //$NON-NLS-1$
+        // this.registerRelayEndpointAtMediator(targetId, endpointAtRelay,
+        // controlConnection);
+        // this.isRegistered = true;
+        // } catch (final Exception e) {
+        // logger.error(e.getMessage());
+        // throw new
+        // ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
+        //                    "Target could not be registered.", e); //$NON-NLS-1$
+        // }
+    }
+
+    private InetSocketAddress createAllocationAtRelayServer(final RelayingClient relayingClient) throws Exception {
+        InetSocketAddress result = relayingClient.createAllocation();
         if (result.getAddress().isAnyLocalAddress()) {
             result = new InetSocketAddress(this.relayAddress.getAddress(), result.getPort());
         }
         return result;
     }
 
-    private void registerRelayEndpointAtMediator(final String targetId, final InetSocketAddress endpointAtRelay)
-            throws Exception {
-        final Message registerMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.REGISTER);
-        final Username userName = new Username(targetId);
-        registerMessage.addAttribute(userName);
-        registerMessage.addAttribute(new XorMappedAddress(endpointAtRelay));
-        registerMessage.writeTo(this.controlConnection.getOutputStream());
-    }
+    // private void registerRelayEndpointAtMediator(final String targetId, final
+    // InetSocketAddress endpointAtRelay,
+    // final Socket controlConnection) throws Exception {
+    // final Message registerMessage =
+    // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+    // STUNMessageMethod.REGISTER);
+    // final Username userName = new Username(targetId);
+    // registerMessage.addAttribute(userName);
+    // registerMessage.addAttribute(new XorMappedAddress(endpointAtRelay));
+    // registerMessage.writeTo(controlConnection.getOutputStream());
+    // }
 
     @Override
-    public void deregisterTargetAtMediator(final String targetId, final InetSocketAddress mediatorAddress)
-            throws Exception {
-        try {
-            this.deregisterRelayEndpointAtMediator(targetId);
-            this.isRegistered = false;
-        } catch (final Exception e) {
-            logger.error("Exception while deregistering target {}: {}", targetId, e.getMessage()); //$NON-NLS-1$
-            throw new Exception("Exception while deregistering target", e); //$NON-NLS-1$
-        }
+    public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
+        // try {
+        // this.deregisterRelayEndpointAtMediator(targetId, controlConnection);
+        // this.isRegistered = false;
+        // } catch (final Exception e) {
+        //            logger.error("Exception while deregistering target {}: {}", targetId, e.getMessage()); //$NON-NLS-1$
+        //            throw new Exception("Exception while deregistering target", e); //$NON-NLS-1$
+        // }
     }
 
-    private void deregisterRelayEndpointAtMediator(final String targetId) throws Exception {
-        final Message deregisterMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.DEREGISTER);
-        deregisterMessage.addAttribute(new Username(targetId));
-        deregisterMessage.writeTo(this.controlConnection.getOutputStream());
-    }
+    // private void deregisterRelayEndpointAtMediator(final String targetId,
+    // final Socket controlConnection)
+    // throws Exception {
+    // final Message deregisterMessage =
+    // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+    // STUNMessageMethod.DEREGISTER);
+    // deregisterMessage.addAttribute(new Username(targetId));
+    // deregisterMessage.writeTo(controlConnection.getOutputStream());
+    // }
 
     @Override
     public NATTraversalTechniqueMetaData getMetaData() {
