@@ -46,6 +46,7 @@ public final class HandleMessageTask implements Runnable {
     private final HandleMessage deregisterMessageHandler;
     private final HandleMessage keepAliveMessageHandler;
     private final HandleMessage connectionRequestMessageHandler;
+    private final HandleMessage natRequestMessageHandler;
 
     /**
      * Creates a {@link HandleMessageTask} which processes messages of the given
@@ -64,6 +65,7 @@ public final class HandleMessageTask implements Runnable {
         this.deregisterMessageHandler = new DefaultDeregisterHandling();
         this.keepAliveMessageHandler = new DefaultKeepAliveHandling();
         this.connectionRequestMessageHandler = new ConnectionRequestHandling();
+        this.natRequestMessageHandler = new DefaultNatRequestHandling();
     }
 
     @Override
@@ -90,6 +92,8 @@ public final class HandleMessageTask implements Runnable {
                 this.handleKeepAliveMessae(toHandle);
             } else if (toHandle.isMethod(STUNMessageMethod.CONNECTION_REQUEST)) {
                 this.handleConnectionRequestMessage(toHandle);
+            } else if (toHandle.isMethod(STUNMessageMethod.NAT_REQUEST)) {
+                this.handleNatRequestMessage(toHandle);
             } else if (toHandle.isMethod(STUNMessageMethod.DEREGISTER)) {
                 this.handleDeregisterMessage(toHandle);
             } else {
@@ -120,6 +124,10 @@ public final class HandleMessageTask implements Runnable {
 
     private void handleConnectionRequestMessage(final Message connectionRequestMessage) throws Exception {
         this.connectionRequestMessageHandler.handleMessage(connectionRequestMessage, this.socket);
+    }
+
+    private void handleNatRequestMessage(final Message natRequestMessage) throws Exception {
+        this.natRequestMessageHandler.handleMessage(natRequestMessage, this.socket);
     }
 
     private void sendSuccessResponse(final Message toRespond) throws Exception {

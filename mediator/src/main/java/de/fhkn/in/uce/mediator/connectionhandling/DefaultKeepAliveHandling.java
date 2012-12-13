@@ -46,6 +46,12 @@ public final class DefaultKeepAliveHandling implements HandleMessage {
         this.mediatorUtil.checkForAttribute(keepaliveMessage, Username.class);
         final Username username = keepaliveMessage.getAttribute(Username.class);
         this.userList.refreshUserTimestamp(username.getUsernameAsString());
+        this.sendSuccessResponse(keepaliveMessage, controlConnection);
+    }
+
+    private void sendSuccessResponse(final Message toRespond, final Socket controlConnection) throws Exception {
+        final Message response = toRespond.buildSuccessResponse();
+        response.writeTo(controlConnection.getOutputStream());
     }
 
     @Override

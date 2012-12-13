@@ -57,6 +57,12 @@ public final class DefaultRegisterHandling implements HandleMessage {
         newUser.addEndpoint(this.getPublicEndpointFromSocket(controlConnection));
         newUser.addEndpoint(this.createEndpointFromAttributes(registerMessage));
         this.userList.addOrUpdateUser(newUser);
+        this.sendSuccessResponse(registerMessage, controlConnection);
+    }
+
+    private void sendSuccessResponse(final Message toRespond, final Socket controlConnection) throws Exception {
+        final Message response = toRespond.buildSuccessResponse();
+        response.writeTo(controlConnection.getOutputStream());
     }
 
     private void checkForRequiredAttributes(final Message registerMessage) throws Exception {

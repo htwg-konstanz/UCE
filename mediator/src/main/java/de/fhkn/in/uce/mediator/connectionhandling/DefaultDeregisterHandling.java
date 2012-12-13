@@ -46,6 +46,12 @@ public final class DefaultDeregisterHandling implements HandleMessage {
         this.mediatorUtil.checkForAttribute(deregisterMessage, Username.class);
         final Username username = deregisterMessage.getAttribute(Username.class);
         this.userList.removeUser(username.getUsernameAsString());
+        this.sendSuccessResponse(deregisterMessage, controlConnection);
+    }
+
+    private void sendSuccessResponse(final Message toRespond, final Socket controlConnection) throws Exception {
+        final Message response = toRespond.buildSuccessResponse();
+        response.writeTo(controlConnection.getOutputStream());
     }
 
     @Override
