@@ -16,10 +16,13 @@
  */
 package de.fhkn.in.uce.stun.server.connectionhandling;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
@@ -46,10 +49,13 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  */
 public final class HandleMessageTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(HandleMessageTask.class);
+    private static final int TIMEOUT_IN_SECONDS = 10 * 1000;
     private final Socket socket;
     private final InetSocketAddress primaryAddress;
     private final InetSocketAddress secondaryAddress;
     private final MessageReader messageReader;
+
+    private final int thirdPort;
 
     /**
      * Creates a {@link HandleMessageTask} to handle STUN messages over TCP.
@@ -67,24 +73,27 @@ public final class HandleMessageTask implements Runnable {
         this.primaryAddress = primaryAddress;
         this.secondaryAddress = secondaryAddress;
         this.messageReader = MessageReader.createMessageReader();
+        this.thirdPort = secondaryAddress.getPort();
     }
 
     @Override
     public void run() {
-        while (this.socket.isConnected()) {
+        while (this.socket.isConnected() && !this.socket.isClosed()) {
             try {
                 final Message inMessage = this.receiveMessage();
                 logger.debug("received message at local {}:{}", this.socket.getLocalAddress(), //$NON-NLS-1$
                         this.socket.getLocalPort());
                 this.handleMessage(inMessage);
+            } catch (final EOFException eofe) {
+                // TODO why is this exception thrown?
             } catch (final Exception e) {
                 logger.error(e.getMessage(), e);
-                logger.debug("Closing socket if not already done"); //$NON-NLS-1$
                 if (!this.socket.isClosed()) {
+                    logger.debug("Closing socket"); //$NON-NLS-1$
                     try {
                         this.socket.close();
                     } catch (final IOException e1) {
-                        logger.error(e.getMessage(), e);
+                        // logger.error(e.getMessage(), e);
                     }
                 }
                 return;
@@ -123,28 +132,50 @@ public final class HandleMessageTask implements Runnable {
 
     private void handleMessageWithChangeRequestAttribute(final Message toHandle) throws Exception {
         final ChangeRequest changeRequest = toHandle.getAttribute(ChangeRequest.class);
-        if (changeRequest.isChangeIp() && changeRequest.isChangePort()) {
-            this.sendIndicationViaNewSocket(this.secondaryAddress, toHandle);
-        } else if (!changeRequest.isChangeIp() && changeRequest.isChangePort()) {
-            this.sendIndicationViaNewSocket(new InetSocketAddress(this.primaryAddress.getAddress(),
-                    this.secondaryAddress.getPort()), toHandle);
-        } else if (!changeRequest.isChangeIp() && !changeRequest.isChangePort()) {
+        logger.debug("Getting indication with change request flag = {}", changeRequest.getFlag()); //$NON-NLS-1$
+        switch (changeRequest.getFlag()) {
+        case ChangeRequest.CHANGE_IP_AND_PORT:
+            this.sendIndicationViaNewSocket(new InetSocketAddress(this.secondaryAddress.getAddress(), this.thirdPort),
+                    toHandle);
+            break;
+        case ChangeRequest.CHANGE_PORT:
+            this.sendIndicationViaNewSocket(new InetSocketAddress(this.primaryAddress.getAddress(), this.thirdPort),
+                    toHandle);
+            break;
+        case ChangeRequest.FLAGS_NOT_SET:
             // for checking connection dependent filtering, not part of RFC 5780
             this.sendIndicationViaNewSocket(this.primaryAddress, toHandle);
+            break;
+        case ChangeRequest.CHANGE_IP:
+            this.sendIndicationViaNewSocket(new InetSocketAddress(this.secondaryAddress.getAddress(),
+                    this.primaryAddress.getPort()), toHandle);
+            break;
+        default:
+            break;
         }
     }
 
-    private void sendIndicationViaNewSocket(final InetSocketAddress bindAddress, final Message message)
-            throws Exception {
-        final Message indication = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.INDICATION,
-                STUNMessageMethod.BINDING);
-        indication.addAttribute(this.getPublicClientAddressAsAttribute(message));
-        final Socket newSocket = new Socket();
-        newSocket.bind(new InetSocketAddress(this.primaryAddress.getAddress(), this.secondaryAddress.getPort()));
-        newSocket.setReuseAddress(true);
-        newSocket.connect(this.socket.getRemoteSocketAddress());
-        indication.writeTo(newSocket.getOutputStream());
-        newSocket.close();
+    private void sendIndicationViaNewSocket(final InetSocketAddress bindAddress, final Message message) {
+        try {
+            final Message indication = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.INDICATION,
+                    STUNMessageMethod.BINDING);
+            indication.addAttribute(this.getPublicClientAddressAsAttribute(message));
+            final Socket newSocket = new Socket();
+            newSocket.setReuseAddress(true);
+            logger.debug("Binding new socket to {}", bindAddress); //$NON-NLS-1$
+            newSocket.bind(bindAddress);
+            logger.debug("Connecting to {}", this.socket.getRemoteSocketAddress()); //$NON-NLS-1$
+            newSocket.connect(this.socket.getRemoteSocketAddress(), TIMEOUT_IN_SECONDS);
+            logger.debug("Wrtiting indication"); //$NON-NLS-1$
+            indication.writeTo(newSocket.getOutputStream());
+            newSocket.close();
+        } catch (final SocketTimeoutException ste) {
+            // do nothing
+        } catch (SocketException e) {
+            // do nothing
+        } catch (IOException e) {
+            // do nothing
+        }
     }
 
     private boolean isPrimaryAddress() {

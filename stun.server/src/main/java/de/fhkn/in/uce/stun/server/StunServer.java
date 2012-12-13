@@ -81,12 +81,12 @@ public final class StunServer {
      * @throws Exception
      */
     public void startStunServer() throws Exception {
-        for (SocketListener socketListener : this.getListWIthSocketListeners()) {
+        for (SocketListener socketListener : this.getListWithSocketListeners()) {
             this.socketListenerExecutor.execute(socketListener);
         }
     }
 
-    private List<SocketListener> getListWIthSocketListeners() throws IOException {
+    private List<SocketListener> getListWithSocketListeners() throws IOException {
         final List<SocketListener> result = new ArrayList<SocketListener>();
         result.add(this.createSocketListener(this.primaryAddress));
         result.add(this.createSocketListener(new InetSocketAddress(this.primaryAddress.getAddress(),
@@ -100,7 +100,7 @@ public final class StunServer {
     private SocketListener createSocketListener(final InetSocketAddress listenerAddress) throws IOException {
         final ServerSocket serverSocket = new ServerSocket();
         serverSocket.setReuseAddress(true);
-        serverSocket.bind(this.secondaryAddress);
+        serverSocket.bind(listenerAddress);
         return new SocketListener(serverSocket, this.handleExecutor, this.handleMessageTaskFactory);
     }
 
