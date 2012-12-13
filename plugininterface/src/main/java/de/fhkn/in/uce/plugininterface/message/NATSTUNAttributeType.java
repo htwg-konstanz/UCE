@@ -53,8 +53,7 @@ public enum NATSTUNAttributeType implements AttributeType {
         @Override
         public Attribute fromBytes(byte[] encoded, AttributeHeader header, MessageHeader messageHeader)
                 throws MessageFormatException, IOException {
-            // TODO Auto-generated method stub
-            return null;
+            return NATTraversalTechniqueAttribute.fromBytes(encoded, header);
         }
 
     };

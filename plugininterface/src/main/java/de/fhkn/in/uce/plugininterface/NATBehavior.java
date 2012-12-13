@@ -47,11 +47,11 @@ public final class NATBehavior implements Attribute {
     private static final int LENGTH = 4;
 
     /**
-     * Creates a unknown {@link NATBehavior}. In this case all
-     * {@link NATFeatureRealization}s are set to unknown.
+     * Creates a {@link NATBehavior}. In this case all
+     * {@link NATFeatureRealization}s are set to don't care.
      */
     public NATBehavior() {
-        this(NATFeatureRealization.UNKNOWN, NATFeatureRealization.UNKNOWN);
+        this(NATFeatureRealization.DONT_CARE, NATFeatureRealization.DONT_CARE);
     }
 
     /**

@@ -57,11 +57,16 @@ public enum NATFeatureRealization {
      */
     NOT_REALIZED(0x5),
 
+    // /**
+    // * Represents a unknown {@link NATFeatureRealization} of a
+    // * {@link NATFeature}.
+    // */
+    // UNKNOWN(0x6),
+
     /**
-     * Represents a unknown {@link NATFeatureRealization} of a
-     * {@link NATFeature}.
+     * Wildcard, in this case all values previously defined values are possible.
      */
-    UNKNOWN(0x6);
+    DONT_CARE(0x7);
 
     private static final Map<Integer, NATFeatureRealization> intToEnum = new ConcurrentHashMap<Integer, NATFeatureRealization>();
 

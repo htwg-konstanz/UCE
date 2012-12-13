@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 import de.fhkn.in.uce.plugininterface.NATBehavior;
+import de.fhkn.in.uce.plugininterface.NATFeature;
 import de.fhkn.in.uce.plugininterface.NATFeatureRealization;
 import de.fhkn.in.uce.plugininterface.NATSituation;
 
@@ -73,7 +74,7 @@ public final class NATTraversalTechniqueUtil {
             result.add(traversaledNATBehavior);
         }
 
-        return Collections.unmodifiableSet(result);
+        return Collections.unmodifiableSet(this.resolveWildcards(result));
     }
 
     private InputStream getResourceAsStream(final String resourceName) {
@@ -87,6 +88,83 @@ public final class NATTraversalTechniqueUtil {
         final NATFeatureRealization serviceFiltering = NATFeatureRealization.valueOf(values[3].toUpperCase());
 
         return new NATSituation(clientMapping, clientFiltering, serviceMapping, serviceFiltering);
+    }
+
+    private Set<NATSituation> resolveWildcards(final Set<NATSituation> withWildcards) {
+        // TODO refactor: divide and conquer
+        final Set<NATSituation> result = new HashSet<NATSituation>();
+        for (NATSituation withWildcard : withWildcards) {
+            // resolve client
+            final NATBehavior clientNat = withWildcard.getClientNATBehavior();
+            final Set<NATBehavior> clientBehaviors = new HashSet<NATBehavior>();
+            if (this.hasWildcard(clientNat)) {
+                clientBehaviors.addAll(this.resolveWildcardInNatBehavior(clientNat));
+            } else {
+                clientBehaviors.add(clientNat);
+            }
+            // resolve server
+            final NATBehavior serverNat = withWildcard.getServiceNATBehavior();
+            final Set<NATBehavior> serverBehaviors = new HashSet<NATBehavior>();
+            if (this.hasWildcard(serverNat)) {
+                serverBehaviors.addAll(this.resolveWildcardInNatBehavior(serverNat));
+            } else {
+                serverBehaviors.add(serverNat);
+            }
+            // combine
+            for (NATBehavior clientBehavior : clientBehaviors) {
+                for (NATBehavior serverBehavior : serverBehaviors) {
+                    result.add(new NATSituation(clientBehavior, serverBehavior));
+                }
+            }
+        }
+        return Collections.unmodifiableSet(result);
+    }
+
+    private boolean hasWildcard(final NATBehavior nat) {
+        final Set<NATFeature> features = nat.getNATFeatures();
+        for (NATFeature natFeature : features) {
+            if (nat.getFeatureRealization(natFeature).equals(NATFeatureRealization.DONT_CARE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<NATBehavior> resolveWildcardInNatBehavior(final NATBehavior nat) {
+        // TODO refactor
+        final Set<NATBehavior> firstResult = new HashSet<NATBehavior>();
+        final Set<NATBehavior> result = new HashSet<NATBehavior>();
+        if (nat.getFeatureRealization(NATFeature.MAPPING).equals(NATFeatureRealization.DONT_CARE)) {
+            for (NATFeatureRealization nonWildcard : this.getNonWildcardFeatureRealizations()) {
+                NATBehavior newNatBehavior = new NATBehavior(nonWildcard,
+                        nat.getFeatureRealization(NATFeature.FILTERING));
+                firstResult.add(newNatBehavior);
+            }
+        } else {
+            firstResult.add(nat);
+        }
+        for (NATBehavior natBehavior : firstResult) {
+            if (natBehavior.getFeatureRealization(NATFeature.FILTERING).equals(NATFeatureRealization.DONT_CARE)) {
+                for (NATFeatureRealization nonWildcard : this.getNonWildcardFeatureRealizations()) {
+                    NATBehavior newNatBehavior = new NATBehavior(natBehavior.getFeatureRealization(NATFeature.MAPPING),
+                            nonWildcard);
+                    result.add(newNatBehavior);
+                }
+            } else {
+                result.add(natBehavior);
+            }
+        }
+        return result;
+    }
+
+    private Set<NATFeatureRealization> getNonWildcardFeatureRealizations() {
+        final Set<NATFeatureRealization> result = new HashSet<NATFeatureRealization>();
+        for (NATFeatureRealization value : NATFeatureRealization.values()) {
+            if (!value.equals(NATFeatureRealization.DONT_CARE)) {
+                result.add(value);
+            }
+        }
+        return Collections.unmodifiableSet(result);
     }
 
     /**
@@ -110,8 +188,9 @@ public final class NATTraversalTechniqueUtil {
 
     private Set<NATBehavior> getAllPossibleNATBehaviors() {
         final Set<NATBehavior> result = new HashSet<NATBehavior>();
-        for (NATFeatureRealization a : NATFeatureRealization.values()) {
-            for (NATFeatureRealization b : NATFeatureRealization.values()) {
+        final Set<NATFeatureRealization> nonWildcards = this.getNonWildcardFeatureRealizations();
+        for (NATFeatureRealization a : nonWildcards) {
+            for (NATFeatureRealization b : nonWildcards) {
                 result.add(new NATBehavior(a, b));
             }
         }
