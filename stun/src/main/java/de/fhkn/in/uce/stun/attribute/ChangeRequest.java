@@ -82,7 +82,7 @@ public final class ChangeRequest implements Attribute {
      * @return true if the change IP flag is set, false else
      */
     public boolean isChangeIp() {
-        return this.flag == CHANGE_IP;
+        return this.flag == CHANGE_IP || this.flag == CHANGE_IP_AND_PORT;
     }
 
     /**
@@ -91,7 +91,7 @@ public final class ChangeRequest implements Attribute {
      * @return true if the change port flag is set, false else
      */
     public boolean isChangePort() {
-        return this.flag == CHANGE_PORT;
+        return this.flag == CHANGE_PORT || this.flag == CHANGE_IP_AND_PORT;
     }
 
     @Override
