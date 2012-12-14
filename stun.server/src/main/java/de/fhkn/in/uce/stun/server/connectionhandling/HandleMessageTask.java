@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
@@ -73,7 +71,7 @@ public final class HandleMessageTask implements Runnable {
         this.primaryAddress = primaryAddress;
         this.secondaryAddress = secondaryAddress;
         this.messageReader = MessageReader.createMessageReader();
-        this.thirdPort = secondaryAddress.getPort();
+        this.thirdPort = secondaryAddress.getPort() + 1;
     }
 
     @Override
@@ -115,9 +113,13 @@ public final class HandleMessageTask implements Runnable {
 
     private void handleBindingMessage(final Message toHandle) throws Exception {
         if (toHandle.isRequest() && toHandle.isMethod(STUNMessageMethod.BINDING)) {
+            logger.debug("handling binding request"); //$NON-NLS-1$
             this.handleSimpleBindingRequest(toHandle);
         } else if (this.isPrimaryAddress() && toHandle.hasAttribute(ChangeRequest.class)) {
-            this.handleMessageWithChangeRequestAttribute(toHandle);
+            final InetSocketAddress remoteAddress = new InetSocketAddress(this.socket.getInetAddress(),
+                    this.socket.getPort());
+            logger.debug("handling message with change request attribute"); //$NON-NLS-1$
+            this.handleMessageWithChangeRequestAttribute(toHandle, remoteAddress);
         }
     }
 
@@ -130,32 +132,40 @@ public final class HandleMessageTask implements Runnable {
         response.writeTo(this.socket.getOutputStream());
     }
 
-    private void handleMessageWithChangeRequestAttribute(final Message toHandle) throws Exception {
+    private void handleMessageWithChangeRequestAttribute(final Message toHandle, final InetSocketAddress remoteAddress)
+            throws Exception {
         final ChangeRequest changeRequest = toHandle.getAttribute(ChangeRequest.class);
         logger.debug("Getting indication with change request flag = {}", changeRequest.getFlag()); //$NON-NLS-1$
         switch (changeRequest.getFlag()) {
         case ChangeRequest.CHANGE_IP_AND_PORT:
             this.sendIndicationViaNewSocket(new InetSocketAddress(this.secondaryAddress.getAddress(), this.thirdPort),
-                    toHandle);
+                    toHandle, remoteAddress);
             break;
         case ChangeRequest.CHANGE_PORT:
             this.sendIndicationViaNewSocket(new InetSocketAddress(this.primaryAddress.getAddress(), this.thirdPort),
-                    toHandle);
+                    toHandle, remoteAddress);
             break;
         case ChangeRequest.FLAGS_NOT_SET:
             // for checking connection dependent filtering, not part of RFC 5780
-            this.sendIndicationViaNewSocket(this.primaryAddress, toHandle);
+            // the server should try to establish a connection from the primary
+            // address but this does not work under linux
+            // this.socket.close();
+            // logger.debug("socket to client closed");
+            // this.waitForSocketClosed();
+            // this.sendIndicationViaNewSocket(this.primaryAddress, toHandle,
+            // remoteAddress);
             break;
         case ChangeRequest.CHANGE_IP:
             this.sendIndicationViaNewSocket(new InetSocketAddress(this.secondaryAddress.getAddress(),
-                    this.primaryAddress.getPort()), toHandle);
+                    this.primaryAddress.getPort()), toHandle, remoteAddress);
             break;
         default:
             break;
         }
     }
 
-    private void sendIndicationViaNewSocket(final InetSocketAddress bindAddress, final Message message) {
+    private void sendIndicationViaNewSocket(final InetSocketAddress bindAddress, final Message message,
+            final InetSocketAddress remoteAddress) {
         try {
             final Message indication = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.INDICATION,
                     STUNMessageMethod.BINDING);
@@ -164,17 +174,13 @@ public final class HandleMessageTask implements Runnable {
             newSocket.setReuseAddress(true);
             logger.debug("Binding new socket to {}", bindAddress); //$NON-NLS-1$
             newSocket.bind(bindAddress);
-            logger.debug("Connecting to {}", this.socket.getRemoteSocketAddress()); //$NON-NLS-1$
-            newSocket.connect(this.socket.getRemoteSocketAddress(), TIMEOUT_IN_SECONDS);
+            logger.debug("Connecting to {}", remoteAddress.toString()); //$NON-NLS-1$
+            newSocket.connect(remoteAddress, TIMEOUT_IN_SECONDS);
             logger.debug("Wrtiting indication"); //$NON-NLS-1$
             indication.writeTo(newSocket.getOutputStream());
             newSocket.close();
-        } catch (final SocketTimeoutException ste) {
-            // do nothing
-        } catch (SocketException e) {
-            // do nothing
         } catch (IOException e) {
-            // do nothing
+            logger.error("Connection to client not successfully established: {}", e.getMessage()); //$NON-NLS-1$
         }
     }
 
