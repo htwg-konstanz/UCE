@@ -95,10 +95,11 @@ public class MessageDispatcherTask implements Runnable {
     public void run() {
         Message message;
         try {
-            MessageReader messageReader = this.createCustomRelayingMessageReader();
+            final MessageReader messageReader = this.createCustomRelayingMessageReader();
+            logger.debug("Reading incoming message from {}", s.toString()); //$NON-NLS-1$
             message = messageReader.readSTUNMessage(s.getInputStream());
         } catch (IOException e) {
-            logger.error("IOEXception while receiving message: {}", e);
+            logger.error("IOEXception while receiving message: {}", e.getMessage());
             return;
         }
         if (message.isMethod(RelayingMethod.ALLOCATION) && message.isRequest()) {
@@ -122,6 +123,7 @@ public class MessageDispatcherTask implements Runnable {
     }
 
     private MessageReader createCustomRelayingMessageReader() {
+        logger.debug("Creating custom relaying message reader"); //$NON-NLS-1$
         final List<MessageMethodDecoder> customMethodDecoders = new ArrayList<MessageMethodDecoder>();
         customMethodDecoders.add(new RelayingMethodDecoder());
         final List<AttributeTypeDecoder> customAttributeTypeDecoders = new ArrayList<AttributeTypeDecoder>();

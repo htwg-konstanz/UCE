@@ -35,7 +35,7 @@ import de.fhkn.in.uce.relaying.message.RelayingLifetime;
 import de.fhkn.in.uce.stun.attribute.EndpointClass;
 import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageWriter;
 
@@ -119,7 +119,7 @@ final class RelayAllocationHandler {
                         controlConnectionWriter, lifetime, peerSocketListener));
                 peerSocketListener.start();
                 Message successResponse = relayAllocationMessage.buildSuccessResponse();
-                successResponse.addAttribute(new MappedAddress(new InetSocketAddress(peerSS.getInetAddress(), peerSS
+                successResponse.addAttribute(new XorMappedAddress(new InetSocketAddress(peerSS.getInetAddress(), peerSS
                         .getLocalPort())));
                 successResponse.addAttribute(new EndpointClass(EndpointCategory.RELAY));
                 successResponse.addAttribute(new RelayingLifetime(lifetime));

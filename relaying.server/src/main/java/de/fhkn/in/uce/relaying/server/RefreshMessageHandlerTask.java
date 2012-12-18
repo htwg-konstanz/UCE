@@ -19,8 +19,6 @@ package de.fhkn.in.uce.relaying.server;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +27,8 @@ import de.fhkn.in.net.SocketListener;
 import de.fhkn.in.uce.relaying.message.RelayingAttributeTypeDecoder;
 import de.fhkn.in.uce.relaying.message.RelayingConstants;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
-import de.fhkn.in.uce.relaying.message.RelayingMethod;
-import de.fhkn.in.uce.relaying.message.RelayingMethodDecoder;
-import de.fhkn.in.uce.stun.attribute.AttributeTypeDecoder;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
-import de.fhkn.in.uce.stun.header.MessageMethodDecoder;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageWriter;
@@ -105,7 +100,7 @@ public final class RefreshMessageHandlerTask implements Runnable {
                     logger.error("Received message was null");
                     break;
                 }
-                if (message.isMethod(RelayingMethod.REFRESH) && message.isRequest()) {
+                if (message.isMethod(STUNMessageMethod.KEEP_ALIVE) && message.isRequest()) {
                     int lifetime = message.getAttribute(RelayingLifetime.class).getLifeTime();
                     logger.info("Received refresh request with lifetime {}", lifetime);
                     if (lifetime > 0) {
@@ -152,11 +147,6 @@ public final class RefreshMessageHandlerTask implements Runnable {
     }
 
     private MessageReader createCustomRelayingMessageReader() {
-        final List<MessageMethodDecoder> customMethodDecoders = new ArrayList<MessageMethodDecoder>();
-        customMethodDecoders.add(new RelayingMethodDecoder());
-        final List<AttributeTypeDecoder> customAttributeTypeDecoders = new ArrayList<AttributeTypeDecoder>();
-        customAttributeTypeDecoders.add(new RelayingAttributeTypeDecoder());
-        return MessageReader.createMessageReaderWithCustomDecoderLists(customMethodDecoders,
-                customAttributeTypeDecoders);
+        return MessageReader.createMessageReaderWithCustomAttributeTypeDecoder(new RelayingAttributeTypeDecoder());
     }
 }
