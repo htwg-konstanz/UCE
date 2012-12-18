@@ -16,7 +16,6 @@
  */
 package de.fhkn.in.uce.holepunching.core.target;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -30,11 +29,9 @@ import de.fhkn.in.uce.holepunching.core.CancelableTask;
 import de.fhkn.in.uce.holepunching.core.ConnectionListener;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
-import de.fhkn.in.uce.holepunching.message.HolePunchingMethod;
 import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.message.Message;
-import de.fhkn.in.uce.stun.message.MessageReader;
 
 /**
  * Task that is waiting for forward endpoints messages and keep-live messages.
@@ -51,6 +48,8 @@ public final class MessageHandlerTask implements CancelableTask {
     private final HolePuncher hp;
     private boolean cancelled = false;
     private final HolePunchingUtil hpUtil;
+    private final List<XorMappedAddress> endpoints;
+    private final Token authentificationToken;
 
     /**
      * Creates a new {@link MessageHandlerTask}.
@@ -61,13 +60,16 @@ public final class MessageHandlerTask implements CancelableTask {
      *            queue to put established and authenticated hole punching
      *            connections.
      */
-    public MessageHandlerTask(final Socket socketToMediator, final BlockingQueue<Socket> socketQueue, final int port) {
+    public MessageHandlerTask(final Socket socketToMediator, final BlockingQueue<Socket> socketQueue, final int port,
+            final List<XorMappedAddress> endpoints, final Token authentificationToken) {
         this.hpUtil = HolePunchingUtil.getInstance();
         this.socketToMediator = socketToMediator;
         final SocketAddress localSocketAddress = new InetSocketAddress(port);
         this.connectionListener = new ConnectionListener(socketToMediator.getLocalAddress(),
                 socketToMediator.getLocalPort());
         this.hp = new HolePuncher(this.connectionListener, localSocketAddress, socketQueue);
+        this.endpoints = endpoints;
+        this.authentificationToken = authentificationToken;
     }
 
     /**
@@ -79,26 +81,38 @@ public final class MessageHandlerTask implements CancelableTask {
      */
     @Override
     public void run() {
-        final MessageReader messageReader = this.hpUtil.getCustomHolePunchingMessageReader();
-        while (!this.cancelled) {
-            try {
-                final Message receivedMessage = messageReader.readSTUNMessage(this.socketToMediator.getInputStream());
-                if (this.isForwardedEndpointsMessage(receivedMessage)) {
-                    logger.info("New ForwardedEndpointsMessage, starting hole punching"); //$NON-NLS-1$
-                    final TargetConnectionAuthenticator authentification = new TargetConnectionAuthenticator(
-                            receivedMessage.getAttribute(Token.class).getToken());
-                    final List<XorMappedAddress> addresses = receivedMessage.getAttributes(XorMappedAddress.class);
-                    this.startHolePunching(addresses, authentification);
-                }
-            } catch (final IOException e) {
-                logger.error("Exception while reading incoming message", e); //$NON-NLS-1$
-            }
-        }
+        // final MessageReader messageReader =
+        // this.hpUtil.getCustomHolePunchingMessageReader();
+        // while (!this.cancelled) {
+        // try {
+        //                logger.debug("Trying to read incoming message from mediator {}", this.socketToMediator.toString()); //$NON-NLS-1$
+        // final Message receivedMessage =
+        // messageReader.readSTUNMessage(this.socketToMediator.getInputStream());
+        // logger.debug("Received message {}:{}",
+        // receivedMessage.getMessageClass().toString(), receivedMessage
+        // .getMessageMethod().toString());
+        // if (this.isForwardedEndpointsMessage(receivedMessage)) {
+        //                    logger.info("New ForwardedEndpointsMessage, starting hole punching"); //$NON-NLS-1$
+        // final TargetConnectionAuthenticator authentification = new
+        // TargetConnectionAuthenticator(
+        // receivedMessage.getAttribute(Token.class).getToken());
+        // final List<XorMappedAddress> addresses =
+        // receivedMessage.getAttributes(XorMappedAddress.class);
+        // this.startHolePunching(addresses, authentification);
+        this.startHolePunching(this.endpoints, new TargetConnectionAuthenticator(this.authentificationToken.getToken()));
+        // }
+        // } catch (final IOException e) {
+        //                logger.error("Exception while reading incoming message", e); //$NON-NLS-1$
+        // }
+        // }
+        //        logger.debug("Message handler task is cancelled"); //$NON-NLS-1$
     }
 
     private boolean isForwardedEndpointsMessage(final Message toCheck) {
-        return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) && toCheck.hasAttribute(XorMappedAddress.class)
-                && toCheck.hasAttribute(Token.class);
+        // return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) &&
+        // toCheck.hasAttribute(XorMappedAddress.class)
+        // && toCheck.hasAttribute(Token.class);
+        return toCheck.hasAttribute(XorMappedAddress.class) && toCheck.hasAttribute(Token.class);
     }
 
     private void startHolePunching(final List<XorMappedAddress> endpoints,

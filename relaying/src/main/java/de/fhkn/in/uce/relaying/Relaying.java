@@ -30,6 +30,7 @@ import de.fhkn.in.uce.plugininterface.ConnectionNotEstablishedException;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
 import de.fhkn.in.uce.relaying.core.RelayingClient;
+import de.fhkn.in.uce.relaying.message.RelayingAttribute;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
@@ -47,9 +48,10 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  */
 public final class Relaying implements NATTraversalTechnique {
     private static final Logger logger = LoggerFactory.getLogger(Relaying.class);
+    private static final String BUNDLE_NAME_RELAYING_PROPERTIES = "de.fhkn.in.uce.relaying.relaying"; //$NON-NLS-1$
     private final NATTraversalTechniqueMetaData metaData;
     private final InetSocketAddress relayAddress;
-    private final ResourceBundle bundle = ResourceBundle.getBundle("de.fhkn.in.uce.relay.traversal.relaying"); //$NON-NLS-1$
+    private final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME_RELAYING_PROPERTIES);
 
     // private RelayingClient targetRelayClient = null;
 
@@ -75,7 +77,7 @@ public final class Relaying implements NATTraversalTechnique {
         }
     }
 
-    private InetSocketAddress getRelayServerAddressFromBundle() {
+    private InetSocketAddress getRelayServerAddressFromBundle() throws Exception {
         final String host = this.bundle.getString("relaying.server.ip"); //$NON-NLS-1$
         final String port = this.bundle.getString("relaying.server.port"); //$NON-NLS-1$
         return new InetSocketAddress(host, Integer.valueOf(port));
@@ -101,6 +103,7 @@ public final class Relaying implements NATTraversalTechnique {
         final Message requestConnectionMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.CONNECTION_REQUEST);
         requestConnectionMessage.addAttribute(new Username(targetId));
+        requestConnectionMessage.addAttribute(new RelayingAttribute());
         requestConnectionMessage.writeTo(controlConnection.getOutputStream());
     }
 
@@ -140,6 +143,7 @@ public final class Relaying implements NATTraversalTechnique {
         try {
             final RelayingClient targetRelayClient = new RelayingClient(this.relayAddress);
             final InetSocketAddress endpointAtRelay = this.createAllocationAtRelayServer(targetRelayClient);
+            logger.debug("Allocation at relay server created: {}", endpointAtRelay.toString());
             this.sendConnectionRequestResponse(controlConnection, connectioRequestMessage, endpointAtRelay);
             socket = targetRelayClient.accept();
         } catch (final Exception e) {
@@ -153,6 +157,7 @@ public final class Relaying implements NATTraversalTechnique {
     private void sendConnectionRequestResponse(final Socket controlConnection, final Message connectionRequest,
             final InetSocketAddress endpointAtRelay) throws IOException {
         final Message response = connectionRequest.buildSuccessResponse();
+        response.addAttribute(new RelayingAttribute());
         XorMappedAddress endpointAtRelayAttribute;
         if (endpointAtRelay.getAddress() instanceof Inet6Address) {
             endpointAtRelayAttribute = new XorMappedAddress(endpointAtRelay, ByteBuffer.wrap(
@@ -183,10 +188,12 @@ public final class Relaying implements NATTraversalTechnique {
     }
 
     private InetSocketAddress createAllocationAtRelayServer(final RelayingClient relayingClient) throws Exception {
+        logger.debug("Creating allocation at relay server");
         InetSocketAddress result = relayingClient.createAllocation();
         if (result.getAddress().isAnyLocalAddress()) {
             result = new InetSocketAddress(this.relayAddress.getAddress(), result.getPort());
         }
+        logger.debug("Allocation at relay server created: {}", result.toString());
         return result;
     }
 

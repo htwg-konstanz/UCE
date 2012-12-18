@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.holepunching.core.source.HolePunchingSource;
 import de.fhkn.in.uce.holepunching.core.target.HolePunchingTarget;
+import de.fhkn.in.uce.holepunching.message.HolePunchingAttribute;
 import de.fhkn.in.uce.plugininterface.ConnectionNotEstablishedException;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
@@ -95,8 +96,11 @@ public final class HolePunching implements NATTraversalTechnique {
         // this.checkIfTargetIsInitialized();
         try {
             HolePunchingTarget target = new HolePunchingTarget(controlConnection, targetId);
-            target.start();
+            logger.debug("Sending connection request response"); //$NON-NLS-1$
             this.sendConnectionRequestResponse(controlConnection, connectionRequestMessage);
+            logger.debug("Starting hole punching target"); //$NON-NLS-1$
+            target.start(connectionRequestMessage);
+            logger.debug("Waiting for accepted socket"); //$NON-NLS-1$
             return target.accept();
         } catch (final Exception e) {
             final String errorMessage = "Could not create target-side connection"; //$NON-NLS-1$
@@ -108,6 +112,7 @@ public final class HolePunching implements NATTraversalTechnique {
     private void sendConnectionRequestResponse(final Socket controlConnection, final Message connectionRequest)
             throws Exception {
         final Message response = connectionRequest.buildSuccessResponse();
+        response.addAttribute(new HolePunchingAttribute());
         // add private endpoint
         final InetAddress privateAddress = controlConnection.getLocalAddress();
         if (privateAddress instanceof Inet6Address) {
@@ -119,6 +124,7 @@ public final class HolePunching implements NATTraversalTechnique {
                     controlConnection.getLocalPort())));
         }
         response.writeTo(controlConnection.getOutputStream());
+        logger.debug("Connection request response send"); //$NON-NLS-1$
     }
 
     @Override

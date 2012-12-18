@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -29,8 +30,10 @@ import org.slf4j.LoggerFactory;
 import de.fhkn.in.uce.holepunching.core.ConnectionListener;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
+import de.fhkn.in.uce.holepunching.message.HolePunchingAttribute;
 import de.fhkn.in.uce.holepunching.message.HolePunchingMethod;
 import de.fhkn.in.uce.stun.attribute.Token;
+import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
@@ -70,47 +73,48 @@ public final class HolePunchingSource {
         Socket result = null;
         logger.debug("Trying to connect to {}", targetId); //$NON-NLS-1$
         // this.connectToMediator(mediatorAddress);
-        this.sendConnectionRequest(controlConnection);
+        final Token token = new Token(UUID.randomUUID());
+        this.sendConnectionRequest(controlConnection, targetId, token);
         final Message receivedMessage = this.receiveMessage(controlConnection);
-        if (this.isForwardedEndpointsMessage(receivedMessage)) {
-            logger.debug("Received forwarding endpoints message"); //$NON-NLS-1$
-            final List<XorMappedAddress> addresses = receivedMessage.getAttributes(XorMappedAddress.class);
-            final BlockingQueue<Socket> socketQueue = new ArrayBlockingQueue<Socket>(1);
-            final InetSocketAddress localAddress = (InetSocketAddress) controlConnection.getLocalSocketAddress();
-            final ConnectionListener connectionListener = new ConnectionListener(localAddress.getAddress(),
-                    localAddress.getPort());
-            logger.debug("Starting hole puncher"); //$NON-NLS-1$
-            final SourceConnectionAuthenticator authentification = new SourceConnectionAuthenticator(receivedMessage
-                    .getAttribute(Token.class).getToken());
-            final HolePuncher hp = new HolePuncher(connectionListener, localAddress, socketQueue);
-            this.startHolePunching(addresses, authentification, hp);
-            boolean interrupted = false;
-            try {
-                while (result == null) {
-                    try {
-                        result = socketQueue.take();
-                    } catch (final InterruptedException e) {
-                        interrupted = true;
-                        // fall through and retry
-                        logger.info("InterruptedException (fall through and retry)");
-                    }
-                }
-            } finally {
-                if (interrupted) {
-                    Thread.currentThread().interrupt();
+        // if (this.isForwardedEndpointsMessage(receivedMessage)) {
+        logger.debug("Received forwarding endpoints message"); //$NON-NLS-1$
+        final List<XorMappedAddress> addresses = receivedMessage.getAttributes(XorMappedAddress.class);
+        final BlockingQueue<Socket> socketQueue = new ArrayBlockingQueue<Socket>(1);
+        final InetSocketAddress localAddress = (InetSocketAddress) controlConnection.getLocalSocketAddress();
+        final ConnectionListener connectionListener = new ConnectionListener(localAddress.getAddress(),
+                localAddress.getPort());
+        logger.debug("Starting hole puncher"); //$NON-NLS-1$
+        final SourceConnectionAuthenticator authentification = new SourceConnectionAuthenticator(token.getToken());
+        final HolePuncher hp = new HolePuncher(connectionListener, localAddress, socketQueue);
+        this.startHolePunching(addresses, authentification, hp);
+        boolean interrupted = false;
+        try {
+            while (result == null) {
+                try {
+                    result = socketQueue.take();
+                } catch (final InterruptedException e) {
+                    interrupted = true;
+                    // fall through and retry
+                    logger.info("InterruptedException (fall through and retry)");
                 }
             }
-            connectionListener.shutdown();
-            hp.shutdownNow();
-            // received dummy socket for indicating time limit exceeded
-            if (!result.isConnected()) {
-                throw new IOException("Could not get socket to: " + targetId);
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
             }
-            logger.info("Returning socket: {}", result);
-        } else {
-            logger.debug("Forwarded Endpoints message expected but was {}", receivedMessage.getMessageMethod()
-                    .toString());
         }
+        connectionListener.shutdown();
+        hp.shutdownNow();
+        // received dummy socket for indicating time limit exceeded
+        if (!result.isConnected()) {
+            throw new IOException("Could not get socket to: " + targetId);
+        }
+        logger.info("Returning socket: {}", result);
+        // } else {
+        // logger.debug("Forwarded Endpoints message expected but was {}",
+        // receivedMessage.getMessageMethod()
+        // .toString());
+        // }
         return result;
     }
 
@@ -120,12 +124,16 @@ public final class HolePunchingSource {
     // this.controlConnection.connect(mediatorAddress);
     // }
 
-    private void sendConnectionRequest(final Socket controlConnection) throws IOException {
+    private void sendConnectionRequest(final Socket controlConnection, final String targetId,
+            final Token authentificationToken) throws IOException {
         final MessageWriter messageWriter = new MessageWriter(controlConnection.getOutputStream());
         final Message connectionRequestMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.CONNECTION_REQUEST);
+        connectionRequestMessage.addAttribute(new HolePunchingAttribute());
+        connectionRequestMessage.addAttribute(new Username(targetId));
         final InetSocketAddress localAddress = (InetSocketAddress) controlConnection.getLocalSocketAddress();
         connectionRequestMessage.addAttribute(new XorMappedAddress(localAddress));
+        connectionRequestMessage.addAttribute(authentificationToken);
         messageWriter.writeMessage(connectionRequestMessage);
     }
 

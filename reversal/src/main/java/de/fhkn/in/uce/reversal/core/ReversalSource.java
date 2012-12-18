@@ -39,7 +39,7 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  */
 public final class ReversalSource {
     private static final Logger logger = LoggerFactory.getLogger(ReversalSource.class);
-    private final int socketTimeoutInMillis = 20 * 1000;
+    private final int socketTimeoutInMillis = 60 * 1000;
 
     /**
      * Creates a {@link ReversalSource} object.

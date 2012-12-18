@@ -21,6 +21,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
 import de.fhkn.in.uce.stun.message.Message;
 
 /**
@@ -66,43 +67,7 @@ public final class DirectconnectionTarget {
     private void sendResponseForTargetIsReady(final Socket controlConnection, final Message connectionRequestMessage)
             throws IOException {
         final Message response = connectionRequestMessage.buildSuccessResponse();
+        response.addAttribute(new DirectconnectionAttribute());
         response.writeTo(controlConnection.getOutputStream());
     }
-
-    // /**
-    // * Sends a register message to the mediator.
-    // *
-    // * @param targetId
-    // * the id of the target
-    // * @param controlConnection
-    // * the connection to the mediator
-    // * @throws Exception
-    // */
-    // public void registerTarget(final String targetId, final Socket
-    // controlConnection) throws Exception {
-    // final Message registerMessage =
-    // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-    // STUNMessageMethod.REGISTER);
-    // final Username userName = new Username(targetId);
-    // registerMessage.addAttribute(userName);
-    // registerMessage.writeTo(controlConnection.getOutputStream());
-    // }
-
-    // /**
-    // * Sends a deregister message to the mediator.
-    // *
-    // * @param targetId
-    // * the id of the target
-    // * @param controlConnection
-    // * the control connection to the mediator
-    // * @throws Exception
-    // */
-    // public void deregisterTarget(final String targetId, final Socket
-    // controlConnection) throws Exception {
-    // final Message deregisterMessage =
-    // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-    // STUNMessageMethod.DEREGISTER);
-    // deregisterMessage.addAttribute(new Username(targetId));
-    // deregisterMessage.writeTo(controlConnection.getOutputStream());
-    // }
 }

@@ -21,6 +21,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -28,13 +30,18 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fhkn.in.uce.relaying.message.RelayingAttributeTypeDecoder;
 import de.fhkn.in.uce.relaying.message.RelayingConstants;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
-import de.fhkn.in.uce.relaying.message.RelayingMessageReader;
 import de.fhkn.in.uce.relaying.message.RelayingMethod;
+import de.fhkn.in.uce.relaying.message.RelayingMethodDecoder;
+import de.fhkn.in.uce.stun.attribute.AttributeTypeDecoder;
 import de.fhkn.in.uce.stun.attribute.Token;
+import de.fhkn.in.uce.stun.header.MessageMethodDecoder;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
+import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 import de.fhkn.in.uce.stun.message.MessageWriter;
 
@@ -92,7 +99,8 @@ final class MessageHandlerTask implements Runnable {
         Message message;
         while (!cancelled) {
             try {
-                message = RelayingMessageReader.read(controlConnection.getInputStream());
+                final MessageReader messageReader = this.createCustomRelayingMessageReader();
+                message = messageReader.readSTUNMessage(controlConnection.getInputStream());
                 if (message == null) {
                     // server closed connection
                     logger.error("IOException while receiving message (message was null)");
@@ -111,7 +119,7 @@ final class MessageHandlerTask implements Runnable {
                     dataConnectionWriter.writeMessage(connectionBindRequestMessage);
                     // TODO erfolgs oder fehlermeldung abwarten
                     socketQueue.add(s);
-                } else if (message.isMethod(RelayingMethod.REFRESH) && message.isSuccessResponse()) {
+                } else if (message.isMethod(STUNMessageMethod.KEEP_ALIVE) && message.isSuccessResponse()) {
                     int lifetime = message.getAttribute(RelayingLifetime.class).getLifeTime();
                     logger.debug("Received lifetime response {}", lifetime);
                     refreshExecutor.schedule(new RefreshAllocationTask(controlConnectionWriter, lifetime), Math.max(
@@ -145,6 +153,16 @@ final class MessageHandlerTask implements Runnable {
             controlConnection.close();
         } catch (IOException ignore) {
         }
+    }
+
+    private MessageReader createCustomRelayingMessageReader() {
+        logger.debug("Creating custom relaying message reader"); //$NON-NLS-1$
+        final List<MessageMethodDecoder> customMethodDecoders = new ArrayList<MessageMethodDecoder>();
+        customMethodDecoders.add(new RelayingMethodDecoder());
+        final List<AttributeTypeDecoder> customAttributeTypeDecoders = new ArrayList<AttributeTypeDecoder>();
+        customAttributeTypeDecoders.add(new RelayingAttributeTypeDecoder());
+        return MessageReader.createMessageReaderWithCustomDecoderLists(customMethodDecoders,
+                customAttributeTypeDecoders);
     }
 
 }

@@ -23,6 +23,7 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fhkn.in.uce.reversal.message.ReversalAttribute;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
@@ -126,7 +127,7 @@ public final class ReversalTarget {
 
     public Socket establishTargetSideConnection(final Socket controlConnection, final Message connectionRequestMessage)
             throws Exception {
-        if (connectionRequestMessage.hasAttribute(XorMappedAddress.class)) {
+        if (!connectionRequestMessage.hasAttribute(XorMappedAddress.class)) {
             final String errorReason = "Source endpoint is not provided by the connection request"; //$NON-NLS-1$
             this.sendFailureResponse(controlConnection, connectionRequestMessage, errorReason);
             throw new Exception(errorReason);
@@ -144,6 +145,7 @@ public final class ReversalTarget {
     private void sendSuccessResponse(final Socket controlConnection, final Message request) throws IOException {
         logger.debug("Sending success response"); //$NON-NLS-1$
         final Message response = request.buildSuccessResponse();
+        response.addAttribute(new ReversalAttribute());
         response.writeTo(controlConnection.getOutputStream());
     }
 

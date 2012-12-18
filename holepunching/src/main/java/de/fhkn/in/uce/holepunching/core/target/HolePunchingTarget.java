@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.ThreadGroupThreadFactory;
+import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
@@ -74,6 +76,7 @@ public final class HolePunchingTarget {
         this.targetId = targetId;
         this.socketQueue = new LinkedBlockingQueue<Socket>();
         this.threadFactory = new ThreadGroupThreadFactory();
+        this.started = false;
     }
 
     /**
@@ -86,21 +89,25 @@ public final class HolePunchingTarget {
      * @throws IllegalStateException
      *             if the target was already started.
      */
-    public synchronized void start() throws IOException, IllegalStateException {
+    public synchronized void start(final Message connectionRequestMessage) throws IOException, IllegalStateException {
         if (this.started) {
             throw new IllegalStateException("Target is already started"); //$NON-NLS-1$
         }
         this.started = true;
         // this.connectToMediator();
-        this.sendRegisterMessage();
-        final Message receivedMessage = this.receiveMessage();
-        if (receivedMessage.isMethod(STUNMessageMethod.REGISTER) && receivedMessage.isSuccessResponse()) {
-            logger.info("Target {} registered successfully, starting handler thread", this.targetId); //$NON-NLS-1$
-            this.startMessageHandler();
-        } else {
-            logger.error("Could not register target {}", this.targetId); //$NON-NLS-1$
-            throw new IllegalStateException("Could not register target"); //$NON-NLS-1$
-        }
+        // this.sendRegisterMessage();
+        // final Message receivedMessage = this.receiveMessage();
+        // if (receivedMessage.isMethod(STUNMessageMethod.REGISTER) &&
+        // receivedMessage.isSuccessResponse()) {
+        //            logger.info("Target {} registered successfully, starting handler thread", this.targetId); //$NON-NLS-1$
+        // this.startMessageHandler();
+        final List<XorMappedAddress> endpoints = connectionRequestMessage.getAttributes(XorMappedAddress.class);
+        final Token authentificationToken = connectionRequestMessage.getAttribute(Token.class);
+        this.startMessageHandler(endpoints, authentificationToken);
+        // } else {
+        //            logger.error("Could not register target {}", this.targetId); //$NON-NLS-1$
+        //            throw new IllegalStateException("Could not register target"); //$NON-NLS-1$
+        // }
     }
 
     // private void connectToMediator() throws IOException {
@@ -134,8 +141,10 @@ public final class HolePunchingTarget {
         return messageReader.readSTUNMessage(this.socketToMediator.getInputStream());
     }
 
-    private void startMessageHandler() {
-        this.messageHandlerTask = new MessageHandlerTask(this.socketToMediator, this.socketQueue, 0);
+    private void startMessageHandler(final List<XorMappedAddress> endpoints, final Token authentificationToken) {
+        logger.debug("Starting message handler task"); //$NON-NLS-1$
+        this.messageHandlerTask = new MessageHandlerTask(this.socketToMediator, this.socketQueue, 0, endpoints,
+                authentificationToken);
         this.threadFactory.newThread(this.messageHandlerTask).start();
     }
 
@@ -156,14 +165,17 @@ public final class HolePunchingTarget {
         if (!this.started) {
             throw new IllegalStateException("Target is not started"); //$NON-NLS-1$
         }
-        final Message deregisterMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.DEREGISTER);
+        // final Message deregisterMessage =
+        // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
+        // STUNMessageMethod.DEREGISTER);
         // we need a new socket to deregister
-        final Socket s = new Socket();
+        // final Socket s = new Socket();
         // s.connect(this.mediatorSocketAddress);
-        s.connect(new InetSocketAddress(this.socketToMediator.getInetAddress(), this.socketToMediator.getPort()));
-        deregisterMessage.writeTo(s.getOutputStream());
-        s.close();
+        // s.connect(new
+        // InetSocketAddress(this.socketToMediator.getInetAddress(),
+        // this.socketToMediator.getPort()));
+        // deregisterMessage.writeTo(s.getOutputStream());
+        // s.close();
         this.socketToMediator.close();
         this.messageHandlerTask.cancel();
     }

@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -35,12 +37,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.core.concurrent.ThreadGroupFactory;
+import de.fhkn.in.uce.relaying.message.RelayingAttributeTypeDecoder;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
-import de.fhkn.in.uce.relaying.message.RelayingMessageReader;
 import de.fhkn.in.uce.relaying.message.RelayingMethod;
+import de.fhkn.in.uce.relaying.message.RelayingMethodDecoder;
+import de.fhkn.in.uce.stun.attribute.AttributeTypeDecoder;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
+import de.fhkn.in.uce.stun.header.MessageMethodDecoder;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
+import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 import de.fhkn.in.uce.stun.message.MessageWriter;
 
@@ -152,17 +159,29 @@ public final class RelayingClient {
         final Message allocationRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 RelayingMethod.ALLOCATION);
         allocationRequest.addAttribute(new RelayingLifetime(ALLOCATION_LIFETIME));
+        logger.debug("Sending allocation request to relay server"); //$NON-NLS-1$
         this.controlConnectionWriter.writeMessage(allocationRequest);
     }
 
     private synchronized Message receiveAllocationResponse() throws IOException {
-        final Message allocationResponse = RelayingMessageReader.read(this.controlConnection.getInputStream());
+        final MessageReader messageReader = this.createCustomRelayingMessageReader();
+        final Message allocationResponse = messageReader.readSTUNMessage(this.controlConnection.getInputStream());
         if (!allocationResponse.isMethod(RelayingMethod.ALLOCATION) || !allocationResponse.isSuccessResponse()
                 || !allocationResponse.hasAttribute(XorMappedAddress.class)
                 || !allocationResponse.hasAttribute(RelayingLifetime.class)) {
             throw new IOException("Unexpected response from Relay server"); //$NON-NLS-1$
         }
         return allocationResponse;
+    }
+
+    private MessageReader createCustomRelayingMessageReader() {
+        logger.debug("Creating custom relaying message reader"); //$NON-NLS-1$
+        final List<MessageMethodDecoder> customMethodDecoders = new ArrayList<MessageMethodDecoder>();
+        customMethodDecoders.add(new RelayingMethodDecoder());
+        final List<AttributeTypeDecoder> customAttributeTypeDecoders = new ArrayList<AttributeTypeDecoder>();
+        customAttributeTypeDecoders.add(new RelayingAttributeTypeDecoder());
+        return MessageReader.createMessageReaderWithCustomDecoderLists(customMethodDecoders,
+                customAttributeTypeDecoders);
     }
 
     private InetSocketAddress getAddressAtRelayFromMessage(final Message msg) {
@@ -208,7 +227,7 @@ public final class RelayingClient {
 
     private synchronized void sendDiscardMessage() throws IOException {
         final Message refreshRequestMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                RelayingMethod.REFRESH);
+                STUNMessageMethod.KEEP_ALIVE);
         refreshRequestMessage.addAttribute(new RelayingLifetime(0));
         this.controlConnectionWriter.writeMessage(refreshRequestMessage);
     }

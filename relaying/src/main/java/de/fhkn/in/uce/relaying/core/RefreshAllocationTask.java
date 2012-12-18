@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
-import de.fhkn.in.uce.relaying.message.RelayingMethod;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 import de.fhkn.in.uce.stun.message.MessageWriter;
@@ -63,7 +63,7 @@ final class RefreshAllocationTask implements Runnable {
     public void run() {
         try {
             final Message refreshRequestMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                    RelayingMethod.REFRESH);
+                    STUNMessageMethod.KEEP_ALIVE);
             refreshRequestMessage.addAttribute(new RelayingLifetime(this.lifetime));
             this.controlConnectionWriter.writeMessage(refreshRequestMessage);
         } catch (final IOException e) {
