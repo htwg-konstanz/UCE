@@ -59,7 +59,7 @@ public final class Username implements Attribute {
 
     @Override
     public int getLength() {
-        return this.username.length;
+        return this.username.length + this.calculatePaddingBytes(username);
     }
 
     /**

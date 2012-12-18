@@ -114,7 +114,7 @@ public enum STUNAttributeType implements AttributeType {
         }
     },
 
-    TOKEN(0x1002) {
+    TOKEN(0x1003) {
         @Override
         public Attribute fromBytes(final byte[] encoded, final AttributeHeader header, final MessageHeader messageHeader)
                 throws MessageFormatException, IOException {
@@ -137,32 +137,6 @@ public enum STUNAttributeType implements AttributeType {
             return OtherAddress.fromBytes(encoded, header);
         }
     };
-
-    // /**
-    // * The payload of this {@link AttributeType} is represented by the class
-    // * {@link SocketEndpoint}.
-    // */
-    // SOCKET_ENDPOINT(0x0) {
-    //
-    // public Attribute fromBytes(byte[] encoded, AttributeHeader header) throws
-    // MessageFormatException, IOException {
-    // // return SocketEndpoint.fromBytes(encoded, header);
-    // return null;
-    // }
-    // },
-    //
-    // /**
-    // * The payload of this {@link AttributeType} is represented by the class
-    // * {@link StringList}.
-    // */
-    // STRING_LIST(0x3) {
-    //
-    // public Attribute fromBytes(byte[] encoded, AttributeHeader header) throws
-    // MessageFormatException, IOException {
-    // // return StringList.fromBytes(encoded, header);
-    // return null;
-    // }
-    // };
 
     private static final Map<Integer, STUNAttributeType> intToEnum = new HashMap<Integer, STUNAttributeType>();
 
