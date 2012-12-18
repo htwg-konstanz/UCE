@@ -28,7 +28,7 @@ import de.fhkn.in.uce.stun.header.MessageMethod;
  * 
  */
 public enum RelayingMethod implements MessageMethod {
-    ALLOCATION(0x33), REFRESH(0x34), CONNECTION_ATTEMPT(0x35), CONNECTION_BIND(0x36);
+    ALLOCATION(0x00a), CONNECTION_ATTEMPT(0x00b), CONNECTION_BIND(0x00c);
 
     private static final Map<Integer, RelayingMethod> intToEnum = new HashMap<Integer, RelayingMethod>();
 
