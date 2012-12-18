@@ -18,10 +18,12 @@ package de.fhkn.in.uce.mediator.techniqueregistry;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Iterator;
-import java.util.ResourceBundle;
+import java.util.Properties;
 import java.util.ServiceLoader;
 
 import org.slf4j.Logger;
@@ -40,7 +42,8 @@ import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
  */
 final class PluginLoaderImpl implements PluginLoader {
     private static final PluginLoaderImpl INSTANCE = new PluginLoaderImpl();
-    private static final String RESOURCE_PLUGIN_DIRECTORY = "de.fhkn.in.uce.mediator.techniqueregistry"; //$NON-NLS-1$
+    private static final String RESOURCE_PLUGIN_DIRECTORY = "de.fhkn.in.uce.mediator.techniqueregistry.nattraversalregistry"; //$NON-NLS-1$
+    private static final String DEFAULT_PLUGIN_DIRECTORY = "/plugins/"; //$NON-NLS-1$
     private final Logger logger = LoggerFactory.getLogger(PluginLoaderImpl.class);
     private ServiceLoader<HandleMessage> serviceLoader = ServiceLoader.load(HandleMessage.class);
 
@@ -103,8 +106,23 @@ final class PluginLoaderImpl implements PluginLoader {
     }
 
     private String getFolderNameFromBundle() {
-        final ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_PLUGIN_DIRECTORY);
-        return bundle.getString("nattraversalregistry.directory");
+        String result = DEFAULT_PLUGIN_DIRECTORY;
+        final InputStream resourceAsStream = this.getClass().getClassLoader()
+                .getResourceAsStream(RESOURCE_PLUGIN_DIRECTORY);
+        final Properties props = new Properties();
+        if (resourceAsStream != null) {
+            try {
+                props.load(resourceAsStream);
+            } catch (final IOException e) {
+                logger.error(
+                        "Resource for plugin directory could not be loaded. Default location will be used. {}", e.getMessage()); //$NON-NLS-1$
+            }
+            result = props.getProperty("nattraversalregistry.directory"); //$NON-NLS-1$
+        }
+        // final ResourceBundle bundle =
+        // ResourceBundle.getBundle(RESOURCE_PLUGIN_DIRECTORY);
+        //        return bundle.getString("nattraversalregistry.directory"); //$NON-NLS-1$
+        return result;
     }
 
     private PluginLoaderImpl() {

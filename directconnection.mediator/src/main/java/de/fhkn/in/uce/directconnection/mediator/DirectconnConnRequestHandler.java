@@ -20,10 +20,14 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
+import de.fhkn.in.uce.mediator.connectionhandling.ConnectionRequest;
+import de.fhkn.in.uce.mediator.connectionhandling.ConnectionRequestList;
 import de.fhkn.in.uce.mediator.peerregistry.UserData;
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
@@ -37,7 +41,6 @@ import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
-import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
@@ -49,14 +52,27 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
  * 
  */
+@ThreadSafe
 public final class DirectconnConnRequestHandler implements HandleMessage {
     private static final Logger logger = LoggerFactory.getLogger(DirectconnConnRequestHandler.class);
+    private final ConnectionRequestList connectionRequests = ConnectionRequestList.INSTANCE;
     private final MediatorUtil mediatorUtil = MediatorUtil.INSTANCE;
     private final UserList userList = UserList.INSTANCE;
 
     @Override
     public void handleMessage(final Message message, final Socket controlConnection) throws Exception {
+        if (message.getMessageClass() == STUNMessageClass.REQUEST) {
+            logger.debug("Handling connection request from {}", controlConnection.toString()); //$NON-NLS-1$
+            this.handleConnectionRequest(message, controlConnection);
+        } else if (message.getMessageClass() == STUNMessageClass.SUCCESS_RESPONSE) {
+            logger.debug("Handling connection request response from {}", controlConnection.toString()); //$NON-NLS-1$
+            this.handleConnectionRequestResponse(message, controlConnection);
+        }
+    }
+
+    private void handleConnectionRequest(final Message message, final Socket controlConnection) throws Exception {
         this.mediatorUtil.checkForAttribute(message, Username.class);
+        this.connectionRequests.putConnectionRequest(new ConnectionRequest(controlConnection, message));
         final String username = message.getAttribute(Username.class).getUsernameAsString();
         final UserData userData = this.userList.getUserDataByUserId(username);
         if (userData == null) {
@@ -64,36 +80,31 @@ public final class DirectconnConnRequestHandler implements HandleMessage {
             this.sendFailureResponse(message, errorMessage, STUNErrorCode.BAD_REQUEST,
                     controlConnection.getOutputStream());
         } else {
-            this.callTarget(userData);
-            this.sendConnectionRequestSuccessReponse(userData, message, controlConnection);
+            this.callTarget(userData, message);
         }
     }
 
-    private void sendConnectionRequestSuccessReponse(final UserData userData, final Message requestMessage,
-            final Socket controlConnection) throws Exception {
-        final Message successResponse = requestMessage.buildSuccessResponse();
-        final InetSocketAddress targetEndpoint = new InetSocketAddress(userData.getSocketToUser().getInetAddress(),
-                userData.getSocketToUser().getPort());
+    private void handleConnectionRequestResponse(final Message message, final Socket controlConnection)
+            throws Exception {
+        final ConnectionRequest connReq = this.connectionRequests.getConnectionRequest(new String(message.getHeader()
+                .getTransactionId()));
+        final Message successResponse = connReq.getConnectionRequestMessage().buildSuccessResponse();
+        final InetSocketAddress targetEndpoint = new InetSocketAddress(controlConnection.getInetAddress(),
+                controlConnection.getPort());
+        logger.debug("Sending connection request response with {} to source", targetEndpoint.toString()); //$NON-NLS-1$
         successResponse.addAttribute(new XorMappedAddress(targetEndpoint));
         successResponse.addAttribute(new EndpointClass(EndpointCategory.PUBLIC));
-        successResponse.writeTo(controlConnection.getOutputStream());
+        successResponse.writeTo(connReq.getControlConnection().getOutputStream());
     }
 
-    private void callTarget(final UserData target) throws Exception {
+    private void callTarget(final UserData target, final Message connectionRequestFromSource) throws Exception {
+        logger.debug("Calling target {}", target.getUserId()); //$NON-NLS-1$
         final Socket toTarget = target.getSocketToUser();
         final Message connectionRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.CONNECTION_REQUEST);
+                STUNMessageMethod.CONNECTION_REQUEST, connectionRequestFromSource.getHeader().getTransactionId());
         connectionRequest.addAttribute(new DirectconnectionAttribute());
+        logger.debug("Forwarding connection request to target"); //$NON-NLS-1$
         connectionRequest.writeTo(toTarget.getOutputStream());
-        this.waitForTarget(toTarget);
-    }
-
-    private void waitForTarget(final Socket toTarget) throws Exception {
-        final Message responseFromTarget = MessageReader.createMessageReader().readSTUNMessage(
-                toTarget.getInputStream());
-        if (responseFromTarget.isFailureResponse()) {
-            throw new Exception("Target could not be started"); //$NON-NLS-1$
-        }
     }
 
     private void sendFailureResponse(final Message message, final String errorReaon, final STUNErrorCode errorCode,

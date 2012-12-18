@@ -16,8 +16,10 @@
  */
 package de.fhkn.in.uce.mediator.connectionhandling;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,16 +74,25 @@ public final class HandleMessageTask implements Runnable {
     public void run() {
         while (this.socket.isConnected()) {
             try {
-                final Message inMessage = this.receiveMessage(this.socket);
+                final Message inMessage = this.receiveMessage();
+                logger.debug(
+                        "Got message: {}, {}", inMessage.getMessageClass().toString(), inMessage.getMessageMethod().toString()); //$NON-NLS-1$
+                logger.debug("Got message from {}", this.socket.toString()); //$NON-NLS-1$
                 this.handleMessage(inMessage);
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+            } catch (final SocketException se) {
+                logger.error("Socket exception, canceling processing for socket: {}", se.getMessage()); //$NON-NLS-1$
+                return;
+            } catch (final EOFException eofe) {
+                logger.error("Got end of file exception, canceling processing for socket: {}", eofe.getMessage());
+                return;
+            } catch (final Exception e) {
+                logger.error("Exception occured while processing control connection", e); //$NON-NLS-1$
             }
         }
     }
 
-    private Message receiveMessage(final Socket socket) throws Exception {
-        return this.messageReader.readSTUNMessage(socket.getInputStream());
+    private Message receiveMessage() throws Exception {
+        return this.messageReader.readSTUNMessage(this.socket.getInputStream());
     }
 
     private void handleMessage(final Message toHandle) throws Exception {
@@ -101,13 +112,11 @@ public final class HandleMessageTask implements Runnable {
             }
         } catch (final Exception e) {
             final String errorMessage = "Exception while handling message"; //$NON-NLS-1$
-            logger.error(errorMessage, e);
+            logger.error(errorMessage);
             // TODO examine cause of the error to send correct error code
             this.sendFailureResponse(toHandle, STUNErrorCode.SERVER_ERROR, e.getMessage());
             throw e;
         }
-        this.sendSuccessResponse(toHandle);
-
     }
 
     private void handleRegisterMessage(final Message registerMessage) throws Exception {
@@ -128,11 +137,6 @@ public final class HandleMessageTask implements Runnable {
 
     private void handleNatRequestMessage(final Message natRequestMessage) throws Exception {
         this.natRequestMessageHandler.handleMessage(natRequestMessage, this.socket);
-    }
-
-    private void sendSuccessResponse(final Message toRespond) throws Exception {
-        final Message successResponse = toRespond.buildSuccessResponse();
-        this.messageWriter.writeMessage(successResponse);
     }
 
     private void sendFailureResponse(final Message toRespond, final STUNErrorCode errorCode, final String errorReason)

@@ -25,7 +25,9 @@ import de.fhkn.in.uce.mediator.techniqueregistry.MessageHandlerRegistry;
 import de.fhkn.in.uce.mediator.techniqueregistry.MessageHandlerRegistryImpl;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
+import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
+import de.fhkn.in.uce.stun.attribute.Attribute;
 import de.fhkn.in.uce.stun.message.Message;
 
 /**
@@ -62,8 +64,11 @@ public final class ConnectionRequestHandling implements HandleMessage {
     }
 
     private void checkForRequiredTravTechAttribute(final Message message) throws Exception {
+        for (final Attribute a : message.getAttributes()) {
+            logger.debug("connection request message has attribute {}", a.getType().toString()); //$NON-NLS-1$
+        }
         try {
-            this.mediatorUtil.checkForAttribute(message, NATTraversalTechniqueAttribute.class);
+            this.mediatorUtil.checkForAttributeType(message, NATSTUNAttributeType.NAT_TRAVERSAL_TECHNIQUE);
         } catch (final Exception e) {
             final String errorMessage = "Required NATTraversalTechniqueAttribute is not provided, can not decide which handler to used"; //$NON-NLS-1$
             logger.error(errorMessage);

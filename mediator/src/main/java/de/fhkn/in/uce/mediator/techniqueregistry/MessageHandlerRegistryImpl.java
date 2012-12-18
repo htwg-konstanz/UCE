@@ -38,6 +38,7 @@ public final class MessageHandlerRegistryImpl implements MessageHandlerRegistry 
             final HandleMessage handler = handlerIterator.next();
             if (encoding == handler.getAttributeForTraversalTechnique().getEncoded()) {
                 result = handler;
+                break;
             }
         }
         return result;

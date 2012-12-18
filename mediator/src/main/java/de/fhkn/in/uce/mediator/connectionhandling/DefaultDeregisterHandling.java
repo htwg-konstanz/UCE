@@ -18,6 +18,9 @@ package de.fhkn.in.uce.mediator.connectionhandling;
 
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
@@ -33,6 +36,7 @@ import de.fhkn.in.uce.stun.message.Message;
  * 
  */
 public final class DefaultDeregisterHandling implements HandleMessage {
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionRequestHandling.class);
     private final UserList userList;
     private final MediatorUtil mediatorUtil;
 
@@ -46,6 +50,7 @@ public final class DefaultDeregisterHandling implements HandleMessage {
         this.mediatorUtil.checkForAttribute(deregisterMessage, Username.class);
         final Username username = deregisterMessage.getAttribute(Username.class);
         this.userList.removeUser(username.getUsernameAsString());
+        logger.debug("User {} removed", username.getUsernameAsString()); //$NON-NLS-1$
         this.sendSuccessResponse(deregisterMessage, controlConnection);
     }
 

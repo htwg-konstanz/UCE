@@ -26,12 +26,16 @@ import java.nio.ByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fhkn.in.uce.mediator.connectionhandling.ConnectionRequest;
+import de.fhkn.in.uce.mediator.connectionhandling.ConnectionRequestList;
 import de.fhkn.in.uce.mediator.peerregistry.UserData;
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.reversal.message.ReversalAttribute;
+import de.fhkn.in.uce.stun.attribute.EndpointClass;
+import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
@@ -52,12 +56,24 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  */
 public final class ReversalConnRequestHandler implements HandleMessage {
     private static final Logger logger = LoggerFactory.getLogger(ReversalConnRequestHandler.class);
+    private final ConnectionRequestList connectionRequests = ConnectionRequestList.INSTANCE;
     private final MediatorUtil mediatorUtil = MediatorUtil.INSTANCE;
     private final UserList userList = UserList.INSTANCE;
 
     @Override
     public void handleMessage(final Message message, final Socket controlConnection) throws Exception {
+        if (message.getMessageClass() == STUNMessageClass.REQUEST) {
+            logger.debug("Handling connection request from {}", controlConnection.toString());
+            this.handleConnectionRequest(message, controlConnection);
+        } else if (message.getMessageClass() == STUNMessageClass.SUCCESS_RESPONSE) {
+            logger.debug("Handling connection request response from {}", controlConnection.toString());
+            this.handleConnectionRequestResponse(message, controlConnection);
+        }
+    }
+
+    private void handleConnectionRequest(final Message message, final Socket controlConnection) throws Exception {
         this.mediatorUtil.checkForAttribute(message, Username.class);
+        this.connectionRequests.putConnectionRequest(new ConnectionRequest(controlConnection, message));
         final Username username = message.getAttribute(Username.class);
         final UserData user = this.userList.getUserDataByUserId(username.getUsernameAsString());
         if (user == null) {
@@ -65,13 +81,22 @@ public final class ReversalConnRequestHandler implements HandleMessage {
             this.sendFailureResponse(message, errorMessage, STUNErrorCode.BAD_REQUEST,
                     controlConnection.getOutputStream());
         } else {
-            this.sendReversalRequestToTarget(controlConnection, user);
+            this.forwardReversalRequestToTarget(controlConnection, user, message);
         }
     }
 
-    private void sendReversalRequestToTarget(final Socket toSource, final UserData user) throws IOException {
+    private void handleConnectionRequestResponse(final Message message, final Socket controlConnection)
+            throws Exception {
+        final ConnectionRequest connReq = this.connectionRequests.getConnectionRequest(new String(message.getHeader()
+                .getTransactionId()));
+        final Message successResponse = connReq.getConnectionRequestMessage().buildSuccessResponse();
+        successResponse.writeTo(connReq.getControlConnection().getOutputStream());
+    }
+
+    private void forwardReversalRequestToTarget(final Socket toSource, final UserData user,
+            final Message connectionRequestFromSource) throws IOException {
         final Message connectionRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.CONNECTION_REQUEST);
+                STUNMessageMethod.CONNECTION_REQUEST, connectionRequestFromSource.getHeader().getTransactionId());
         XorMappedAddress clientAddress;
         if (toSource.getInetAddress() instanceof Inet6Address) {
             clientAddress = new XorMappedAddress(new InetSocketAddress(toSource.getInetAddress(), toSource.getPort()),
@@ -80,6 +105,7 @@ public final class ReversalConnRequestHandler implements HandleMessage {
             clientAddress = new XorMappedAddress(new InetSocketAddress(toSource.getInetAddress(), toSource.getPort()));
         }
         connectionRequest.addAttribute(clientAddress);
+        connectionRequest.addAttribute(new EndpointClass(EndpointCategory.PUBLIC));
         connectionRequest.addAttribute(new ReversalAttribute());
         final Socket toTarget = user.getSocketToUser();
         connectionRequest.writeTo(toTarget.getOutputStream());

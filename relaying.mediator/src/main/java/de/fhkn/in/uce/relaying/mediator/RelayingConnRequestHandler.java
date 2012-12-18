@@ -17,29 +17,25 @@
 package de.fhkn.in.uce.relaying.mediator;
 
 import java.io.OutputStream;
-import java.net.Inet6Address;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fhkn.in.uce.mediator.connectionhandling.ConnectionRequest;
+import de.fhkn.in.uce.mediator.connectionhandling.ConnectionRequestList;
 import de.fhkn.in.uce.mediator.peerregistry.UserData;
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.relaying.message.RelayingAttribute;
-import de.fhkn.in.uce.stun.attribute.EndpointClass;
-import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 import de.fhkn.in.uce.stun.attribute.ErrorCode.STUNErrorCode;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
-import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 /**
@@ -52,12 +48,24 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  */
 public final class RelayingConnRequestHandler implements HandleMessage {
     private static final Logger logger = LoggerFactory.getLogger(RelayingConnRequestHandler.class);
+    private final ConnectionRequestList connectionRequests = ConnectionRequestList.INSTANCE;
     private final MediatorUtil mediatorUtil = MediatorUtil.INSTANCE;
     private final UserList userList = UserList.INSTANCE;
 
     @Override
     public void handleMessage(Message message, Socket controlConnection) throws Exception {
+        if (message.getMessageClass() == STUNMessageClass.REQUEST) {
+            logger.debug("Handling connection request from {}", controlConnection.toString());
+            this.handleConnectionRequest(message, controlConnection);
+        } else if (message.getMessageClass() == STUNMessageClass.SUCCESS_RESPONSE) {
+            logger.debug("Handling connection request response from {}", controlConnection.toString());
+            this.handleConnectionRequestResponse(message, controlConnection);
+        }
+    }
+
+    private void handleConnectionRequest(final Message message, final Socket controlConnection) throws Exception {
         this.mediatorUtil.checkForAttribute(message, Username.class);
+        this.connectionRequests.putConnectionRequest(new ConnectionRequest(controlConnection, message));
         final Username username = message.getAttribute(Username.class);
         final UserData user = this.userList.getUserDataByUserId(username.getUsernameAsString());
         if (user == null) {
@@ -65,48 +73,28 @@ public final class RelayingConnRequestHandler implements HandleMessage {
             this.sendFailureResponse(message, errorMessage, STUNErrorCode.BAD_REQUEST,
                     controlConnection.getOutputStream());
         } else {
-            try {
-                final InetSocketAddress endpointAtRelay = this.callTarget(user);
-                this.sendRelayEndpointToSource(message, endpointAtRelay, controlConnection);
-            } catch (final Exception e) {
-                final String errorMessage = "No relay endpoint registered for user " + user.getUserId(); //$NON-NLS-1$
-                this.sendFailureResponse(message, errorMessage, STUNErrorCode.BAD_REQUEST,
-                        controlConnection.getOutputStream());
-            }
+            this.callTarget(user, message);
         }
     }
 
-    private void sendRelayEndpointToSource(final Message requestMessage, final InetSocketAddress endpointAtRelay,
-            final Socket controlConnection) throws Exception {
-        final Message responseMessage = requestMessage.buildSuccessResponse();
-        if (endpointAtRelay.getAddress() instanceof Inet6Address) {
-            responseMessage.addAttribute(new XorMappedAddress(endpointAtRelay, ByteBuffer.wrap(
-                    responseMessage.getHeader().getTransactionId()).getInt()));
-        } else {
-            responseMessage.addAttribute(new XorMappedAddress(endpointAtRelay));
-        }
-        responseMessage.addAttribute(new EndpointClass(EndpointCategory.RELAY));
-        responseMessage.writeTo(controlConnection.getOutputStream());
+    private void handleConnectionRequestResponse(final Message message, final Socket controlConnection)
+            throws Exception {
+        final ConnectionRequest connReq = this.connectionRequests.getConnectionRequest(new String(message.getHeader()
+                .getTransactionId()));
+        final Message successResponse = connReq.getConnectionRequestMessage().buildSuccessResponse();
+        final XorMappedAddress endpointAtRelay = message.getAttribute(XorMappedAddress.class);
+        successResponse.addAttribute(endpointAtRelay);
+        successResponse.writeTo(connReq.getControlConnection().getOutputStream());
     }
 
-    private InetSocketAddress callTarget(final UserData target) throws Exception {
+    private void callTarget(final UserData target, final Message connectionRequestFromSource) throws Exception {
         final Socket toTarget = target.getSocketToUser();
+        logger.debug("Calling target {}", toTarget.toString());
         final Message connectionRequest = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-                STUNMessageMethod.CONNECTION_REQUEST);
+                STUNMessageMethod.CONNECTION_REQUEST, connectionRequestFromSource.getHeader().getTransactionId());
         connectionRequest.addAttribute(new RelayingAttribute());
         connectionRequest.writeTo(toTarget.getOutputStream());
-        return this.waitForTarget(toTarget);
-    }
-
-    private InetSocketAddress waitForTarget(final Socket toTarget) throws Exception {
-        final Message responseFromTarget = MessageReader.createMessageReader().readSTUNMessage(
-                toTarget.getInputStream());
-        if (responseFromTarget.isFailureResponse() || !responseFromTarget.hasAttribute(XorMappedAddress.class)) {
-            throw new Exception("Target could not be started correctly"); //$NON-NLS-1$
-        } else {
-            final XorMappedAddress endpointAtRelay = responseFromTarget.getAttribute(XorMappedAddress.class);
-            return endpointAtRelay.getEndpoint();
-        }
+        // return this.waitForTarget(toTarget);
     }
 
     private void sendFailureResponse(final Message message, final String errorReaon, final STUNErrorCode errorCode,

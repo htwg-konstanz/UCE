@@ -17,6 +17,7 @@
 package de.fhkn.in.uce.mediator.util;
 
 import de.fhkn.in.uce.stun.attribute.Attribute;
+import de.fhkn.in.uce.stun.attribute.AttributeType;
 import de.fhkn.in.uce.stun.message.Message;
 
 /**
@@ -29,7 +30,8 @@ public enum MediatorUtil {
     INSTANCE;
 
     /**
-     * Checks if a message has the requested attibute.
+     * Checks if a message has the requested attribute. The class of the
+     * required attribute has to be the same. Subclasses will not be detected.
      * 
      * @param message
      *            the message to check
@@ -43,6 +45,32 @@ public enum MediatorUtil {
         if (!message.hasAttribute(attributeClass)) {
             final String errorMessage = attributeClass.getSimpleName() + " attribute expected"; //$NON-NLS-1 
             throw new Exception(errorMessage);
+        }
+    }
+
+    /**
+     * Checks if a message has an attribute with the given {@link AttributeType}
+     * . This method can be used to check if a message includes a subclass of an
+     * attribute with the given type.
+     * 
+     * @param message
+     *            the message to check
+     * @param requiredAttributeType
+     *            the required {@link AttributeType}
+     * @throws Exception
+     *             if the message has no attribute with the given type
+     */
+    public void checkForAttributeType(final Message message, final AttributeType requiredAttributeType)
+            throws Exception {
+        boolean hasAttribute = false;
+        for (final Attribute a : message.getAttributes()) {
+            if (a.getType().equals(requiredAttributeType)) {
+                hasAttribute = true;
+                break;
+            }
+        }
+        if (!hasAttribute) {
+            throw new Exception(requiredAttributeType.toString() + " attribute expected"); //$NON-NLS-1
         }
     }
 }

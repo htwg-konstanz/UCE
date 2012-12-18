@@ -19,6 +19,9 @@ package de.fhkn.in.uce.mediator.connectionhandling;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fhkn.in.uce.mediator.peerregistry.Endpoint;
 import de.fhkn.in.uce.mediator.peerregistry.UserData;
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
@@ -28,8 +31,8 @@ import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.stun.attribute.EndpointClass;
 import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
-import de.fhkn.in.uce.stun.attribute.MappedAddress;
 import de.fhkn.in.uce.stun.attribute.Username;
+import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.message.Message;
 
 /**
@@ -42,6 +45,7 @@ import de.fhkn.in.uce.stun.message.Message;
  * 
  */
 public final class DefaultRegisterHandling implements HandleMessage {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultRegisterHandling.class);
     private final UserList userList;
     private final MediatorUtil mediatorUtil;
 
@@ -55,8 +59,11 @@ public final class DefaultRegisterHandling implements HandleMessage {
         this.checkForRequiredAttributes(registerMessage);
         final UserData newUser = this.createNewUserWithRequiredAttributes(registerMessage, controlConnection);
         newUser.addEndpoint(this.getPublicEndpointFromSocket(controlConnection));
-        newUser.addEndpoint(this.createEndpointFromAttributes(registerMessage));
+        if (registerMessage.hasAttribute(XorMappedAddress.class)) {
+            newUser.addEndpoint(this.createEndpointFromAttributes(registerMessage));
+        }
         this.userList.addOrUpdateUser(newUser);
+        logger.debug("User {} added or updated", newUser.getUserId()); //$NON-NLS-1$
         this.sendSuccessResponse(registerMessage, controlConnection);
     }
 
@@ -83,10 +90,12 @@ public final class DefaultRegisterHandling implements HandleMessage {
     }
 
     private Endpoint createEndpointFromAttributes(final Message registerMessage) {
-        // TODO what if there are several endpoints?
-        final MappedAddress address = registerMessage.getAttribute(MappedAddress.class);
-        final EndpointClass category = registerMessage.getAttribute(EndpointClass.class);
-        return new Endpoint(address.getEndpoint(), category.getEndpointCategory());
+        final XorMappedAddress address = registerMessage.getAttribute(XorMappedAddress.class);
+        EndpointCategory category = EndpointCategory.PRIVATE;
+        if (registerMessage.hasAttribute(EndpointClass.class)) {
+            category = registerMessage.getAttribute(EndpointClass.class).getEndpointCategory();
+        }
+        return new Endpoint(address.getEndpoint(), category);
     }
 
     @Override

@@ -33,5 +33,4 @@ public final class HandleMessageTaskFactory implements SocketTaskFactory {
     public Runnable getTask(final Socket s) throws IOException {
         return new HandleMessageTask(s);
     }
-
 }
