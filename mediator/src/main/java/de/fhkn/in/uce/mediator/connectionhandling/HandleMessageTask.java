@@ -49,6 +49,7 @@ public final class HandleMessageTask implements Runnable {
     private final HandleMessage keepAliveMessageHandler;
     private final HandleMessage connectionRequestMessageHandler;
     private final HandleMessage natRequestMessageHandler;
+    private final HandleMessage travTechRequestHandler;
 
     /**
      * Creates a {@link HandleMessageTask} which processes messages of the given
@@ -68,6 +69,7 @@ public final class HandleMessageTask implements Runnable {
         this.keepAliveMessageHandler = new DefaultKeepAliveHandling();
         this.connectionRequestMessageHandler = new ConnectionRequestHandling();
         this.natRequestMessageHandler = new DefaultNatRequestHandling();
+        this.travTechRequestHandler = new DefaultTravTechRequestHandling();
     }
 
     @Override
@@ -107,6 +109,8 @@ public final class HandleMessageTask implements Runnable {
                 this.handleNatRequestMessage(toHandle);
             } else if (toHandle.isMethod(STUNMessageMethod.DEREGISTER)) {
                 this.handleDeregisterMessage(toHandle);
+            } else if (toHandle.isMethod(STUNMessageMethod.SUPPORTED_TRAV_TECHS_REQUEST)) {
+                this.handleSupportedTravTechsRequestMesage(toHandle);
             } else {
                 logger.error("Unknown message method {}", toHandle.getMessageMethod().encode()); //$NON-NLS-1$
             }
@@ -137,6 +141,10 @@ public final class HandleMessageTask implements Runnable {
 
     private void handleNatRequestMessage(final Message natRequestMessage) throws Exception {
         this.natRequestMessageHandler.handleMessage(natRequestMessage, this.socket);
+    }
+
+    private void handleSupportedTravTechsRequestMesage(final Message travTechRequestMessage) throws Exception {
+        this.travTechRequestHandler.handleMessage(travTechRequestMessage, this.socket);
     }
 
     private void sendFailureResponse(final Message toRespond, final STUNErrorCode errorCode, final String errorReason)

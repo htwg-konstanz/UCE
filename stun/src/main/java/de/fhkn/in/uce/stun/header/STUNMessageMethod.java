@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public enum STUNMessageMethod implements MessageMethod {
     BINDING(0x001), AUTHENTICATE(0x003), LIST(0x004), REGISTER(0x005), DEREGISTER(0x006), CONNECTION_REQUEST(0x007), KEEP_ALIVE(
-            0x008), NAT_REQUEST(0x009);
+            0x008), NAT_REQUEST(0x009), SUPPORTED_TRAV_TECHS_REQUEST(0x00d);
 
     private final int encoded;
 

@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 import de.fhkn.in.uce.plugininterface.NATBehavior;
+import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 
 /**
@@ -47,6 +48,8 @@ public final class UserData {
     @GuardedBy("itself")
     private NATBehavior userNat;
     private final Socket socketToUser;
+    @GuardedBy("itself")
+    private final List<NATTraversalTechniqueAttribute> supportedNatTraversalTechniques;
 
     /**
      * Creates a new registered user with the given information.
@@ -57,13 +60,19 @@ public final class UserData {
      *            the {@link NATBehavior} of the user nat device
      * @param socketToUser
      *            the socket to the user
+     * @param supportedNatTraversalTechniques
+     *            a list of supported nat traversal techniques
      */
-    public UserData(final String userId, final NATBehavior userNat, final Socket socketToUser) {
+    public UserData(final String userId, final NATBehavior userNat, final Socket socketToUser,
+            final List<NATTraversalTechniqueAttribute> supportedNatTraversalTechniques) {
         this.userId = userId;
         this.userNat = userNat;
         this.endpoints = Collections.synchronizedList(new ArrayList<Endpoint>());
         this.timestamp = System.currentTimeMillis();
         this.socketToUser = socketToUser;
+        final List<NATTraversalTechniqueAttribute> travTechs = new ArrayList<NATTraversalTechniqueAttribute>();
+        Collections.copy(travTechs, supportedNatTraversalTechniques);
+        this.supportedNatTraversalTechniques = Collections.synchronizedList(travTechs);
     }
 
     /**
@@ -178,5 +187,39 @@ public final class UserData {
         synchronized (this.userNat) {
             this.userNat = newUserNat;
         }
+    }
+
+    /**
+     * Returns the unmodifiable list of supported NAT traversal techniques of
+     * the user.
+     * 
+     * @return the supported NAT traversal techniques as unmodifiable list
+     */
+    public List<NATTraversalTechniqueAttribute> getSupportedNatTraversalTechniques() {
+        return Collections.unmodifiableList(this.supportedNatTraversalTechniques);
+    }
+
+    /**
+     * Adds a new nat traversal technique to the list of supported techniques.
+     * 
+     * @param toAdd
+     *            the {@link NATTraversalTechniqueAttribute} of the supported
+     *            technique
+     * @return see {@link List#add(Object)}
+     */
+    public boolean addSupportedNatTraversalTechnique(final NATTraversalTechniqueAttribute toAdd) {
+        return this.supportedNatTraversalTechniques.add(toAdd);
+    }
+
+    /**
+     * Removes the given nat traversal technique from the list of supported
+     * techniques.
+     * 
+     * @param toRemove
+     *            the {@link NATTraversalTechniqueAttribute} to remove
+     * @return see {@link List#remove(Object)}
+     */
+    public boolean removeSupportedNatTraversalTechnique(final NATTraversalTechniqueAttribute toRemove) {
+        return this.supportedNatTraversalTechniques.remove(toRemove);
     }
 }

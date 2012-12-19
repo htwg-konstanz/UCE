@@ -18,6 +18,8 @@ package de.fhkn.in.uce.mediator.connectionhandling;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,9 @@ import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
 import de.fhkn.in.uce.plugininterface.NATBehavior;
 import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
+import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
+import de.fhkn.in.uce.stun.attribute.Attribute;
 import de.fhkn.in.uce.stun.attribute.EndpointClass;
 import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;
 import de.fhkn.in.uce.stun.attribute.Username;
@@ -75,13 +79,26 @@ public final class DefaultRegisterHandling implements HandleMessage {
     private void checkForRequiredAttributes(final Message registerMessage) throws Exception {
         this.mediatorUtil.checkForAttribute(registerMessage, Username.class);
         this.mediatorUtil.checkForAttribute(registerMessage, NATBehavior.class);
+        this.mediatorUtil.checkForAttributeType(registerMessage, NATSTUNAttributeType.NAT_TRAVERSAL_TECHNIQUE);
     }
 
     private UserData createNewUserWithRequiredAttributes(final Message registerMessage, final Socket socketToUser)
             throws Exception {
         final Username username = registerMessage.getAttribute(Username.class);
         final NATBehavior userNat = registerMessage.getAttribute(NATBehavior.class);
-        return new UserData(username.getUsernameAsString(), userNat, socketToUser);
+        final List<NATTraversalTechniqueAttribute> supportedTravTechs = this
+                .createListOfTechniquesFromMessage(registerMessage);
+        return new UserData(username.getUsernameAsString(), userNat, socketToUser, supportedTravTechs);
+    }
+
+    private List<NATTraversalTechniqueAttribute> createListOfTechniquesFromMessage(final Message message) {
+        final List<NATTraversalTechniqueAttribute> result = new ArrayList<NATTraversalTechniqueAttribute>();
+        for (final Attribute a : message.getAttributes()) {
+            if (a.getType() == NATSTUNAttributeType.NAT_TRAVERSAL_TECHNIQUE) {
+                result.add((NATTraversalTechniqueAttribute) a);
+            }
+        }
+        return result;
     }
 
     private Endpoint getPublicEndpointFromSocket(final Socket socket) {
