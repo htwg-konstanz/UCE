@@ -22,8 +22,8 @@ import java.util.Set;
 import de.fhkn.in.uce.holepunching.message.HolePunchingAttribute;
 import de.fhkn.in.uce.plugininterface.NATSituation;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
+import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.plugininterface.util.NATTraversalTechniqueUtil;
-import de.fhkn.in.uce.stun.attribute.Attribute;
 
 /**
  * Implementation of {@link NATTraversalTechniqueMetaData} for
@@ -92,7 +92,7 @@ public final class HolePunchingMetaData implements NATTraversalTechniqueMetaData
     }
 
     @Override
-    public Attribute getAttribute() {
+    public NATTraversalTechniqueAttribute getAttribute() {
         return new HolePunchingAttribute();
     }
 

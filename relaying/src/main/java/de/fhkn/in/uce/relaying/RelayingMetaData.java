@@ -22,9 +22,9 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import de.fhkn.in.uce.plugininterface.NATSituation;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
+import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.plugininterface.util.NATTraversalTechniqueUtil;
 import de.fhkn.in.uce.relaying.message.RelayingAttribute;
-import de.fhkn.in.uce.stun.attribute.Attribute;
 
 /**
  * Implementation of {@link NATTraversalTechniqueMetaData} for {@link Relaying}.
@@ -89,7 +89,7 @@ public final class RelayingMetaData implements NATTraversalTechniqueMetaData {
     }
 
     @Override
-    public Attribute getAttribute() {
+    public NATTraversalTechniqueAttribute getAttribute() {
         return new RelayingAttribute();
     }
 

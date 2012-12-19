@@ -18,7 +18,7 @@ package de.fhkn.in.uce.plugininterface;
 
 import java.util.Set;
 
-import de.fhkn.in.uce.stun.attribute.Attribute;
+import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 
 /**
  * {@link NATTraversalTechniqueMetaData} delivers meta data of a
@@ -84,10 +84,11 @@ public interface NATTraversalTechniqueMetaData {
     long getTimeout();
 
     /**
-     * Returns the {@link Attribute} for the NAT traversal technique. It
-     * contains the unique encoding for the technique.
+     * Returns the {@link NATTraversalTechniqueAttribute} for the NAT traversal
+     * technique. It contains the unique encoding for the technique.
      * 
-     * @return the {@link Attribute} for the NAT traversal technique
+     * @return the {@link NATTraversalTechniqueAttribute} for the NAT traversal
+     *         technique
      */
-    Attribute getAttribute();
+    NATTraversalTechniqueAttribute getAttribute();
 }
