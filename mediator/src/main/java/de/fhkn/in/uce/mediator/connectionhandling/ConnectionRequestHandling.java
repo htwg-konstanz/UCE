@@ -44,6 +44,7 @@ public final class ConnectionRequestHandling implements HandleMessage {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionRequestHandling.class);
     private final MessageHandlerRegistry messageHandlerRegistry;
     private final MediatorUtil mediatorUtil;
+    private final ConnectionRequestList connectionRequests;
 
     /**
      * Creates a {@link ConnectionRequestHandling} object.
@@ -51,6 +52,7 @@ public final class ConnectionRequestHandling implements HandleMessage {
     public ConnectionRequestHandling() {
         this.messageHandlerRegistry = MessageHandlerRegistryImpl.getInstance();
         this.mediatorUtil = MediatorUtil.INSTANCE;
+        this.connectionRequests = ConnectionRequestList.INSTANCE;
     }
 
     @Override
@@ -61,6 +63,8 @@ public final class ConnectionRequestHandling implements HandleMessage {
         final HandleMessage connectionRequestHandler = this.messageHandlerRegistry
                 .getConnectionRequestHandlerByEncoding(usedTravTech.getEncoded());
         connectionRequestHandler.handleMessage(connectionRequestMessage, controlConnection);
+        this.connectionRequests.removeConnectionRequest(new String(connectionRequestMessage.getHeader()
+                .getTransactionId()));
     }
 
     private void checkForRequiredTravTechAttribute(final Message message) throws Exception {
