@@ -86,8 +86,14 @@ public final class DirectconnConnRequestHandler implements HandleMessage {
 
     private void handleConnectionRequestResponse(final Message message, final Socket controlConnection)
             throws Exception {
+        logger.debug("Handling connection request response"); //$NON-NLS-1$
         final ConnectionRequest connReq = this.connectionRequests.getConnectionRequest(new String(message.getHeader()
                 .getTransactionId()));
+        if (null == connReq) {
+            logger.debug("Connection request is NOT in list"); //$NON-NLS-1$
+        }
+        logger.debug(
+                "Got connection request from list with transactionId={}", String.valueOf(connReq.getConnectionRequestMessage().getHeader().getTransactionId())); //$NON-NLS-1$
         final Message successResponse = connReq.getConnectionRequestMessage().buildSuccessResponse();
         final InetSocketAddress targetEndpoint = new InetSocketAddress(controlConnection.getInetAddress(),
                 controlConnection.getPort());
