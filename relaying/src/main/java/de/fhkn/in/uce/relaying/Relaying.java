@@ -134,11 +134,6 @@ public final class Relaying implements NATTraversalTechnique {
     @Override
     public Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
             final Message connectioRequestMessage) throws ConnectionNotEstablishedException {
-        // if (!this.isRegistered) {
-        // throw new
-        // ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
-        //                    "Target must be registered before creating target-side connection.", null); //$NON-NLS-1$
-        // }
         Socket socket = new Socket();
         try {
             final RelayingClient targetRelayClient = new RelayingClient(this.relayAddress);
@@ -171,20 +166,7 @@ public final class Relaying implements NATTraversalTechnique {
 
     @Override
     public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // try {
-        // this.targetRelayClient = new RelayingClient(this.relayAddress);
-        // final InetSocketAddress endpointAtRelay =
-        // this.createAllocationAtRelayServer();
-        //            logger.debug("created endpoint at relay server: {}", endpointAtRelay.toString()); //$NON-NLS-1$
-        // this.registerRelayEndpointAtMediator(targetId, endpointAtRelay,
-        // controlConnection);
-        // this.isRegistered = true;
-        // } catch (final Exception e) {
-        // logger.error(e.getMessage());
-        // throw new
-        // ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
-        //                    "Target could not be registered.", e); //$NON-NLS-1$
-        // }
+        // can be used to use traversal technique without connectivity manager
     }
 
     private InetSocketAddress createAllocationAtRelayServer(final RelayingClient relayingClient) throws Exception {
@@ -197,38 +179,10 @@ public final class Relaying implements NATTraversalTechnique {
         return result;
     }
 
-    // private void registerRelayEndpointAtMediator(final String targetId, final
-    // InetSocketAddress endpointAtRelay,
-    // final Socket controlConnection) throws Exception {
-    // final Message registerMessage =
-    // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-    // STUNMessageMethod.REGISTER);
-    // final Username userName = new Username(targetId);
-    // registerMessage.addAttribute(userName);
-    // registerMessage.addAttribute(new XorMappedAddress(endpointAtRelay));
-    // registerMessage.writeTo(controlConnection.getOutputStream());
-    // }
-
     @Override
     public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // try {
-        // this.deregisterRelayEndpointAtMediator(targetId, controlConnection);
-        // this.isRegistered = false;
-        // } catch (final Exception e) {
-        //            logger.error("Exception while deregistering target {}: {}", targetId, e.getMessage()); //$NON-NLS-1$
-        //            throw new Exception("Exception while deregistering target", e); //$NON-NLS-1$
-        // }
+        // can be used to use traversal technique without connectivity manager
     }
-
-    // private void deregisterRelayEndpointAtMediator(final String targetId,
-    // final Socket controlConnection)
-    // throws Exception {
-    // final Message deregisterMessage =
-    // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-    // STUNMessageMethod.DEREGISTER);
-    // deregisterMessage.addAttribute(new Username(targetId));
-    // deregisterMessage.writeTo(controlConnection.getOutputStream());
-    // }
 
     @Override
     public NATTraversalTechniqueMetaData getMetaData() {

@@ -89,6 +89,7 @@ public final class Directconnection implements NATTraversalTechnique {
     public Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
             final Message connectionRequestMessage) throws ConnectionNotEstablishedException {
         try {
+            logger.debug("Establishing target-side conenction via directconnection"); //$NON-NLS-1$
             return this.target.establishTargetSideConnection(controlConnection, connectionRequestMessage);
         } catch (final Exception e) {
             logger.error(e.getMessage());
@@ -99,22 +100,12 @@ public final class Directconnection implements NATTraversalTechnique {
 
     @Override
     public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // try {
-        // this.target.registerTarget(targetId, controlConnection);
-        // } catch (final Exception e) {
-        //            logger.error("Target {} could not be registered successfully.", targetId); //$NON-NLS-1$
-        //            throw new Exception("Target could not be registered successfully", e); //$NON-NLS-1$
-        // }
+        // can be used to use traversal technique without connectivity manager
     }
 
     @Override
     public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // try {
-        // this.target.deregisterTarget(targetId, controlConnection);
-        // } catch (final Exception e) {
-        //            logger.error("Target {} could not be deregistered successfully.", targetId); //$NON-NLS-1$
-        //            throw new Exception("Target could not be deregistered successfully", e); //$NON-NLS-1$
-        // }
+        // can be used to use traversal technique without connectivity manager
     }
 
     @Override

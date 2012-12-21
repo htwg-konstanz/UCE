@@ -19,6 +19,9 @@ package de.fhkn.in.uce.directconnection.core;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
@@ -36,6 +39,7 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
  * 
  */
 public final class DirectconnectionSource {
+    private static final Logger logger = LoggerFactory.getLogger(DirectconnectionSource.class);
 
     /**
      * Creates a {@link DirectconnectionSource} object.
@@ -58,6 +62,7 @@ public final class DirectconnectionSource {
     public Socket establishSourceSideConnection(final String targetId, final Socket controlConnection) throws Exception {
         this.sendConnectionRequest(targetId, controlConnection);
         final InetSocketAddress targetAddress = this.processConnectionRequestResponse(controlConnection);
+        logger.debug("Creating socket to {}", targetAddress.toString());
         return this.createSocketToEndpoint(targetAddress, new InetSocketAddress(controlConnection.getLocalAddress(),
                 controlConnection.getLocalPort()));
     }

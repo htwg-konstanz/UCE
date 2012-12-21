@@ -39,7 +39,7 @@ public final class DirectconnectionMetaData implements NATTraversalTechniqueMeta
     private final String name = "DirectConnection"; //$NON-NLS-1$
     private final String version = "1.0"; //$NON-NLS-1$
     private final int connectionSetupTime = 3;
-    private final int timoutInSeconds = 5;
+    private final int timoutInSeconds = 15;
     private final Set<NATSituation> traversaledNATSituations;
     private final NATTraversalTechniqueUtil util = NATTraversalTechniqueUtil.getInstance();
 

@@ -73,13 +73,6 @@ public final class RelayingMetaData implements NATTraversalTechniqueMetaData {
 
     @Override
     public Set<NATSituation> getTraversaledNATSituations() {
-        // return an empty set because this traversal technique is a fallback
-        // technique
-        // return Collections.emptySet();
-        // return all possible nat situation
-        // final NATTraversalTechniqueUtil util =
-        // NATTraversalTechniqueUtil.getInstance();
-        // return util.getAllPossibleNATSituations();
         return Collections.unmodifiableSet(this.traversaledNATSituations);
     }
 

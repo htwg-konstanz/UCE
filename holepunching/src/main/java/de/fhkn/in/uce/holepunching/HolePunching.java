@@ -129,26 +129,18 @@ public final class HolePunching implements NATTraversalTechnique {
 
     @Override
     public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // this.target = new HolePunchingTarget(mediatorAddress, targetId);
-        // this.target.start();
+        // can be used to use traversal technique without connectivity manager
     }
 
     @Override
     public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // this.checkIfTargetIsInitialized();
-        // this.target.stop();
+        // can be used to use traversal technique without connectivity manager
     }
 
     @Override
     public NATTraversalTechnique copy() {
         return new HolePunching(this);
     }
-
-    // private void checkIfTargetIsInitialized() throws IllegalStateException {
-    // if (this.target == null) {
-    //            throw new IllegalStateException("Target has be be registed first"); //$NON-NLS-1$
-    // }
-    // }
 
     @Override
     public int hashCode() {

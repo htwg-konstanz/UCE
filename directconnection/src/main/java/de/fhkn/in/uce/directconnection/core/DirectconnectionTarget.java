@@ -21,6 +21,9 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
 import de.fhkn.in.uce.stun.message.Message;
 
@@ -31,6 +34,7 @@ import de.fhkn.in.uce.stun.message.Message;
  * 
  */
 public final class DirectconnectionTarget {
+    private static final Logger logger = LoggerFactory.getLogger(DirectconnectionTarget.class);
 
     /**
      * Creates a {@link DirectconnectionTarget} object.
@@ -52,9 +56,15 @@ public final class DirectconnectionTarget {
             throws Exception {
         final InetSocketAddress localAddress = new InetSocketAddress(controlConnection.getLocalAddress(),
                 controlConnection.getLocalPort());
+        logger.debug("LocalAddress={}", localAddress.toString()); //$NON-NLS-1$
         final ServerSocket serverSocket = this.createBoundServerSocket(localAddress);
+        logger.debug(
+                "Server socket listening on {}:{}", serverSocket.getLocalSocketAddress().toString(), serverSocket.getLocalPort()); //$NON-NLS-1$
         this.sendResponseForTargetIsReady(controlConnection, connectionRequestMessage);
-        return serverSocket.accept();
+        logger.debug("response sent and waiting for incoming connection"); //$NON-NLS-1$
+        final Socket result = serverSocket.accept();
+        logger.debug("Returning connected socket"); //$NON-NLS-1$
+        return result;
     }
 
     private ServerSocket createBoundServerSocket(final InetSocketAddress bindAddress) throws IOException {

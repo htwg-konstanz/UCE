@@ -31,7 +31,6 @@ import de.fhkn.in.uce.holepunching.core.ConnectionListener;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
 import de.fhkn.in.uce.holepunching.core.HolePunchingUtil;
 import de.fhkn.in.uce.holepunching.message.HolePunchingAttribute;
-import de.fhkn.in.uce.holepunching.message.HolePunchingMethod;
 import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
@@ -110,19 +109,8 @@ public final class HolePunchingSource {
             throw new IOException("Could not get socket to: " + targetId);
         }
         logger.info("Returning socket: {}", result);
-        // } else {
-        // logger.debug("Forwarded Endpoints message expected but was {}",
-        // receivedMessage.getMessageMethod()
-        // .toString());
-        // }
         return result;
     }
-
-    // private void connectToMediator(final SocketAddress mediatorAddress)
-    // throws IOException {
-    // this.controlConnection.setReuseAddress(true);
-    // this.controlConnection.connect(mediatorAddress);
-    // }
 
     private void sendConnectionRequest(final Socket controlConnection, final String targetId,
             final Token authentificationToken) throws IOException {
@@ -140,11 +128,6 @@ public final class HolePunchingSource {
     private Message receiveMessage(final Socket controlConnection) throws IOException {
         final MessageReader messageReader = this.hpUtil.getCustomHolePunchingMessageReader();
         return messageReader.readSTUNMessage(controlConnection.getInputStream());
-    }
-
-    private boolean isForwardedEndpointsMessage(final Message toCheck) {
-        return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) && toCheck.hasAttribute(XorMappedAddress.class)
-                && toCheck.hasAttribute(Token.class);
     }
 
     private void startHolePunching(final List<XorMappedAddress> endpoints,

@@ -18,15 +18,10 @@ package de.fhkn.in.uce.directconnection;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import de.fhkn.in.uce.directconnection.message.DirectconnectionAttribute;
-import de.fhkn.in.uce.plugininterface.NATFeatureRealization;
-import de.fhkn.in.uce.plugininterface.NATSituation;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechniqueMetaData;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 
@@ -40,37 +35,10 @@ public final class DirectconnectionMetaDataTest {
 
     @Test
     public void testGetTraversaledNatBehavior() throws Exception {
-        final Set<NATSituation> expectedResult = new HashSet<NATSituation>();
-        expectedResult.add(new NATSituation(NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ENDPOINT_INDEPENDENT, NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ENDPOINT_INDEPENDENT));
-        expectedResult.add(new NATSituation(NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ADDRESS_DEPENDENT, NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ENDPOINT_INDEPENDENT));
-        expectedResult.add(new NATSituation(NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ADDRESS_AND_PORT_DEPENDENT, NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ENDPOINT_INDEPENDENT));
-        expectedResult.add(new NATSituation(NATFeatureRealization.CONNECTION_DEPENDENT,
-                NATFeatureRealization.CONNECTION_DEPENDENT, NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ENDPOINT_INDEPENDENT));
-        expectedResult.add(new NATSituation(NATFeatureRealization.NOT_REALIZED, NATFeatureRealization.NOT_REALIZED,
-                NATFeatureRealization.ENDPOINT_INDEPENDENT, NATFeatureRealization.ENDPOINT_INDEPENDENT));
-        expectedResult.add(new NATSituation(NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ENDPOINT_INDEPENDENT, NATFeatureRealization.NOT_REALIZED,
-                NATFeatureRealization.NOT_REALIZED));
-        expectedResult.add(new NATSituation(NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ADDRESS_DEPENDENT, NATFeatureRealization.NOT_REALIZED,
-                NATFeatureRealization.NOT_REALIZED));
-        expectedResult.add(new NATSituation(NATFeatureRealization.ENDPOINT_INDEPENDENT,
-                NATFeatureRealization.ADDRESS_AND_PORT_DEPENDENT, NATFeatureRealization.NOT_REALIZED,
-                NATFeatureRealization.NOT_REALIZED));
-        expectedResult.add(new NATSituation(NATFeatureRealization.CONNECTION_DEPENDENT,
-                NATFeatureRealization.CONNECTION_DEPENDENT, NATFeatureRealization.NOT_REALIZED,
-                NATFeatureRealization.NOT_REALIZED));
+        final int expectedResult = 25;
+        final int actualResult = this.metaData.getTraversaledNATSituations().size();
 
-        final Set<NATSituation> actualResult = this.metaData.getTraversaledNATSituations();
-
-        assertEquals("The traversaled NAT behavior should be parsed correctly.", expectedResult, actualResult);
+        assertEquals(expectedResult, actualResult);
     }
 
     @Test

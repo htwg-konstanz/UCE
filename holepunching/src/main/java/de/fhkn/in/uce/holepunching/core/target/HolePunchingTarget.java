@@ -94,27 +94,10 @@ public final class HolePunchingTarget {
             throw new IllegalStateException("Target is already started"); //$NON-NLS-1$
         }
         this.started = true;
-        // this.connectToMediator();
-        // this.sendRegisterMessage();
-        // final Message receivedMessage = this.receiveMessage();
-        // if (receivedMessage.isMethod(STUNMessageMethod.REGISTER) &&
-        // receivedMessage.isSuccessResponse()) {
-        //            logger.info("Target {} registered successfully, starting handler thread", this.targetId); //$NON-NLS-1$
-        // this.startMessageHandler();
         final List<XorMappedAddress> endpoints = connectionRequestMessage.getAttributes(XorMappedAddress.class);
         final Token authentificationToken = connectionRequestMessage.getAttribute(Token.class);
         this.startMessageHandler(endpoints, authentificationToken);
-        // } else {
-        //            logger.error("Could not register target {}", this.targetId); //$NON-NLS-1$
-        //            throw new IllegalStateException("Could not register target"); //$NON-NLS-1$
-        // }
     }
-
-    // private void connectToMediator() throws IOException {
-    // this.socketToMediator = new Socket();
-    // this.socketToMediator.setReuseAddress(true);
-    // this.socketToMediator.connect(this.mediatorSocketAddress);
-    // }
 
     private void sendRegisterMessage() throws IOException {
         final Message registerMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
@@ -165,17 +148,6 @@ public final class HolePunchingTarget {
         if (!this.started) {
             throw new IllegalStateException("Target is not started"); //$NON-NLS-1$
         }
-        // final Message deregisterMessage =
-        // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-        // STUNMessageMethod.DEREGISTER);
-        // we need a new socket to deregister
-        // final Socket s = new Socket();
-        // s.connect(this.mediatorSocketAddress);
-        // s.connect(new
-        // InetSocketAddress(this.socketToMediator.getInetAddress(),
-        // this.socketToMediator.getPort()));
-        // deregisterMessage.writeTo(s.getOutputStream());
-        // s.close();
         this.socketToMediator.close();
         this.messageHandlerTask.cancel();
     }

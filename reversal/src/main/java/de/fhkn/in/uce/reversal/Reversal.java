@@ -94,17 +94,6 @@ public final class Reversal implements NATTraversalTechnique {
     @Override
     public Socket createTargetSideConnection(final String targetId, final Socket controlConnection,
             final Message connectionRequestMessage) throws ConnectionNotEstablishedException {
-        // Socket result = null;
-        // try {
-        // result = this.target.establishTargetSideConnection();
-        // } catch (final InterruptedException e) {
-        //            final String errorMessage = "Target-side connection could not be established"; //$NON-NLS-1$
-        // logger.error(errorMessage, e);
-        // throw new
-        // ConnectionNotEstablishedException(this.metaData.getTraversalTechniqueName(),
-        // errorMessage, e);
-        // }
-        // return result;
         try {
             return this.target.establishTargetSideConnection(controlConnection, connectionRequestMessage);
         } catch (final Exception e) {
@@ -116,16 +105,46 @@ public final class Reversal implements NATTraversalTechnique {
 
     @Override
     public void registerTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // this.target.register(targetId, controlConnection);
+        // can be used to use traversal technique without connectivity manager
     }
 
     @Override
     public void deregisterTargetAtMediator(final String targetId, final Socket controlConnection) throws Exception {
-        // this.target.deregister(targetId, controlConnection);
+        // can be used to use traversal technique without connectivity manager
     }
 
     @Override
     public NATTraversalTechnique copy() {
         return new Reversal(this);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.metaData == null) ? 0 : this.metaData.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        final Reversal other = (Reversal) obj;
+        if (this.metaData == null) {
+            if (other.metaData != null) {
+                return false;
+            }
+        } else if (!this.metaData.equals(other.metaData)) {
+            return false;
+        }
+        return true;
     }
 }

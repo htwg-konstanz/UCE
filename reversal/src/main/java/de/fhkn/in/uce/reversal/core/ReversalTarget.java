@@ -48,82 +48,8 @@ import de.fhkn.in.uce.stun.message.MessageReader;
 public final class ReversalTarget {
     private static final Logger logger = LoggerFactory.getLogger(ReversalTarget.class);
 
-    // private BlockingQueue<Socket> blockingSocketQueue;
-    // private ListenerThread listenerThread;
-    // private boolean registered;
-
     public ReversalTarget() {
-        // this.registered = false;
-        // this.blockingSocketQueue = new LinkedBlockingQueue<Socket>();
     }
-
-    // public void deregister(final String targetId, final Socket
-    // controlConnection) throws Exception {
-    // if (!this.registered) {
-    //            logger.error("Target not yet registered"); //$NON-NLS-1$
-    //            throw new IllegalStateException("Target not yet registered"); //$NON-NLS-1$
-    // }
-    // this.listenerThread.interrupt();
-    // this.blockingSocketQueue.clear();
-    // this.sendRequestMessageWithUsername(STUNMessageMethod.DEREGISTER,
-    // targetId, controlConnection);
-    // if (this.waitForSuccessResponse(STUNMessageMethod.DEREGISTER,
-    // controlConnection)) {
-    //            logger.info("Success message for deregistration {} received", targetId); //$NON-NLS-1$
-    // } else {
-    //            logger.error("No success message for deregistration {} received", targetId); //$NON-NLS-1$
-    //            throw new Exception("Could not deregister target"); //$NON-NLS-1$
-    // }
-    // }
-
-    // public void register(final String targetId, final Socket
-    // controlConnection) throws Exception {
-    // if (this.registered) {
-    //            throw new IllegalStateException("Target is already registered"); //$NON-NLS-1$
-    // }
-    // this.sendRequestMessageWithUsername(STUNMessageMethod.REGISTER, targetId,
-    // controlConnection);
-    // if (this.waitForSuccessResponse(STUNMessageMethod.REGISTER,
-    // controlConnection)) {
-    //            logger.info("starting listenerThread"); //$NON-NLS-1$
-    // this.listenerThread = new ListenerThread(controlConnection,
-    // this.blockingSocketQueue);
-    // this.listenerThread.start();
-    // this.registered = true;
-    // } else {
-    //            logger.error("No success message received, could not register target {}", targetId); //$NON-NLS-1$
-    //            throw new Exception("Could not register target"); //$NON-NLS-1$
-    // }
-    // }
-
-    // private void sendRequestMessageWithUsername(final STUNMessageMethod
-    // method, final String username,
-    // final Socket controlConnection) throws Exception {
-    // final Message requestMessage =
-    // MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
-    // method);
-    // requestMessage.addAttribute(new Username(username));
-    // requestMessage.writeTo(controlConnection.getOutputStream());
-    // }
-
-    // /**
-    // * Method for accepting incoming connection from the source-side
-    // *
-    // * @return Socket of the ConnectionReversal connection
-    // * @throws InterruptedException
-    // */
-    // public Socket establishTargetSideConnection() throws InterruptedException
-    // {
-    // Socket result = null;
-    // if (this.registered) {
-    // result = this.blockingSocketQueue.take();
-    // } else {
-    //            final String errorMessage = "Target not yet registered"; //$NON-NLS-1$
-    // logger.error(errorMessage);
-    // throw new IllegalStateException(errorMessage);
-    // }
-    // return result;
-    // }
 
     public Socket establishTargetSideConnection(final Socket controlConnection, final Message connectionRequestMessage)
             throws Exception {
