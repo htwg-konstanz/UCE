@@ -71,13 +71,15 @@ public class NATTraversalTechniqueAttribute implements Attribute {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (null == obj)
             return false;
-        if (getClass() != obj.getClass())
+        if (this instanceof NATTraversalTechniqueAttribute && obj instanceof NATTraversalTechniqueAttribute) {
+            NATTraversalTechniqueAttribute other = (NATTraversalTechniqueAttribute) obj;
+            if (encoded != other.encoded)
+                return false;
+        } else {
             return false;
-        NATTraversalTechniqueAttribute other = (NATTraversalTechniqueAttribute) obj;
-        if (encoded != other.encoded)
-            return false;
+        }
         return true;
     }
 

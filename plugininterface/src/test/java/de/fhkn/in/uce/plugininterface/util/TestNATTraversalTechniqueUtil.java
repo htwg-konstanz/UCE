@@ -78,4 +78,15 @@ public final class TestNATTraversalTechniqueUtil {
 
         assertEquals(extectedResult, actualResult);
     }
+
+    @Test
+    public void testResolveNatSituationWithoutWildcard() {
+        final int expectedResult = 1;
+        final int actualResult = this.util.resolveWildcards(
+                new NATSituation(NATFeatureRealization.CONNECTION_DEPENDENT,
+                        NATFeatureRealization.CONNECTION_DEPENDENT, NATFeatureRealization.CONNECTION_DEPENDENT,
+                        NATFeatureRealization.CONNECTION_DEPENDENT)).size();
+
+        assertEquals(expectedResult, actualResult);
+    }
 }
