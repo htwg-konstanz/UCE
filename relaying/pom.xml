@@ -70,7 +70,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         <dependency>
         	<groupId>de.fhkn.in.uce</groupId>
         	<artifactId>core</artifactId>
-        	<version>0.0.1-SNAPSHOT</version>
+        	<version>1.0</version>
         </dependency>
     </dependencies>
     <parent>

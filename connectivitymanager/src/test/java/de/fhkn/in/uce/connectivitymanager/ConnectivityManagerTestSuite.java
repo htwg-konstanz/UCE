@@ -33,6 +33,14 @@ import de.fhkn.in.uce.connectivitymanager.selector.TestNATTraversalSelection;
 import de.fhkn.in.uce.connectivitymanager.selector.strategy.TestConnectionSetupTimeSelection;
 import de.fhkn.in.uce.connectivitymanager.selector.weighting.TestConnectionSetupTimeComparator;
 
+/**
+ * The test suite requires the nat traversal techniques directconnection,
+ * connetion reversal, hole punching and relaying which can be found in the
+ * Universal Connection Establishing project of the HTWG Konstanz.
+ * 
+ * @author Alexander Diener (aldiener@htwg-konstanz.de)
+ * 
+ */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestConnectionSetupTimeComparator.class, TestNATTraversalSelection.class,
         TestNATTraversalRegistryImpl.class, TestNATTraversalTechniqueNotFoundException.class,

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>stun.server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>UCEStunServer</name>
@@ -98,7 +98,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<dependency>
 			<groupId>de.fhkn.in.uce</groupId>
 			<artifactId>core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
