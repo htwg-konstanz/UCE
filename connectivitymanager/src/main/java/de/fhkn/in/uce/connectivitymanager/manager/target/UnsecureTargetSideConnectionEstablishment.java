@@ -79,10 +79,8 @@ public final class UnsecureTargetSideConnectionEstablishment implements Connecti
         for (final NATTraversalTechnique supportedTraversalTechnique : supportedTraversalTechniques) {
             travTechAttributes.add(supportedTraversalTechnique.getMetaData().getAttribute());
         }
-        // final NATBehavior ownNatBehavior =
-        // this.investigator.investigateOwnNat(this.mediatorConnection
-        // .getControlConnection().getLocalPort());
-        final NATBehavior ownNatBehavior = new NATBehavior();
+        final NATBehavior ownNatBehavior = this.investigator.investigateOwnNat(this.mediatorConnection
+                .getControlConnection().getLocalPort());
         this.mediatorConnection.registerTarget(targetId, ownNatBehavior, travTechAttributes);
     }
 

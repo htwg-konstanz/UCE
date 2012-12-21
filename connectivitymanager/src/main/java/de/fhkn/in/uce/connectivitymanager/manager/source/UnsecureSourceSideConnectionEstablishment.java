@@ -72,10 +72,8 @@ public final class UnsecureSourceSideConnectionEstablishment implements Connecti
 
     @Override
     public Socket establishConnection(final String targetId, final ConnectionConfiguration config) {
-        // final NATBehavior sourceNat =
-        // this.investigator.investigateOwnNat(this.mediatorConnection
-        // .getControlConnection().getLocalPort());
-        final NATBehavior sourceNat = new NATBehavior();
+        final NATBehavior sourceNat = this.investigator.investigateOwnNat(this.mediatorConnection
+                .getControlConnection().getLocalPort());
         NATBehavior targetNat;
         try {
             logger.debug("Requesting nat of {}", targetId); //$NON-NLS-1$
