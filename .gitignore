@@ -12,5 +12,10 @@
 .DS_Store
 
 # Eclipse
+.classpath
 .settings
 .project
+bin
+target
+build
+
