@@ -70,9 +70,7 @@ public final class UserData {
         this.endpoints = Collections.synchronizedList(new ArrayList<Endpoint>());
         this.timestamp = System.currentTimeMillis();
         this.socketToUser = socketToUser;
-        final List<NATTraversalTechniqueAttribute> travTechs = new ArrayList<NATTraversalTechniqueAttribute>();
-        Collections.copy(travTechs, supportedNatTraversalTechniques);
-        this.supportedNatTraversalTechniques = Collections.synchronizedList(travTechs);
+        this.supportedNatTraversalTechniques = Collections.synchronizedList(supportedNatTraversalTechniques);
     }
 
     /**

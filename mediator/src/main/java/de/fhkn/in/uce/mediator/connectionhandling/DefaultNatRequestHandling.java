@@ -18,6 +18,9 @@ package de.fhkn.in.uce.mediator.connectionhandling;
 
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fhkn.in.uce.mediator.peerregistry.UserData;
 import de.fhkn.in.uce.mediator.peerregistry.UserList;
 import de.fhkn.in.uce.mediator.util.MediatorUtil;
@@ -28,6 +31,7 @@ import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.message.Message;
 
 public final class DefaultNatRequestHandling implements HandleMessage {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultNatRequestHandling.class);
     private final UserList userList;
     private final MediatorUtil mediatorUtil;
 
@@ -45,6 +49,8 @@ public final class DefaultNatRequestHandling implements HandleMessage {
         final Message response = message.buildSuccessResponse();
         response.addAttribute(userNat);
         response.writeTo(controlConnection.getOutputStream());
+        logger.debug("response to {}:{} sent", message.getMessageClass().toString(), message.getMessageMethod()
+                .toString());
     }
 
     @Override

@@ -28,6 +28,7 @@ import de.fhkn.in.uce.plugininterface.mediator.HandleMessage;
 import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
 import de.fhkn.in.uce.stun.attribute.Attribute;
+import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 
 /**
@@ -63,8 +64,15 @@ public final class ConnectionRequestHandling implements HandleMessage {
         final HandleMessage connectionRequestHandler = this.messageHandlerRegistry
                 .getConnectionRequestHandlerByEncoding(usedTravTech.getEncoded());
         connectionRequestHandler.handleMessage(connectionRequestMessage, controlConnection);
-        this.connectionRequests.removeConnectionRequest(new String(connectionRequestMessage.getHeader()
-                .getTransactionId()));
+        if (connectionRequestMessage.isMethod(STUNMessageMethod.CONNECTION_REQUEST)
+                && connectionRequestMessage.isSuccessResponse()) {
+            // remove only connection requests from list where a response was
+            // seen
+            this.connectionRequests.removeConnectionRequest(new String(connectionRequestMessage.getHeader()
+                    .getTransactionId()));
+            logger.debug(
+                    "Connection request with transactionId={} removed from list", String.valueOf(connectionRequestMessage.getHeader().getTransactionId())); //$NON-NLS-1$
+        }
     }
 
     private void checkForRequiredTravTechAttribute(final Message message) throws Exception {
