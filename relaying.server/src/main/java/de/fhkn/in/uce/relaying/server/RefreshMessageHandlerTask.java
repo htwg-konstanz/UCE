@@ -23,7 +23,7 @@ import java.net.SocketTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.net.SocketListener;
+import de.fhkn.in.uce.core.socketlistener.SocketListener;
 import de.fhkn.in.uce.relaying.message.RelayingAttributeTypeDecoder;
 import de.fhkn.in.uce.relaying.message.RelayingConstants;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;

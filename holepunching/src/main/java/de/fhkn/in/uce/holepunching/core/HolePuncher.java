@@ -195,12 +195,13 @@ public final class HolePuncher {
                     }
                     s.close();
                 } catch (final InterruptedException e) {
-                    try {
+                	// tzn: dead code
+                	/*try {
                         if (s != null) {
                             s.close();
                         }
                     } catch (final IOException ignore) {
-                    }
+                    }*/
                     Thread.currentThread().interrupt();
                     logger.debug("InterruptedException. Interrupt Status is restored");
                     // respect interruption and cancel task

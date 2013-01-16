@@ -22,9 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.fhkn.in.uce.connectivitymanager.registry.NATTraversalRegistry;
 import de.fhkn.in.uce.connectivitymanager.selector.NATTraversalSelection;
 import de.fhkn.in.uce.connectivitymanager.selector.decisiontree.DecisionTree;
@@ -35,7 +32,8 @@ import de.fhkn.in.uce.plugininterface.NATSituation;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 
 public final class ConnectionSetupTimeSelection implements NATTraversalSelection {
-    private final Logger logger = LoggerFactory.getLogger(ConnectionSetupTimeSelection.class);
+    // tzn: there is no logging here curently
+	//private final Logger logger = LoggerFactory.getLogger(ConnectionSetupTimeSelection.class);
     private final DecisionTree decisionTree;
     private final Comparator<NATTraversalTechnique> comparator;
     private final NATTraversalRegistry registry;

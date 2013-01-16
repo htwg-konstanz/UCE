@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 
-import de.fhkn.in.net.SocketTaskFactory;
+import de.fhkn.in.uce.core.socketlistener.SocketTaskFactory;
 
 /**
  * Factory to create {@link MessageDispatcherTask} instances.

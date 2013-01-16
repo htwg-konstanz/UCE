@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.net.SocketListener;
+import de.fhkn.in.uce.core.socketlistener.SocketListener;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
 import de.fhkn.in.uce.stun.attribute.EndpointClass;
 import de.fhkn.in.uce.stun.attribute.EndpointClass.EndpointCategory;

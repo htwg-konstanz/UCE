@@ -32,7 +32,7 @@ import javax.net.ServerSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.net.SocketListener;
+import de.fhkn.in.uce.core.socketlistener.SocketListener;
 
 /**
  * A Server that implements TURN-like behavior, to relay TCP data. But it is NOT
