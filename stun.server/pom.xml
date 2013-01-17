@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>stun.server</artifactId>
-	<version>1.0</version>
+	<!-- <version>1.0</version> -->
 	<packaging>jar</packaging>
 
 	<name>UCEStunServer</name>

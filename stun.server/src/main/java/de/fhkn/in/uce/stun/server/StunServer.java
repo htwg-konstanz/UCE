@@ -36,7 +36,7 @@ import de.fhkn.in.uce.stun.server.connectionhandling.HandleMessageTaskFactory;
  * Class to configure and start the modified UCE STUN server. With the given
  * primary and secondary public addresses 4 {@link HandleMessageTask}s are
  * started. According to RFC 5780 the server can be used to determine the TCP
- * mapping and filtering behavior of a NAT device. The server is not complaint
+ * mapping and filtering behavior of a NAT device. The server is not compliant
  * completely to RFC 5389 and 5780 because it also instantiates TCP connections
  * with the clients for examining the filtering behavior. IN RFC 5389 7.2.2.
  * this behavior is forbidden.
