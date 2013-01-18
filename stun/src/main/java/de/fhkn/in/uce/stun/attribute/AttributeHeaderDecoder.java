@@ -124,7 +124,8 @@ public final class AttributeHeaderDecoder {
         return result;
     }
 
-    private boolean isComprehensionOptional(final int typeBits) {
+    @SuppressWarnings("unused")
+	private boolean isComprehensionOptional(final int typeBits) {
         boolean result = false;
         if (typeBits >= 0x8000 && typeBits <= 0xFFFF) {
             result = true;

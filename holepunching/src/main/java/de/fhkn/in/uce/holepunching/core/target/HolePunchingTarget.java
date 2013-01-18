@@ -99,7 +99,8 @@ public final class HolePunchingTarget {
         this.startMessageHandler(endpoints, authentificationToken);
     }
 
-    private void sendRegisterMessage() throws IOException {
+    @SuppressWarnings("unused")
+	private void sendRegisterMessage() throws IOException {
         final Message registerMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.REGISTER);
         // target id
@@ -119,7 +120,8 @@ public final class HolePunchingTarget {
         messageWriter.writeMessage(registerMessage);
     }
 
-    private Message receiveMessage() throws IOException {
+    @SuppressWarnings("unused")
+	private Message receiveMessage() throws IOException {
         final MessageReader messageReader = MessageReader.createMessageReader();
         return messageReader.readSTUNMessage(this.socketToMediator.getInputStream());
     }

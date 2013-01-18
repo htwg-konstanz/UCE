@@ -22,9 +22,6 @@ import java.net.SocketAddress;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.fhkn.in.uce.holepunching.core.CancelableTask;
 import de.fhkn.in.uce.holepunching.core.ConnectionListener;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
@@ -42,12 +39,15 @@ import de.fhkn.in.uce.stun.message.Message;
  * 
  */
 public final class MessageHandlerTask implements CancelableTask {
-    private final static Logger logger = LoggerFactory.getLogger(MessageHandlerTask.class);
-    private final Socket socketToMediator;
-    private final ConnectionListener connectionListener;
-    private final HolePuncher hp;
+    @SuppressWarnings("unused")
+	private final Socket socketToMediator;
+    @SuppressWarnings("unused")
     private boolean cancelled = false;
+    @SuppressWarnings("unused")
     private final HolePunchingUtil hpUtil;
+	private final ConnectionListener connectionListener;
+    private final HolePuncher hp;
+    
     private final List<XorMappedAddress> endpoints;
     private final Token authentificationToken;
 
@@ -108,6 +108,7 @@ public final class MessageHandlerTask implements CancelableTask {
         //        logger.debug("Message handler task is cancelled"); //$NON-NLS-1$
     }
 
+    @SuppressWarnings("unused")
     private boolean isForwardedEndpointsMessage(final Message toCheck) {
         // return toCheck.isMethod(HolePunchingMethod.FORWARDED_ENDPOINTS) &&
         // toCheck.hasAttribute(XorMappedAddress.class)

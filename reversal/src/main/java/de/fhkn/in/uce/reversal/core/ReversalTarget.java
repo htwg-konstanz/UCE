@@ -94,7 +94,8 @@ public final class ReversalTarget {
      *         response, false else
      * @throws IOException
      */
-    private boolean waitForSuccessResponse(final STUNMessageMethod method, final Socket controlConnection)
+    @SuppressWarnings("unused")
+	private boolean waitForSuccessResponse(final STUNMessageMethod method, final Socket controlConnection)
             throws IOException {
         boolean result = false;
         final MessageReader messageReader = MessageReader.createMessageReader();
