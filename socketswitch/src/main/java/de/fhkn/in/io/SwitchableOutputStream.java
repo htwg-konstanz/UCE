@@ -54,12 +54,12 @@ public class SwitchableOutputStream extends OutputStream {
 	 * @return the number of bytes totally sent by this OutputStream
 	 * @throws IOException
 	 */
-	public synchronized int switchOutputStream(OutputStream newStream) throws IOException {
+	public synchronized int switchStream(OutputStream newStream) throws IOException {
 		this.outputStream.flush();
 		this.outputStream = newStream;
-		int number = numberOfBytesSent;
+		int bytesSent = numberOfBytesSent;
 		this.numberOfBytesSent = 0;
-		return number;
+		return bytesSent;
 	}
 
 	/**

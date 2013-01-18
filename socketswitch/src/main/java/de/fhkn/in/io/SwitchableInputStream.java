@@ -40,7 +40,7 @@ public class SwitchableInputStream extends InputStream {
 	/** Queue of input streams to switch to **/
 	private BlockingQueue<InputStream> newInputStreams;
 	
-	
+	/** Number of bytes left to read before switching **/
 	private int numberOfBytesToRead;
 
 	private boolean isSwitchException = false;
@@ -49,6 +49,11 @@ public class SwitchableInputStream extends InputStream {
 
 	private int numberOfBytesReceived;
 
+	/**
+	 * Constructor. Wraps the given InputStream in a new SwitchableInputStream
+	 * 
+	 * @param inputStream the InputStream to wrap
+	 */
 	public SwitchableInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
 		this.newInputStreams = new LinkedBlockingQueue<InputStream>();
@@ -56,34 +61,42 @@ public class SwitchableInputStream extends InputStream {
 		this.numberOfBytesReceived = 0;
 	}
 	
+	/**
+	 * @return number of bytes received on the active stream
+	 */
 	public synchronized int getNumberOfBytesReceived() {
 		return numberOfBytesReceived;
 	}
 
+	/**
+	 * @return number of bytes left to read
+	 */
 	public int getNumberOfBytesToRead() {
 		return numberOfBytesToRead;
 	}
 
+	/**
+	 * @return true if stream is reading, false else
+	 */
 	public boolean isReading() {
 		return isReading;
 	}
 
 	/**
-	 * Puts the new InputStream in the newInputStreams queue
+	 * Adds the given InputStream to newInputStreams queue
 	 * 
 	 * @param newSocket
 	 * @throws IOException
 	 */
-	public void putNewInputStream(InputStream inputStream) {
+	public void addInputStream(InputStream inputStream) {
 		this.newInputStreams.add(inputStream);
 	}
 
 	/**
 	 * Sets the numberOfBytesToRead from the existing connection before it can
-	 * be closed
+	 * be closed.
 	 * 
-	 * @param numberOfBytesToRead
-	 *            the numberOfBytesToRead to set
+	 * @param numberOfBytesToRead the numberOfBytesToRead to set
 	 */
 	public void setNumberOfBytesToRead(int numberOfBytesToRead) {
 		this.numberOfBytesToRead = numberOfBytesToRead;
@@ -157,7 +170,7 @@ public class SwitchableInputStream extends InputStream {
 						// left has been read
 						if (data == bytesToReadLeft) {
 							// then switch it
-							internStreamSwitch();
+							switchStream();
 							return data;
 						} else {
 							// Still some bytes left to read
@@ -172,7 +185,7 @@ public class SwitchableInputStream extends InputStream {
 			}
 		} catch (SocketException e) {
 			if (isSwitchException) {
-				internStreamSwitch();
+				switchStream();
 				return this.read(b, off, len);
 			} else {
 				e.printStackTrace();
@@ -183,7 +196,7 @@ public class SwitchableInputStream extends InputStream {
 		if (data != -1) {
 			numberOfBytesReceived += data;
 		}else if (isSwitching) {
-			internStreamSwitch();
+			switchStream();
 			return this.read(b,off,len);
 		}
 		this.isReading = false;
@@ -215,14 +228,14 @@ public class SwitchableInputStream extends InputStream {
 						// socket closing on the other side
 						if (data == -1) {
 							System.out.println("bin drin");
-							internStreamSwitch();
+							switchStream();
 							return this.read(b);
 						}
 						// only switch the stream
 						// if all the bytes which are left has been read
 						if (data == bytesToReadLeft) {
 							// then switch it
-							internStreamSwitch();
+							switchStream();
 							return data;
 						} else {
 							numberOfBytesReceived += data;
@@ -237,7 +250,7 @@ public class SwitchableInputStream extends InputStream {
 			}
 		} catch (SocketException e) {
 			if (isSwitchException) {
-				internStreamSwitch();
+				switchStream();
 				return this.read(b);
 			} else {
 				e.printStackTrace();
@@ -269,14 +282,14 @@ public class SwitchableInputStream extends InputStream {
 						//	- numberOfBytesReceived;
 					data = this.inputStream.read();
 					if (data == -1) {
-						internStreamSwitch();
+						switchStream();
 						return this.read();
 					} else {
 						numberOfBytesReceived++;
 						return data;
 					}
 				} else {
-					internStreamSwitch();
+					switchStream();
 					return this.read();
 				}
 			}
@@ -285,7 +298,7 @@ public class SwitchableInputStream extends InputStream {
 			// System.out.println("DATA recieved: " + data);
 		} catch (SocketException e) {
 			if (isSwitchException) {
-					internStreamSwitch();
+					switchStream();
 					setSwitchException(false);
 					return this.read();
 			} else {
@@ -298,7 +311,7 @@ public class SwitchableInputStream extends InputStream {
 			numberOfBytesReceived += data;
 		} else {
 			if (isSwitching) {
-				internStreamSwitch();
+				switchStream();
 				return this.read();
 			} 
 		}
@@ -314,7 +327,7 @@ public class SwitchableInputStream extends InputStream {
 	 * 
 	 * @throws InterruptedException
 	 */
-	public synchronized void internStreamSwitch() {
+	public synchronized void switchStream() {
 		//synchronized (monitor) {
 			try {
 				inputStream = newInputStreams.take();
