@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.header.MessageHeader;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Enumeration to represent common stun attribute types. It contains attribute

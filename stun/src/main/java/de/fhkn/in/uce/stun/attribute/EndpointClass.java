@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * The {@link EndpointClass} is an implementation of {@link Attribute} and

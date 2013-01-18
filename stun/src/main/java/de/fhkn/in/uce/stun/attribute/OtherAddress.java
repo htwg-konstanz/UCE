@@ -27,7 +27,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Implementation of {@link Attribute} which represents a OTHER-ADDRESS

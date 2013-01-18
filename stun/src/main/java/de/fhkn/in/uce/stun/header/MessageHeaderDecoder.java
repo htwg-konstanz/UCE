@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Class to decode byte encoded message headers.
@@ -36,6 +36,7 @@ import de.fhkn.in.uce.stun.MessageFormatException;
  * 
  */
 public final class MessageHeaderDecoder {
+	// tzn: this should go into MessageHeader, it is header info anyway 
     private static final int HEADER_LENGTH = 20;
     private static final int LEADING_ZEROS_MASK = 0xC0000000;
     private static final int LEADING_ZEROS_SHIFT = 0x1E;

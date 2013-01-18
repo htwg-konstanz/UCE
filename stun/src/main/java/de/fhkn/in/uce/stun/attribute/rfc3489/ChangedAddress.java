@@ -27,10 +27,10 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.attribute.Attribute;
 import de.fhkn.in.uce.stun.attribute.AttributeHeader;
 import de.fhkn.in.uce.stun.attribute.AttributeType;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * The CHANGED-ADDRESS attribute indicates the IP address and port where

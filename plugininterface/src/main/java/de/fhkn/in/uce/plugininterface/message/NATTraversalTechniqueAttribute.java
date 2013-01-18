@@ -23,10 +23,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.attribute.Attribute;
 import de.fhkn.in.uce.stun.attribute.AttributeHeader;
 import de.fhkn.in.uce.stun.attribute.AttributeType;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 public class NATTraversalTechniqueAttribute implements Attribute {
     private static final int LENGTH = 4;

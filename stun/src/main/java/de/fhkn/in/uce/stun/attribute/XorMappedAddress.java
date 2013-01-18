@@ -28,8 +28,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.header.MessageHeader;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Implementation of {@link Attribute} for the XOR-MAPPED-ADDRESS attribute

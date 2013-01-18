@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.header.MessageHeader;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Class to decode byte encoded STUN attributes. A {@link Attribute} consists of

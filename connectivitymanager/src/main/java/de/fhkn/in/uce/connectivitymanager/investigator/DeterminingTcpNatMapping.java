@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fhkn.in.uce.plugininterface.NATFeatureRealization;
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.attribute.OtherAddress;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;
 import de.fhkn.in.uce.stun.header.STUNMessageClass;
@@ -37,6 +36,7 @@ import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
 import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 import de.fhkn.in.uce.stun.message.MessageWriter;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Implementation of {@link DeterminingNATFeatureRealization} to investigate the

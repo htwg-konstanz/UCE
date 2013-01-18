@@ -27,11 +27,12 @@ import de.fhkn.in.uce.stun.header.MessageClass;
 import de.fhkn.in.uce.stun.header.MessageHeader;
 import de.fhkn.in.uce.stun.header.MessageMethod;
 
+//TODO this interface duplicates methods from MessageHeader interface.
 /**
  * The decoded representation of a message. A message consists of a
  * {@link MessageHeader} and zero or more {@link Attribute}.
  * 
- * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
+ * @author daniel maier, alexander diener, thomas zink
  * 
  */
 public interface Message {

@@ -23,7 +23,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * The {@link ChangeRequest} is the implementation of {@link Attribute} for the

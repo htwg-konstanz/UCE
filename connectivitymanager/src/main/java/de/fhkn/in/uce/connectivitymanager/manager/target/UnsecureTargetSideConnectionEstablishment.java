@@ -40,10 +40,10 @@ import de.fhkn.in.uce.plugininterface.NATBehavior;
 import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 import de.fhkn.in.uce.plugininterface.message.NATAttributeTypeDecoder;
 import de.fhkn.in.uce.plugininterface.message.NATTraversalTechniqueAttribute;
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.header.STUNMessageMethod;
 import de.fhkn.in.uce.stun.message.Message;
 import de.fhkn.in.uce.stun.message.MessageReader;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 public final class UnsecureTargetSideConnectionEstablishment implements ConnectionEstablishment {
     private final Logger logger = LoggerFactory.getLogger(UnsecureTargetSideConnectionEstablishment.class);

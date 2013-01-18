@@ -18,8 +18,8 @@ package de.fhkn.in.uce.stun.attribute;
 
 import java.io.IOException;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.header.MessageHeader;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * The STUN attribute type gets encoded in the STUN Attribute Header to

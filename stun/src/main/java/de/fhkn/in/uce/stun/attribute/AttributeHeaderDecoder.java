@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Class to decode byte encoded attribute headers.

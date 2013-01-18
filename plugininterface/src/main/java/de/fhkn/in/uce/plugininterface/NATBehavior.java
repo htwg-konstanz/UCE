@@ -29,10 +29,10 @@ import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 import de.fhkn.in.uce.plugininterface.message.NATSTUNAttributeType;
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.attribute.Attribute;
 import de.fhkn.in.uce.stun.attribute.AttributeHeader;
 import de.fhkn.in.uce.stun.attribute.AttributeType;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * A NAT behavior represents a NAT device. The NAT devices is characterized by

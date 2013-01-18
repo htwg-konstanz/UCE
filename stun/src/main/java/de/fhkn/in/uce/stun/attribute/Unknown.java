@@ -19,7 +19,7 @@ package de.fhkn.in.uce.stun.attribute;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * The {@link Unknown} attribute is an implementation of {@link Attribute} and

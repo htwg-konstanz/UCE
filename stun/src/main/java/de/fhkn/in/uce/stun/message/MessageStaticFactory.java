@@ -16,10 +16,10 @@
  */
 package de.fhkn.in.uce.stun.message;
 
-import de.fhkn.in.uce.stun.MessageUtil;
-import de.fhkn.in.uce.stun.MessageUtilImpl;
 import de.fhkn.in.uce.stun.header.MessageClass;
 import de.fhkn.in.uce.stun.header.MessageMethod;
+import de.fhkn.in.uce.stun.util.MessageUtil;
+import de.fhkn.in.uce.stun.util.MessageUtilImpl;
 
 /**
  * The class {@link MessageStaticFactory} provides static factory methods to

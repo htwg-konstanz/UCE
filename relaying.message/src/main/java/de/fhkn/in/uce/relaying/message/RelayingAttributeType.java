@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.fhkn.in.uce.stun.MessageFormatException;
 import de.fhkn.in.uce.stun.attribute.Attribute;
 import de.fhkn.in.uce.stun.attribute.AttributeHeader;
 import de.fhkn.in.uce.stun.attribute.AttributeType;
 import de.fhkn.in.uce.stun.header.MessageHeader;
+import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Enum for specific relay attribute types.
