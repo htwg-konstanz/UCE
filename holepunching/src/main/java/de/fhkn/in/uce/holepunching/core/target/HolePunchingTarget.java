@@ -29,8 +29,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fhkn.in.uce.core.concurrent.ThreadGroupThreadFactory;
 import de.fhkn.in.uce.holepunching.core.HolePuncher;
-import de.fhkn.in.uce.holepunching.core.ThreadGroupThreadFactory;
 import de.fhkn.in.uce.stun.attribute.Token;
 import de.fhkn.in.uce.stun.attribute.Username;
 import de.fhkn.in.uce.stun.attribute.XorMappedAddress;

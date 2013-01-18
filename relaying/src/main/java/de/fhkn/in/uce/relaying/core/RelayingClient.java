@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.fhkn.in.uce.core.concurrent.ThreadGroupFactory;
+import de.fhkn.in.uce.core.concurrent.ThreadGroupThreadFactory;
 import de.fhkn.in.uce.relaying.message.RelayingAttributeTypeDecoder;
 import de.fhkn.in.uce.relaying.message.RelayingLifetime;
 import de.fhkn.in.uce.relaying.message.RelayingMethod;
@@ -191,7 +191,7 @@ public final class RelayingClient {
     }
 
     private synchronized void startMessageHandler(final int lifetime) {
-        final ThreadFactory specialThreadsFactory = new ThreadGroupFactory();
+        final ThreadFactory specialThreadsFactory = new ThreadGroupThreadFactory();
         final ScheduledExecutorService refreshExecutor = Executors
                 .newSingleThreadScheduledExecutor(specialThreadsFactory);
         refreshExecutor.schedule(new RefreshAllocationTask(this.controlConnectionWriter, lifetime),
