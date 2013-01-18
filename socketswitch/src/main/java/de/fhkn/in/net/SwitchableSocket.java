@@ -74,14 +74,15 @@ public class SwitchableSocket extends Socket {
 				newSocket.getInputStream().read(buffer);
 				message = new String(buffer).trim();
 				int numberOfBytesToRead = Integer.parseInt(message);
-				switchableInputStream.addInputStream(newSocket.getInputStream());
+				//switchableInputStream.addInputStream(newSocket.getInputStream());
 				//Are all the needed Bytes already there?
 				if(numberOfBytesToRead == switchableInputStream.getNumberOfBytesReceived()){
 					//Then just switch the Reference and the Stream
 					switchSocketReference(oldSocket, newSocket);
 					if(switchableInputStream.isReading() != true){
 						//the InputStream can be switched
-						switchableInputStream.switchStream();
+						//switchableInputStream.switchStream();
+						switchableInputStream.switchStream(newSocket.getInputStream());
 					// else set setSwitchException because there is one to be thrown
 					}else switchableInputStream.setSwitchException(true);
 					oldSocket.close();

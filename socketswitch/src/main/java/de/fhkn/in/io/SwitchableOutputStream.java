@@ -89,28 +89,9 @@ public class SwitchableOutputStream extends OutputStream {
 		outputStream.flush();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.OutputStream#write(byte[], int, int)
-	 */
-	@Override
-	public synchronized void write(byte[] b, int off, int len) throws IOException {
-		numberOfBytesSent = numberOfBytesSent + len;
-		outputStream.write(b, off, len);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.OutputStream#write(byte[])
-	 */
-	@Override
-	public synchronized void write(byte[] b) throws IOException {
-		numberOfBytesSent = numberOfBytesSent + b.length;
-		outputStream.write(b);
-	}
-
+	// only write(int b) has to be overridden
+	// since all other writes call this one internally
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,5 +102,27 @@ public class SwitchableOutputStream extends OutputStream {
 		numberOfBytesSent++;
 		outputStream.write(b);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.OutputStream#write(byte[], int, int)
+	 */
+	/*@Override
+	public synchronized void write(byte[] b, int off, int len) throws IOException {
+		numberOfBytesSent = numberOfBytesSent + len;
+		outputStream.write(b, off, len);
+	}*/
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.OutputStream#write(byte[])
+	 */
+	/*@Override
+	public synchronized void write(byte[] b) throws IOException {
+		numberOfBytesSent = numberOfBytesSent + b.length;
+		outputStream.write(b);
+	}*/
 
 }

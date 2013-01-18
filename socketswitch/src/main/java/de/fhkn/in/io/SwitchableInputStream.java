@@ -19,8 +19,6 @@ package de.fhkn.in.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Wrapper of {@link java.io.InputStream}. The {@link SwitchableInputStream}
@@ -37,8 +35,12 @@ public class SwitchableInputStream extends InputStream {
 	/** The wrapped InputStream **/
 	private InputStream inputStream;
 	
+	// got rid of queues to unify with OutputStream switch interface
+	// according to thesis, could lead to deadlocks with fast consecutive
+	// switching
+	// UNTESTED
 	/** Queue of input streams to switch to **/
-	private BlockingQueue<InputStream> newInputStreams;
+	//private BlockingQueue<InputStream> newInputStreams;
 	
 	/** Number of bytes left to read before switching **/
 	private int numberOfBytesToRead;
@@ -56,7 +58,7 @@ public class SwitchableInputStream extends InputStream {
 	 */
 	public SwitchableInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
-		this.newInputStreams = new LinkedBlockingQueue<InputStream>();
+		//this.newInputStreams = new LinkedBlockingQueue<InputStream>();
 		this.numberOfBytesToRead = 0;
 		this.numberOfBytesReceived = 0;
 	}
@@ -88,9 +90,9 @@ public class SwitchableInputStream extends InputStream {
 	 * @param newSocket
 	 * @throws IOException
 	 */
-	public void addInputStream(InputStream inputStream) {
+	/*public void addInputStream(InputStream inputStream) {
 		this.newInputStreams.add(inputStream);
-	}
+	}*/
 
 	/**
 	 * Sets the numberOfBytesToRead from the existing connection before it can
@@ -145,13 +147,17 @@ public class SwitchableInputStream extends InputStream {
 	}
 
 	//TODO: cleanup the read ... read ... read mess and unify.
+	// only read() has to be overridden since the InputStream implementations
+	// all call read internally
+	// UNTESTED
+	
 	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.io.InputStream#read(byte[], int, int)
 	 */
-	@Override
+	/*@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		int data = 0;
 		try {
@@ -201,14 +207,14 @@ public class SwitchableInputStream extends InputStream {
 		}
 		this.isReading = false;
 		return data;
-	}
+	}*/
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.io.InputStream#read(byte[])
 	 */
-	@Override
+	/*@Override
 	public int read(byte[] b) {
 		int data = 0;
 		try {
@@ -265,8 +271,12 @@ public class SwitchableInputStream extends InputStream {
 
 		this.isReading = false;
 		return data;
-	}
+	}*/
 
+	
+	// seriously, I have no idea why switching is done in the read method.
+	// also, the implementations of the reads do not seem correct and are
+	// equal apart of some minor differences.
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -329,7 +339,7 @@ public class SwitchableInputStream extends InputStream {
 	 */
 	public synchronized void switchStream() {
 		//synchronized (monitor) {
-			try {
+			/*try {
 				inputStream = newInputStreams.take();
 				this.numberOfBytesReceived = 0;
 				this.numberOfBytesToRead = 0;
@@ -337,8 +347,15 @@ public class SwitchableInputStream extends InputStream {
 				//monitor.notify();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			}*/
 		//}
+	}
+	
+	public synchronized void switchStream(InputStream newStream) {
+		this.inputStream = newStream;
+		this.numberOfBytesReceived = 0;
+		this.numberOfBytesToRead = 0;
+		this.isSwitching = false;
 	}
 
 	/*
