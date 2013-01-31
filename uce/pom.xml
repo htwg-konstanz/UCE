@@ -39,28 +39,27 @@
 	<modules>
 			<module>../parent</module>
 			<module>../core</module>
-			<module>../mediator</module>
-			<module>../plugininterface</module>
-			
 			<module>../stun</module>
 			<module>../stun.server</module>
-			
-			<module>../directconnection</module>
+			<module>../plugininterface</module>
+			<module>../mediator</module>
+						
 			<module>../directconnection.mediator</module>
 			<module>../directconnection.message</module>
+			<module>../directconnection</module>
 			
-			<module>../holepunching</module>
 			<module>../holepunching.mediator</module>
 			<module>../holepunching.message</module>
+			<module>../holepunching</module>
 			
-			<module>../relaying</module>
 			<module>../relaying.mediator</module>
 			<module>../relaying.message</module>
 			<module>../relaying.server</module>
+			<module>../relaying</module>
 			
-			<module>../reversal</module>
 			<module>../reversal.mediator</module>
 			<module>../reversal.message</module>
+			<module>../reversal</module>
 			
 			<module>../connectivitymanager</module>
 			<module>../connectivitymanager.demo</module>
