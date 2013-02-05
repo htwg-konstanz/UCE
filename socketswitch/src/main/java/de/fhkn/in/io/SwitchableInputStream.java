@@ -33,79 +33,28 @@ public class SwitchableInputStream extends InputStream {
 	//private static Object monitor = new Object();
 	
 	/** The wrapped InputStream **/
-	private InputStream inputStream;
+	private InputStream instream;
 	
-	// got rid of queues to unify with OutputStream switch interface
-	// according to thesis, could lead to deadlocks with fast consecutive
-	// switching
-	// UNTESTED
-	/** Queue of input streams to switch to **/
-	//private BlockingQueue<InputStream> newInputStreams;
-	
-	/** Number of bytes left to read before switching **/
-	private int numberOfBytesToRead;
-
+	/** Status switches **/
 	private boolean isSwitchException = false;
-	private boolean isReading = false;
 	private boolean isSwitching = false;
 
-	private int numberOfBytesReceived;
-
+	/** Number of bytes left to read before switching **/
+	private int numberOfBytesShouldBeReceived = 0;
+	
+	/** Counter for received bytes **/
+	private int numberOfBytesReceived = 0;
+	
+	
 	/**
 	 * Constructor. Wraps the given InputStream in a new SwitchableInputStream
 	 * 
 	 * @param inputStream the InputStream to wrap
 	 */
 	public SwitchableInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
-		//this.newInputStreams = new LinkedBlockingQueue<InputStream>();
-		this.numberOfBytesToRead = 0;
-		this.numberOfBytesReceived = 0;
+		this.instream = inputStream;
 	}
 	
-	/**
-	 * @return number of bytes received on the active stream
-	 */
-	public synchronized int getNumberOfBytesReceived() {
-		return numberOfBytesReceived;
-	}
-
-	/**
-	 * @return number of bytes left to read
-	 */
-	public int getNumberOfBytesToRead() {
-		return numberOfBytesToRead;
-	}
-
-	/**
-	 * @return true if stream is reading, false else
-	 */
-	public boolean isReading() {
-		return isReading;
-	}
-
-	/**
-	 * Adds the given InputStream to newInputStreams queue
-	 * 
-	 * @param newSocket
-	 * @throws IOException
-	 */
-	/*public void addInputStream(InputStream inputStream) {
-		this.newInputStreams.add(inputStream);
-	}*/
-
-	/**
-	 * Sets the numberOfBytesToRead from the existing connection before it can
-	 * be closed.
-	 * 
-	 * @param numberOfBytesToRead the numberOfBytesToRead to set
-	 */
-	public void setNumberOfBytesToRead(int numberOfBytesToRead) {
-		this.numberOfBytesToRead = numberOfBytesToRead;
-	}
-
-	// delegate work to internal input stream
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,7 +62,7 @@ public class SwitchableInputStream extends InputStream {
 	 */
 	@Override
 	public int available() throws IOException {
-		return inputStream.available();
+		return instream.available();
 	}
 
 	/*
@@ -123,7 +72,7 @@ public class SwitchableInputStream extends InputStream {
 	 */
 	@Override
 	public void close() throws IOException {
-		inputStream.close();
+		instream.close();
 	}
 
 	/*
@@ -133,7 +82,7 @@ public class SwitchableInputStream extends InputStream {
 	 */
 	@Override
 	public synchronized void mark(int readlimit) {
-		inputStream.mark(readlimit);
+		instream.mark(readlimit);
 	}
 
 	/*
@@ -143,9 +92,81 @@ public class SwitchableInputStream extends InputStream {
 	 */
 	@Override
 	public synchronized boolean markSupported() {
-		return inputStream.markSupported();
+		return instream.markSupported();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.InputStream#reset()
+	 */
+	@Override
+	public synchronized void reset() throws IOException {
+		instream.reset();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.InputStream#skip(long)
+	 */
+	@Override
+	public synchronized long skip(long n) throws IOException {
+		return instream.skip(n);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.InputStream#read()
+	 */
+	@Override
+	public synchronized int read() throws IOException {
+		int data = instream.read();
+		if (data != -1) {
+			numberOfBytesReceived++;
+		}
+		return data;
+	}
+	
+	/**
+	 * Actually switches the InputStream to the next one in the queue
+	 * newInputStreams
+	 * 
+	 * @throws InterruptedException
+	 */
+	public synchronized void switchStream() {
+		//synchronized (monitor) {
+			/*try {
+				inputStream = newInputStreams.take();
+				this.numberOfBytesReceived = 0;
+				this.numberOfBytesToRead = 0;
+				this.isSwitching = false;
+				//monitor.notify();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}*/
+		//}
+	}
+	
+	public synchronized void switchStream(InputStream newStream) {
+		this.isSwitching = true;
+		if (numberOfBytesReceived == numberOfBytesShouldBeReceived) {
+			// just switch
+			this.instream = newStream;
+			this.isSwitching = false;
+		}
+		else if (numberOfBytesReceived < numberOfBytesShouldBeReceived) {
+			// there are still bytes left to read
+			int data = 0;
+			while (data != -1) {
+				
+			}
+		}
+		
+	}
+			
+	
 	//TODO: cleanup the read ... read ... read mess and unify.
 	// only read() has to be overridden since the InputStream implementations
 	// all call read internally
@@ -282,7 +303,7 @@ public class SwitchableInputStream extends InputStream {
 	 * 
 	 * @see java.io.InputStream#read()
 	 */
-	@Override
+	/*@Override
 	public int read() {
 		int data = 0;
 		try {
@@ -328,65 +349,41 @@ public class SwitchableInputStream extends InputStream {
 		this.isReading = false;
 
 		return data;
-
-	}
-
+	}*/
+	
 	/**
-	 * Actually switches the InputStream to the next one in the queue
-	 * newInputStreams
-	 * 
-	 * @throws InterruptedException
+	 * @return number of bytes left to read
 	 */
-	public synchronized void switchStream() {
-		//synchronized (monitor) {
-			/*try {
-				inputStream = newInputStreams.take();
-				this.numberOfBytesReceived = 0;
-				this.numberOfBytesToRead = 0;
-				this.isSwitching = false;
-				//monitor.notify();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}*/
-		//}
+	public synchronized int getNumberOfBytesShouldBeReceived() {
+		return numberOfBytesShouldBeReceived;
 	}
 	
-	public synchronized void switchStream(InputStream newStream) {
-		this.inputStream = newStream;
-		this.numberOfBytesReceived = 0;
-		this.numberOfBytesToRead = 0;
-		this.isSwitching = false;
-	}
-
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets the numberOfBytesToRead from the existing connection before it can
+	 * be closed.
 	 * 
-	 * @see java.io.InputStream#reset()
+	 * @param numberOfBytesToRead the numberOfBytesToRead to set
 	 */
-	@Override
-	public synchronized void reset() throws IOException {
-		inputStream.reset();
+	public synchronized void setNumberOfBytesShouldBeReceived(int numberOfBytesShouldBeReceived) {
+		this.numberOfBytesShouldBeReceived = numberOfBytesShouldBeReceived;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.InputStream#skip(long)
+	
+	/**
+	 * @return number of bytes received on the active stream
 	 */
-	@Override
-	public synchronized long skip(long n) throws IOException {
-		return inputStream.skip(n);
+	public synchronized int getNumberOfBytesReceived() {
+		return numberOfBytesReceived;
 	}
-
+	
+	public synchronized boolean isSwitchException() {
+		return isSwitchException;
+	}
+	
 	public synchronized void setSwitching(boolean b) {
 		this.isSwitching = b;
 	}
 
 	public synchronized void setSwitchException(boolean isSwitchException) {
 		this.isSwitchException = isSwitchException;
-	}
-
-	public synchronized boolean isSwitchException() {
-		return isSwitchException;
 	}
 }
