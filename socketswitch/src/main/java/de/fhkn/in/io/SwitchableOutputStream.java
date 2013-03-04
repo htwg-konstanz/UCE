@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2012 Thomas Zink, 
+    Copyright (c) 2012 Steven Boeckle, 
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,54 +20,37 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Wrapper of {@link java.io.OutputStream} that allows switching to new
- * output streams. {@link SwitchableOutputStream} keeps an internal counter
- * of the number of sent bytes which is used for synchronization.
- * 
- * @author Steven Boeckle (sbo), Thomas Zink (tzn)
+ * @author Steven Böckle
  * 
  */
 public class SwitchableOutputStream extends OutputStream {
 
-	/** The wrapped OutputStream **/
 	private OutputStream outputStream;
-
-	/** Counter of the bytes written on the wrapped OutputStream **/
-	private int numberOfBytesSent;
-	//private volatile int numberOfBytesSent;// @sbo: why volatile?
+	private volatile int numberOfBytesSent;
 	
-	/* 
-	 * Constructor. Creates a new {@link SwitchableOutputStream} wrapping the
-	 * passed OutputStream.
-	 * 
-	 * @param outputStream The OutputStream to wrap as switchable
-	 */
 	public SwitchableOutputStream(OutputStream outputStream) {
 		this.outputStream = outputStream;
 		this.numberOfBytesSent = 0;
 	}
 	/**
-	 * Switches the wrapped OutputStream to a new one. First flushes the stream
-	 * and then resets the number of sent bytes.
 	 * 
-	 * @param newStream the new OutputStream to wrap and switch to
-	 * @return the number of bytes totally sent by this OutputStream
+	 * @param newStream
+	 * @return the of bytes totally sent by this OutputStream
 	 * @throws IOException
 	 */
-	public synchronized int switchStream(OutputStream newStream) throws IOException {
+	public synchronized int switchOutputStream(OutputStream newStream) throws IOException {
 		this.outputStream.flush();
 		this.outputStream = newStream;
-		int bytesSent = numberOfBytesSent;
-		this.numberOfBytesSent = 0;
-		return bytesSent;
+		int number = numberOfBytesSent;
+		numberOfBytesSent = 0;
+		return number;
 	}
 
-	/**
-	 * @return outputStream the wrapped OutputStream 
-	 */
 	public synchronized OutputStream getOutputStream() {
 		return outputStream;
 	}
+
+	// delegate work to internal output stream
 
 	/*
 	 * (non-Javadoc)
@@ -89,9 +72,28 @@ public class SwitchableOutputStream extends OutputStream {
 		outputStream.flush();
 	}
 
-	// only write(int b) has to be overridden
-	// since all other writes call this one internally
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.OutputStream#write(byte[], int, int)
+	 */
+	@Override
+	public synchronized void write(byte[] b, int off, int len) throws IOException {
+		numberOfBytesSent = numberOfBytesSent + len;
+		outputStream.write(b, off, len);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.OutputStream#write(byte[])
+	 */
+	@Override
+	public synchronized void write(byte[] b) throws IOException {
+		numberOfBytesSent = numberOfBytesSent + b.length;
+		outputStream.write(b);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -102,27 +104,5 @@ public class SwitchableOutputStream extends OutputStream {
 		numberOfBytesSent++;
 		outputStream.write(b);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.OutputStream#write(byte[], int, int)
-	 */
-	/*@Override
-	public synchronized void write(byte[] b, int off, int len) throws IOException {
-		numberOfBytesSent = numberOfBytesSent + len;
-		outputStream.write(b, off, len);
-	}*/
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.OutputStream#write(byte[])
-	 */
-	/*@Override
-	public synchronized void write(byte[] b) throws IOException {
-		numberOfBytesSent = numberOfBytesSent + b.length;
-		outputStream.write(b);
-	}*/
 
 }

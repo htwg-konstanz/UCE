@@ -1,3 +1,19 @@
+/*
+    Copyright (c) 2012 Steven Boeckle, 
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.fhkn.in.net;
 
 import java.io.IOException;
@@ -11,34 +27,16 @@ import de.fhkn.in.io.SwitchableInputStream;
 import de.fhkn.in.io.SwitchableOutputStream;
 
 /**
- * A {@link SwitchableSocket} is an extension of {@link java.net.Socket} that
- * allows switching 
- * 
- * @author Steven Boeckle, Thomas Zink
+ * @author Steven Böckle
  * 
  */
 public class SwitchableSocket extends Socket {
 
-	/** The wrapped socket **/
 	private Socket socket;
 
-	/** The input stream **/
 	private SwitchableInputStream switchableInputStream;
-	/** The output stream **/
 	private SwitchableOutputStream switchableOutputStream;
-	
-	/** Synchronization monitor for input stream **/
-	private Object SwitchableInputStreamMonitor = new Object();
 
-	/**
-	 * Constructor. Wraps the {@link Socket} in a new {@link SwitchableSocket}.
-	 * Also takes the Socket's {@link InputStream} and {@link OutputStream} and
-	 * wraps them in {@link SwitchableInputStream} and {@link SwitchableOutputStream}
-	 * resp.
-	 *  
-	 * @param socket the Socket to wrap as switchable
-	 * @throws IOException
-	 */
 	public SwitchableSocket(Socket socket) throws IOException {
 		this.socket = socket;
 		switchableInputStream = new SwitchableInputStream(
@@ -47,12 +45,11 @@ public class SwitchableSocket extends Socket {
 				socket.getOutputStream());
 	}
 
-	//TODO: Check the switching code, especially synchronization
+	// TODO: check if this is actually correct and works
+	
 	/**
-	 * Switches streams from used socket to newSocket.
-	 * 
-	 * @param newSocket the new Socket to switch to
-	 * 
+	 * Switches Socket which is already in use to the newSocket
+	 * @param newSocket
 	 */
 	public void switchSocket(Socket newSocket) {
 		try {
@@ -61,7 +58,7 @@ public class SwitchableSocket extends Socket {
 			synchronized (switchableOutputStream) {
 				// Get the number of Bytes sent over old connection and switch the outputstream
 				int numberOfBytesSent = switchableOutputStream
-						.switchStream(newSocket.getOutputStream());
+						.switchOutputStream(newSocket.getOutputStream());
 				String bytes = Integer.toString(numberOfBytesSent);
 				//Tell the other side how many Bytes where sent over the old connection
 				newSocket.getOutputStream().write(bytes.getBytes(), 0,
@@ -74,15 +71,14 @@ public class SwitchableSocket extends Socket {
 				newSocket.getInputStream().read(buffer);
 				message = new String(buffer).trim();
 				int numberOfBytesToRead = Integer.parseInt(message);
-				//switchableInputStream.addInputStream(newSocket.getInputStream());
+				switchableInputStream.putNewInputStream(newSocket.getInputStream());
 				//Are all the needed Bytes already there?
 				if(numberOfBytesToRead == switchableInputStream.getNumberOfBytesReceived()){
 					//Then just switch the Reference and the Stream
 					switchSocketReference(oldSocket, newSocket);
 					if(switchableInputStream.isReading() != true){
 						//the InputStream can be switched
-						//switchableInputStream.switchStream();
-						switchableInputStream.switchStream(newSocket.getInputStream());
+						switchableInputStream.internStreamSwitch();
 					// else set setSwitchException because there is one to be thrown
 					}else switchableInputStream.setSwitchException(true);
 					oldSocket.close();
@@ -90,12 +86,11 @@ public class SwitchableSocket extends Socket {
 				}else if(numberOfBytesToRead > switchableInputStream.getNumberOfBytesReceived()){
 					switchableInputStream.setNumberOfBytesToRead(numberOfBytesToRead);
 					// wait till all bytes are read over old connection before switching
-					synchronized (SwitchableInputStreamMonitor) {
-						SwitchableInputStreamMonitor.wait();
+					synchronized (SwitchableInputStream.monitor) {
+						SwitchableInputStream.monitor.wait();
 						switchableInputStream.setSwitchException(true);
 						oldSocket.close();
 						switchSocketReference(oldSocket, newSocket);
-						SwitchableInputStreamMonitor.notify();
 					}
 				}
 			}
@@ -109,10 +104,9 @@ public class SwitchableSocket extends Socket {
 	/**
 	 * Tries to transfer settings from old socket to the new one
 	 * and switches the references. Ignores exceptions to leave 
-	 * the user unaware of internal switching of connection.
-	 * 
-	 * @param socket old Socket from which the options should be transferred
-	 * @param newSocket the new Socket to transfer reference to.
+	 * the user unaware of internal switching of connection
+	 * @param socket OldSocket from which the options should be transferred
+	 * @param newSocket The newSocket
 	 */
 	private void switchSocketReference(Socket socket, Socket newSocket){
 		try {
