@@ -58,8 +58,12 @@ public class SwitchableSocketTest {
 	@Before
 	public void setUp() {
 		try {
+			/* TODO: testing should be automatic, not interactive.
+			better provide a test file and start everything automatically */
 			path = (String) JOptionPane
 			.showInputDialog("Path to File for sending:");
+			/* TODO: also, this input doesn't do anything, need to start
+			server manually. */
 			JOptionPane.showInputDialog("Please start the TestFileServer:");
 			s = new Socket(Constants.SERVER_ADDRESS, Constants.SERVER_PORT);
 			switchableSocket = new SwitchableSocket(s);

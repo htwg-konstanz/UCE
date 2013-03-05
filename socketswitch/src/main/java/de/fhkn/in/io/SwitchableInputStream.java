@@ -123,6 +123,12 @@ public class SwitchableInputStream extends InputStream {
 	}
 
 	// TODO: Fix the read(*) implementations
+	/*
+	 * checking needs to be done in read(*), however, maybe this can be done
+	 * more efficiently. Also, would be nice to be able to actually replace
+	 * the switching input stream with a non-switching one, in case we
+	 * do not want to switch anymore. Where to do that? 
+	 */
 	
 	/*
 	 * (non-Javadoc)
