@@ -331,23 +331,23 @@ implementation. It boils down to do sth like the following:
 	
 - Your UCEAIOMediator-1.0 directory should look sth. like this:
 
-	./core-1.0.jar
-	./jcip-annotations-1.0.jar
-	./log4j-1.2.17.jar
-	./mediator-1.0.jar
-	./plugininterface-1.0.jar
-	./slf4j-api-1.6.1.jar
-	./slf4j-log4j12-1.6.6.jar
-	./stun-1.0.jar
-	./plugins/
-		directconnection.mediator-1.0.jar
-		directconnection.message-1.0.jar
-		holepunching.mediator-1.0.jar
-		holepunching.message-1.0.jar
-		relaying.mediator-1.0.jar
-		relaying.message-1.0.jar
-		reversal.mediator-1.0.jar
-		reversal.message-1.0.jar
+		./core-1.0.jar
+		./jcip-annotations-1.0.jar
+		./log4j-1.2.17.jar
+		./mediator-1.0.jar
+		./plugininterface-1.0.jar
+		./slf4j-api-1.6.1.jar
+		./slf4j-log4j12-1.6.6.jar
+		./stun-1.0.jar
+		./plugins/
+			directconnection.mediator-1.0.jar
+			directconnection.message-1.0.jar
+			holepunching.mediator-1.0.jar
+			holepunching.message-1.0.jar
+			relaying.mediator-1.0.jar
+			relaying.message-1.0.jar
+			reversal.mediator-1.0.jar
+			reversal.message-1.0.jar
 		
 - copy the whole UCEAIOMediator-1.0 directory to your target mediator machine
 
