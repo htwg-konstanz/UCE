@@ -352,8 +352,10 @@ implementation. It boils down to do sth like the following:
 - copy the whole UCEAIOMediator-1.0 directory to your target mediator machine
 
 - cd to UCEAIOMediator-1.0 and execute
+
 		java -cp mediator-1.0.jar de.fhkn.in.uce.mediator.Mediator <port> <user clean interval> <max lifetime>
 eg.
+
 		java -cp mediator-1.0.jar de.fhkn.in.uce.mediator.Mediator 10140 300 600
 	
 The mediator is now working on your own machine. To use it from the connectivity manager, you hava to change the mediator.properties. Unfortunately it does not currently work to change the system properties from the command line. To change the mediator.properties goto the directory:
