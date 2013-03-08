@@ -255,9 +255,7 @@ Currently implemented are the NAT traversal techniques mentioned above as well
 as the connectivity manager, a modular mediator, STUN and relay server. There
 are no plans from our side to extend this for support of further techniques.
 
-## Test and use UCE
-
-To test UCE do the following:
+## Clone and build UCE
 
 - Clone the repo
 	
@@ -268,11 +266,13 @@ To test UCE do the following:
 		cd UCE/uce
 		mvn package
 
+## Test the connectivity manager demo
+
 - Copy the the connectivitymanager.demo-1.0-jar-with-dependencies.jar
   to a target machine behind a NAT device and to a source machine 
   (either behind NAT or not).
   
- - On both machines create a directory called 'plugins' in the same
+ - On both machines create a directory called 'plugins' under the same
    directory you put the connectivitymanager.demo in.
    
  - Copy all desired NAT traversal jars along with their custom messages into
@@ -303,7 +303,6 @@ To test UCE do the following:
 		
   Where targetID is the same identifier you used before.
 
-
 You should now have a running CLI-based chat between the (NATed) peers.
 
 *BEWARE* The demo application uses a built-in mediator and STUN server IP. These servers
@@ -317,6 +316,59 @@ implementation. It boils down to do sth like the following:
 		
 		UCESocket socketTpPartner = UCEUnsecureSocketFactory.getInstance().createTargetSocket(targetId);
         socketTpPartner.connect();
+
+## Run your own mediator
+
+- Build UCE as above.
+
+- cd mediator
+
+- Unpack the UCEAIOMediator-1.0-bin.[tar.gz, zip] archive. This is currently required, since we do not have a jar-with-dependencies yet
+
+- in the UCEAIOMediator-1.0 directory, create a directory `plugins`
+
+- copy all the NAT Traversal plugins you want your mediator to use to the plugin directory. You need both the <nattrav>.mediator and <nattrav>.message jars. 
+	
+- Your UCEAIOMediator-1.0 directory should look sth. like this:
+
+	./core-1.0.jar
+	./jcip-annotations-1.0.jar
+	./log4j-1.2.17.jar
+	./mediator-1.0.jar
+	./plugininterface-1.0.jar
+	./slf4j-api-1.6.1.jar
+	./slf4j-log4j12-1.6.6.jar
+	./stun-1.0.jar
+	./plugins/
+		directconnection.mediator-1.0.jar
+		directconnection.message-1.0.jar
+		holepunching.mediator-1.0.jar
+		holepunching.message-1.0.jar
+		relaying.mediator-1.0.jar
+		relaying.message-1.0.jar
+		reversal.mediator-1.0.jar
+		reversal.message-1.0.jar
+		
+- copy the whole UCEAIOMediator-1.0 directory to your target mediator machine
+
+- cd to UCEAIOMediator-1.0 and execute
+	java -cp mediator-1.0.jar de.fhkn.in.uce.mediator.Mediator <port> <user clean interval> <max lifetime>
+eg.
+	java -cp mediator-1.0.jar de.fhkn.in.uce.mediator.Mediator 10140 300 600
+	
+The mediator is now working on your own machine. To use it from the connectivity manager, you hava to change the mediator.properties. Unfortunately it does not currently work to change the system properties from the command line. To change the mediator.properties goto the directory:
+
+	connectivitymanager/src/main/resources/de/fhkn/in/uce/connectivitymanager/mediatorconnection/
+
+Edit the file `mediator.properties` like this:
+
+	mediator.ip=<your mediator ip>
+	mediator.port=<your mediator port>
+	mediator.keepalive=600
+	
+Afterwards you have to rebuild the connectivity manager and the demo.
+
+Similarly, you can also change the plugin directory location of the connectivity manager and the mediator. Just look into the appropriate resources directories, find the registry / techniqueregistry dirs and change the file `nattraversalregistry.properties`.
 
 ## How it works
 
