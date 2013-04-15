@@ -1,8 +1,10 @@
 language: java
 jdk:
   - oraclejdk7
+  - oraclejdk6
   - openjdk7
   - openjdk6
 install: 
-   - mvn -f uce/pom.xml clean install -DskipTests=true
-   - mvn -f uce/pom.xml test
+  - mvn -f uce/pom.xml clean install -DskipTests=true
+script:
+ - mvn -f uce/pom.xml test
