@@ -65,6 +65,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
 				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 					<descriptors>
 						<descriptor>config/assembly-bin.xml</descriptor>
 					</descriptors>
@@ -94,11 +97,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			<artifactId>relaying.message</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>de.fhkn.in.lib</groupId>
-			<artifactId>socketlistener</artifactId>
-			<version>1.0</version>
-		</dependency>-->
+		<!--<dependency> <groupId>de.fhkn.in.lib</groupId> <artifactId>socketlistener</artifactId> 
+			<version>1.0</version> </dependency> -->
 		<dependency>
 			<groupId>de.fhkn.in.uce</groupId>
 			<artifactId>core</artifactId>
