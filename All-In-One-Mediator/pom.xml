@@ -1,0 +1,111 @@
+<!-- 
+Copyright (c) 2013 Robert Danczak, 
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>All-In-One-Mediator</artifactId>
+	<packaging>pom</packaging>
+
+	<name>UCE-All-In-One-Mediator</name>
+	<description>This mediator contains all its dependencies and available plugins from UCE in one single zip and tar.gz file.</description>
+
+	<parent>
+		<groupId>de.fhkn.in.uce</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0</version>
+		<relativePath>../parent/pom.xml</relativePath>
+	</parent>
+
+	<properties>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- groupId is automatically assumed -->
+				<!-- <groupId>org.apache.maven.plugins</groupId> -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptors>
+						<descriptor>config/assembly-bin.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>mediator</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>directconnection.mediator</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>directconnection.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>holepunching.mediator</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>holepunching.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>relaying.mediator</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>relaying.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>reversal.mediator</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>reversal.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+</project>

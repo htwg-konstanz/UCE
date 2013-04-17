@@ -321,42 +321,16 @@ implementation. It boils down to do sth like the following:
 
 - Build UCE as above.
 
-- cd mediator
+- cd All-In-One-Mediator/target
 
-- Unpack the UCEAIOMediator-1.0-bin.[tar.gz, zip] archive. This is currently required, since we do not have a jar-with-dependencies yet
+- Unpack the UCE-All-In-One-Mediator-1.0-bin.[tar.gz, zip] archive in your destination folder.
 
-- in the UCEAIOMediator-1.0 directory, create a directory `plugins`
+- cd to UCE-All-In-One-Mediator-1.0 and execute
 
-- copy all the NAT Traversal plugins you want your mediator to use to the plugin directory. You need both the <nattrav>.mediator and <nattrav>.message jars. 
-	
-- Your UCEAIOMediator-1.0 directory should look sth. like this:
-
-		./core-1.0.jar
-		./jcip-annotations-1.0.jar
-		./log4j-1.2.17.jar
-		./mediator-1.0.jar
-		./plugininterface-1.0.jar
-		./slf4j-api-1.6.1.jar
-		./slf4j-log4j12-1.6.6.jar
-		./stun-1.0.jar
-		./plugins/
-			directconnection.mediator-1.0.jar
-			directconnection.message-1.0.jar
-			holepunching.mediator-1.0.jar
-			holepunching.message-1.0.jar
-			relaying.mediator-1.0.jar
-			relaying.message-1.0.jar
-			reversal.mediator-1.0.jar
-			reversal.message-1.0.jar
-		
-- copy the whole UCEAIOMediator-1.0 directory to your target mediator machine
-
-- cd to UCEAIOMediator-1.0 and execute
-
-		java -cp mediator-1.0.jar de.fhkn.in.uce.mediator.Mediator <port> <user clean interval> <max lifetime>
+		java -jar mediator-1.0.jar <port> <user clean interval> <max lifetime>
 eg.
 
-		java -cp mediator-1.0.jar de.fhkn.in.uce.mediator.Mediator 10140 300 600
+		java -jar mediator-1.0.jar 10140 300 600
 	
 The mediator is now working on your own machine. To use it from the connectivity manager, you hava to change the mediator.properties. Unfortunately it does not currently work to change the system properties from the command line. To change the mediator.properties goto the directory:
 

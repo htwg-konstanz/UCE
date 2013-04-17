@@ -18,11 +18,8 @@
 	this one is the builder for UCE.
 	it builds all UCE modules and bundles.
 -->
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -35,33 +32,35 @@
 	<name>UCE</name>
 	<artifactId>uce</artifactId>
 	<packaging>pom</packaging>
-	
+
 	<modules>
-			<module>../parent</module>
-			<module>../core</module>
-			<module>../stun</module>
-			<module>../stun.server</module>
-			<module>../plugininterface</module>
-			<module>../mediator</module>
-						
-			<module>../directconnection.mediator</module>
-			<module>../directconnection.message</module>
-			<module>../directconnection</module>
-			
-			<module>../holepunching.mediator</module>
-			<module>../holepunching.message</module>
-			<module>../holepunching</module>
-			
-			<module>../relaying.mediator</module>
-			<module>../relaying.message</module>
-			<module>../relaying.server</module>
-			<module>../relaying</module>
-			
-			<module>../reversal.mediator</module>
-			<module>../reversal.message</module>
-			<module>../reversal</module>
-			
-			<module>../connectivitymanager</module>
-			<module>../connectivitymanager.demo</module>
+		<module>../parent</module>
+		<module>../core</module>
+		<module>../stun</module>
+		<module>../stun.server</module>
+		<module>../plugininterface</module>
+		<module>../mediator</module>
+
+		<module>../directconnection.mediator</module>
+		<module>../directconnection.message</module>
+		<module>../directconnection</module>
+
+		<module>../holepunching.mediator</module>
+		<module>../holepunching.message</module>
+		<module>../holepunching</module>
+
+		<module>../relaying.mediator</module>
+		<module>../relaying.message</module>
+		<module>../relaying.server</module>
+		<module>../relaying</module>
+
+		<module>../reversal.mediator</module>
+		<module>../reversal.message</module>
+		<module>../reversal</module>
+
+		<module>../connectivitymanager</module>
+		<module>../connectivitymanager.demo</module>
+
+		<module>../All-In-One-Mediator</module>
 	</modules>
 </project>
