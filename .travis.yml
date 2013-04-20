@@ -8,3 +8,5 @@ install:
   - mvn -f uce/pom.xml clean install -DskipTests=true
 script:
  - mvn -f uce/pom.xml test
+after_success:
+ - mvn -f uce/pom.xml install site
