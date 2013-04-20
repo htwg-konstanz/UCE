@@ -9,4 +9,4 @@ install:
 script:
  - mvn -f uce/pom.xml test
 after_success:
- - mvn -f uce/pom.xml install site
+ - mvn -f uce/pom.xml checkstyle:checkstyle findbugs:findbugs

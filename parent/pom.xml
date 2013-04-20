@@ -82,8 +82,8 @@
 				<version>2.5.2</version>
 				<configuration>
 					<failOnError>false</failOnError>
-					<outputDirectory>${basedir}/site/</outputDirectory>
 					<xmlOutput>true</xmlOutput>
+					<findbugsXmlOutput>true</findbugsXmlOutput>
 				</configuration>
 			</plugin>
 		</plugins>
