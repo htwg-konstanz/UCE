@@ -83,7 +83,6 @@
 				<configuration>
 					<failOnError>false</failOnError>
 					<xmlOutput>true</xmlOutput>
-					<findbugsXmlOutput>true</findbugsXmlOutput>
 				</configuration>
 			</plugin>
 		</plugins>
