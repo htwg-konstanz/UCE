@@ -19,8 +19,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
+	    <artifactId>parent</artifactId>
 		<groupId>de.fhkn.in.uce</groupId>
-		<artifactId>uce</artifactId>
 		<version>1.0</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
