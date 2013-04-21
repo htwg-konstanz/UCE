@@ -1,6 +1,6 @@
-	Copyright (c) 2012 HTWG Konstanz, 
+    Copyright (c) 2012 HTWG Konstanz, 
 
-	This program is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
@@ -55,37 +55,37 @@ in literature. See [P2PNat](http://www.brynosaurus.com/pub/net/p2pnat/),
 
 *	Direct connect
 
-	If the target peer is publicly available or has a persistent mapping on the 
-	NAT or a user defined mapping the source can directly connect to the public
-	address.
+    If the target peer is publicly available or has a persistent mapping on the 
+    NAT or a user defined mapping the source can directly connect to the public
+    address.
 
 *	Relaying
 
-	Instead of directly communicating with each other, the peers connect to
-	a public relay server. This always works but puts pressure on the relays
-	and might increase delay and latency which is undesirable in certain applications.
+    Instead of directly communicating with each other, the peers connect to
+    a public relay server. This always works but puts pressure on the relays
+    and might increase delay and latency which is undesirable in certain applications.
 
 *	Connection Reversal
 
-	If only the target (serving) peer is behind NAT, or the source (requesting)
-	peer's NAT is configured for persistent port forwarding or otherwise
-	has a persistent non-filtering mapping, the connection can be reversed.
-	In this case the target peer connects to the source peer. This requires
-	the target to maintain a connection to a rendezvous or mediator that 
-	signals the connection request and tells the target to reverse the connection.
+    If only the target (serving) peer is behind NAT, or the source (requesting)
+    peer's NAT is configured for persistent port forwarding or otherwise
+    has a persistent non-filtering mapping, the connection can be reversed.
+    In this case the target peer connects to the source peer. This requires
+    the target to maintain a connection to a rendezvous or mediator that 
+    signals the connection request and tells the target to reverse the connection.
 
 *	Hole Punching
 
-	Both peers open connections to the outside, thus creating a mapping in the
-	NAT, effectively punching a hole. This mapping can then be used to connect
-	to. Requires some sort of rendezvous server to exchange public and private
-	endpoints.
+    Both peers open connections to the outside, thus creating a mapping in the
+    NAT, effectively punching a hole. This mapping can then be used to connect
+    to. Requires some sort of rendezvous server to exchange public and private
+    endpoints.
 
 * 	UPnP
 
-	If the NAT box supports UPnP it can be directed to automatically create
-	persistent mappings. The peer behind this NAT box is then effectively
-	visible from the outside.
+    If the NAT box supports UPnP it can be directed to automatically create
+    persistent mappings. The peer behind this NAT box is then effectively
+    visible from the outside.
 
 There are other solutions like NAT-PMP or SOCKS which are not discussed here.
 A good overview can be found on [Wikipedia](http://en.wikipedia.org/wiki/NAT_traversal).
@@ -118,132 +118,132 @@ one release.
 
 * 	README.md
 
-	This readme file
-	
+    This readme file
+    
 * 	LICENSE
 
-	The license file. GPLv3.
+    The license file. GPLv3.
 
 * 	parent/
 
-	The parent project with all global definitions and dependencies.
+    The parent project with all global definitions and dependencies.
 
 * 	uce/
 
-	The UCE build project. Defines and builds all modules and bundles.
-	Here run 
-		mvn compile
-	or
-		mvn package
+    The UCE build project. Defines and builds all modules and bundles.
+    Here run 
+        mvn compile
+    or
+        mvn package
 
 * 	core/
 
-	Core functionality that is used by multiple other modules.
+    Core functionality that is used by multiple other modules.
 
 * 	plugininterface/
 
-	UCE is built to be extendible using plugins and the java Service Loader.
-	The plugininterface includes all common interfaces for NAT behavior, situation
-	traversal techniques, method handlers and so on. All NAT traversal techniques
-	for instance must implement the interface NATTraversalTechnique.
+    UCE is built to be extendible using plugins and the java Service Loader.
+    The plugininterface includes all common interfaces for NAT behavior, situation
+    traversal techniques, method handlers and so on. All NAT traversal techniques
+    for instance must implement the interface NATTraversalTechnique.
 
 * 	stun/
 
-	Another core technology in UCE this is an implementation of the
-	[RFC5389](https://tools.ietf.org/html/rfc5389) STUN message standard. Only
-	the messages are implemented here. Custom message handlers as well as custom 
-	NAT traversal STUN messages are implemented alongside specific NAT traversal
-	techniques.
-	 
+    Another core technology in UCE this is an implementation of the
+    [RFC5389](https://tools.ietf.org/html/rfc5389) STUN message standard. Only
+    the messages are implemented here. Custom message handlers as well as custom 
+    NAT traversal STUN messages are implemented alongside specific NAT traversal
+    techniques.
+     
 *	stun.server/
 
-	An implementation of a STUN server. This is _not_ compliant to RFC 5389
-	since it uses TCP exclusivly and also opens TCP connections to the STUN
-	client in order to investigate NAT filtering behavior.
+    An implementation of a STUN server. This is _not_ compliant to RFC 5389
+    since it uses TCP exclusivly and also opens TCP connections to the STUN
+    client in order to investigate NAT filtering behavior.
 
 * 	connectivitymanager/
 
-	The connectivity manager implements all the logic of collecting NAT information,
-	identifying the NAT situation and then choosing a suitable NAT traversal
-	techniques. For that it always has a control connection open to a publicly
-	available mediator (see below). The connectivity manager requires the implementation
-	of at least one NAT traversal techniques as plugin in it's classpath or
-	plugin path. For easy use in your application, use the
-	connectivitymanager, to manage you connections transparently.
-	
+    The connectivity manager implements all the logic of collecting NAT information,
+    identifying the NAT situation and then choosing a suitable NAT traversal
+    techniques. For that it always has a control connection open to a publicly
+    available mediator (see below). The connectivity manager requires the implementation
+    of at least one NAT traversal techniques as plugin in it's classpath or
+    plugin path. For easy use in your application, use the
+    connectivitymanager, to manage you connections transparently.
+    
 *	connectivitymanager.demo/
-	
-	A demo chat application that uses the connectivity manager to establish a
-	peer-to-peer connection behind NATs and provides a simple CLI chat between
-	the peers. You need to manually copy the NAT traversal jar files into
-	the plugin directory for testing.
+    
+    A demo chat application that uses the connectivity manager to establish a
+    peer-to-peer connection behind NATs and provides a simple CLI chat between
+    the peers. You need to manually copy the NAT traversal jar files into
+    the plugin directory for testing.
 
 *	mediator/
 
-	The mediator is a publicly available rendezvous server that handles peers,
-	peer requests, and exchanges endpoints. As the connectivity manager it requires the
-	presense of NAT traversal plugins for the messages it should handle.
+    The mediator is a publicly available rendezvous server that handles peers,
+    peer requests, and exchanges endpoints. As the connectivity manager it requires the
+    presense of NAT traversal plugins for the messages it should handle.
 
 *	directconnection/
 
-	Implementation of the direct connection NAT traversal (not really a traversal
-	method though).
+    Implementation of the direct connection NAT traversal (not really a traversal
+    method though).
 
 *	directconnection.mediator/
 
-	Direct connect request handler for the mediator.
+    Direct connect request handler for the mediator.
 
 * 	directconnection.message/
 
-	STUN messages for direct connection.
+    STUN messages for direct connection.
 
 * 	holepunching/
 
-	Implementation of parallel TCP holepunching NAT traversal.
-	
+    Implementation of parallel TCP holepunching NAT traversal.
+    
 *	holepunching.mediator/
 
-	Holepunching request handler
-		
+    Holepunching request handler
+        
 *	holepunching.message/
 
-	Holepunching STUN messages.
+    Holepunching STUN messages.
 
 *	relaying/
 
-	Implementation of a TURN like relaying NAT traversal.
+    Implementation of a TURN like relaying NAT traversal.
 
 *	relaying.mediator/
 
-	Relaying request handler.
-		
+    Relaying request handler.
+        
 * 	relaying.message/
 
-	Relaying STUN messages.
-	
+    Relaying STUN messages.
+    
 *	relaying.server/
 
-	Implementation of a TURN like Relay server. Not compliant to the standard.
-	
+    Implementation of a TURN like Relay server. Not compliant to the standard.
+    
 *	reversal/
 
-	Implementation of connection reversal NAT traversal.
+    Implementation of connection reversal NAT traversal.
 
 *	reversal.mediator/
 
-	Connection reversal request handler.
-	
+    Connection reversal request handler.
+    
 *	reversal.message/
 
-	Connection reversal STUN messages.
-	
+    Connection reversal STUN messages.
+    
 *	socketswitch/
 
-	A proof-of-concept implementation of TCP socket switching. Is able to switch
-	connections from one socket to another. This should enable to change sockets
-	on-the-fly while maintaining an active connection from an application point
-	of view. Not very well tested, code is a mess right now and it is not yet
-	integrated into the UCE framework.
+    A proof-of-concept implementation of TCP socket switching. Is able to switch
+    connections from one socket to another. This should enable to change sockets
+    on-the-fly while maintaining an active connection from an application point
+    of view. Not very well tested, code is a mess right now and it is not yet
+    integrated into the UCE framework.
 
 ## State of UCE
 
@@ -258,49 +258,31 @@ are no plans from our side to extend this for support of further techniques.
 ## Clone and build UCE
 
 - Clone the repo
-	
-		git clone git@github.com:htwg/UCE.git
+    
+        git clone git@github.com:htwg/UCE.git
 
 - Compile and package
 
-		cd UCE/uce
-		mvn package
+        cd UCE/uce
+        mvn install package
 
 ## Test the connectivity manager demo
 
-- Copy the the connectivitymanager.demo-1.0-jar-with-dependencies.jar
-  to a target machine behind a NAT device and to a source machine 
-  (either behind NAT or not).
-  
- - On both machines create a directory called 'plugins' under the same
-   directory you put the connectivitymanager.demo in.
-   
- - Copy all desired NAT traversal jars along with their custom messages into
-   the plugins directories.
-  
-- It should now look sth like this:
+- Copy the connectivitymanager.demo.complete-1.0-bin.[tar.gz, zip] archive to a target and source machine.
+  Both or one of them can be behind a NAT device.
 
-		./connectivitymanager.demo-1.0-jar-with-dependencies.jar
-		./plugins/
-			directconnection-1.0.jar
-			directconnection.message-1.0.jar
-			holepunching-1.0.jar
-			holepunching.message-1.0.jar
-			relaying-1.0.jar
-			relaying.message-1.0.jar
-			reversal-1.0.jar
-			reversal.message-1.0.jar
+- Unpack both.
 
 - On the _target_ machine run:
 
-		java -cp connectivitymanager.demo-1.0-jar-with-dependencies.jar de.fhkn.in.uce.connectivitymanager.demo.chat.ChatTarget <targetID>
-		
+        java -cp connectivitymanager.demo-1.0-jar-with-dependencies.jar de.fhkn.in.uce.connectivitymanager.demo.chat.ChatTarget <targetID>
+        
   Where targetID is any arbitrary string you want as identifier for the target
  
 - On the _source_ machine run:
 
-		java -cp connectivitymanager.demo-1.0-jar-with-dependencies.jar de.fhkn.in.uce.connectivitymanager.demo.chat.ChatSource <targetID>
-		
+        java -cp connectivitymanager.demo-1.0-jar-with-dependencies.jar de.fhkn.in.uce.connectivitymanager.demo.chat.ChatSource <targetID>
+        
   Where targetID is the same identifier you used before.
 
 You should now have a running CLI-based chat between the (NATed) peers.
@@ -311,11 +293,25 @@ are hosted by us and might not always be available.
 To see how to integrate UCE into your own application see the connectivitymanager.demo
 implementation. It boils down to do sth like the following:
 
-		import de.fhkn.in.uce.connectivitymanager.connection.UCESocket;
-		import de.fhkn.in.uce.connectivitymanager.connection.UCEUnsecureSocketFactory;
-		
-		UCESocket socketTpPartner = UCEUnsecureSocketFactory.getInstance().createTargetSocket(targetId);
+        import de.fhkn.in.uce.connectivitymanager.connection.UCESocket;
+        import de.fhkn.in.uce.connectivitymanager.connection.UCEUnsecureSocketFactory;
+        
+        UCESocket socketTpPartner = UCEUnsecureSocketFactory.getInstance().createTargetSocket(targetId);
         socketTpPartner.connect();
+
+## Build your own bundle
+
+- Copy the connectivitymanager.demo.complete directory and change the folder name
+
+- Cd into this directory, head to the pom.xml and change the following:
+        <artifactId>: Id of your bundle
+        <name>: Name of your bundle
+
+- Edit the source path in the <file>-tag in config/assembly-bin.xml.
+
+- Add your new module in the module section of uce/pom.xml.
+
+- Build UCE as above.
 
 ## Run your own mediator
 
@@ -327,21 +323,21 @@ implementation. It boils down to do sth like the following:
 
 - cd to UCE-All-In-One-Mediator-1.0 and execute
 
-		java -jar mediator-1.0.jar <port> <user clean interval> <max lifetime>
+        java -jar mediator-1.0.jar <port> <user clean interval> <max lifetime>
 eg.
 
-		java -jar mediator-1.0.jar 10140 300 600
-	
+        java -jar mediator-1.0.jar 10140 300 600
+    
 The mediator is now working on your own machine. To use it from the connectivity manager, you hava to change the mediator.properties. Unfortunately it does not currently work to change the system properties from the command line. To change the mediator.properties goto the directory:
 
-	connectivitymanager/src/main/resources/de/fhkn/in/uce/connectivitymanager/mediatorconnection/
+    connectivitymanager/src/main/resources/de/fhkn/in/uce/connectivitymanager/mediatorconnection/
 
 Edit the file `mediator.properties` like this:
 
-	mediator.ip=<your mediator ip>
-	mediator.port=<your mediator port>
-	mediator.keepalive=600
-	
+    mediator.ip=<your mediator ip>
+    mediator.port=<your mediator port>
+    mediator.keepalive=600
+    
 Afterwards you have to rebuild the connectivity manager and the demo.
 
 Similarly, you can also change the plugin directory location of the connectivity manager and the mediator. Just look into the appropriate resources directories, find the registry / techniqueregistry dirs and change the file `nattraversalregistry.properties`.
@@ -361,9 +357,6 @@ relaying is tried.
 Although UCE work has proven to work quite well in our tests there are some open
 issues.
 
-- The build process does not yet support ready to use bundles without
-  manual interaction like copying stuff etc
-  
 - UPnP support would be nice, although most UPnP implementations have severe
   security issues and should not really be activated. It is important to note here
   that all NAT traversal techniques implement the equals method correctly.
@@ -393,11 +386,12 @@ free to contact the project maintainer at any time.
 
 *	Lead / Maintainer:
 
-	Thomas Zink, tzink {at-sign} htwg-konstanz {a dot} de
+    Thomas Zink, tzink {at-sign} htwg-konstanz {a dot} de
 
 *	Contributors:
 
-	- Daniel Maier: former lead and all initial code
-	- Stefan Lohr: connection reversal, web hole punching, some demos
-	- Alexander Diener: connectivity manager, STUN, refactoring to plugins
-	- Ellen Wieland / Steven Boeckle: socket switching
+    - Daniel Maier: former lead and all initial code
+    - Stefan Lohr: connection reversal, web hole punching, some demos
+    - Alexander Diener: connectivity manager, STUN, refactoring to plugins
+    - Ellen Wieland / Steven Boeckle: socket switching
+    - Robert Danczak: Configuration of bundles, CI

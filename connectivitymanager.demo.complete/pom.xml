@@ -1,0 +1,118 @@
+<!--
+Copyright (c) 2013 Robert Danczak,
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.fhkn.in.uce</groupId>
+		<artifactId>uce</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<packaging>pom</packaging>
+
+	<!-- change the artifactId to your needs -->
+	<artifactId>connectivitymanager.demo.complete</artifactId>
+
+	<!-- change the name to your needs -->
+	<name>UCEConnectivityManagerDemoComplete</name>
+
+	<properties>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>GPL-3.0</name>
+			<comments>GNU General Public License, version 3</comments>
+			<url>http://www.opensource.org/licenses/gpl-3.0.html</url>
+		</license>
+	</licenses>
+
+	<build>
+		<finalName>${finalName}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<descriptors>
+						<descriptor>config/assembly-bin.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<!-- phase needs to be verify to ensure the jar with its dependencies is builded -->
+						<phase>verify</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- depependencies to plugins -->
+		<!-- Please do not remove any of these. -->
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>directconnection</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>directconnection.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>holepunching</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>holepunching.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>relaying</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>relaying.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>reversal</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.fhkn.in.uce</groupId>
+			<artifactId>reversal.message</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+
+</project>

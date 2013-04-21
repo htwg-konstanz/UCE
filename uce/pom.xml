@@ -62,5 +62,6 @@
 		<module>../connectivitymanager.demo</module>
 
 		<module>../All-In-One-Mediator</module>
+		<module>../connectivitymanager.demo.complete</module>
 	</modules>
 </project>
