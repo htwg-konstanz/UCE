@@ -304,10 +304,11 @@ implementation. It boils down to do sth like the following:
 - Copy the connectivitymanager.demo.complete directory and change the folder name
 
 - Cd into this directory, head to the pom.xml and change the following:
-        <artifactId>: Id of your bundle
-        <name>: Name of your bundle
 
-- Edit the source path in the <file>-tag in config/assembly-bin.xml.
+		<artifactId>: Id of your bundle
+		<name>: Name of your bundle
+
+- Edit the source path in the `<file>`-tag in config/assembly-bin.xml.
 
 - Add your new module in the module section of uce/pom.xml.
 
