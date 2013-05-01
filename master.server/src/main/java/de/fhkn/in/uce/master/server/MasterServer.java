@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +45,6 @@ public class MasterServer {
 
     private final int EXECUTOR_THREADS = 3;
     private final int TERMINATION_TIME = 100;
-    private final long SLEEP_TIME = 100;
     private final Pattern ipPattern = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
     private final int RelayArgCount = 1;
@@ -67,10 +65,6 @@ public class MasterServer {
     private List<String> relayArgs;
     private List<String> mediatorArgs;
 
-    private Future<?> stunServerFuture;
-    private Future<?> relayServerFuture;
-    private Future<?> mediatorServerFuture;
-
     /**
      * Creates a master server with the given args.
      *
@@ -81,8 +75,17 @@ public class MasterServer {
         executorService = Executors.newFixedThreadPool(EXECUTOR_THREADS);
         this.args = args;
         relayArgs = new ArrayList<String>(RelayArgCount);
+        for(int i=0; i < RelayArgCount; i++) {
+            relayArgs.add("");
+        }
         stunArgs = new ArrayList<String>(StunArgCount);
+        for(int i=0; i < StunArgCount; i++) {
+            stunArgs.add("");
+        }
         mediatorArgs = new ArrayList<String>(MediatorArgCount);
+        for(int i=0; i < MediatorArgCount; i++) {
+            mediatorArgs.add("");
+        }
     }
 
     /**
@@ -97,6 +100,7 @@ public class MasterServer {
         } catch (Exception e) {
             logger.error("An error occured during startup of the master server.");
             e.printStackTrace();
+            logger.error("Execption:", e);
         }
     }
 
@@ -109,8 +113,7 @@ public class MasterServer {
         try {
             checkAndSetArgs();
         } catch (IllegalArgumentException e) {
-            logger.error("Not all needed arguments are present!");
-            System.err.println("Not all needed arguments are present!");
+            logError("Not all needed arguments are present!");
             printHelp();
             return;
         }
@@ -118,29 +121,6 @@ public class MasterServer {
         stunServerTask();
         relayServerTask();
         mediatorServerTask();
-
-        // do not accept any more tasks.
-        executorService.shutdown();
-
-        while (true) {
-            if (relayServerFuture.isCancelled() || relayServerFuture.isDone()) {
-                logger.info("Relay Server was shutdown.");
-                break;
-            }
-            if (stunServerFuture.isCancelled() || stunServerFuture.isDone()) {
-                logger.info("Stun Server was shutdown.");
-                break;
-            }
-            if (mediatorServerFuture.isCancelled() || mediatorServerFuture.isDone()) {
-                logger.info("Mediator Server was shutdown.");
-                break;
-            }
-            if (Thread.currentThread().isInterrupted()) {
-                logger.info("Master Server was shutdown.");
-                break;
-            }
-            Thread.currentThread().wait(SLEEP_TIME);
-        }
 
         shutdown();
     }
@@ -169,14 +149,26 @@ public class MasterServer {
                 printHelp();
             }
             else {
-                logger.info("Argument \"{}\" not recognized", arg);
+                logInfo("Argument \"" + arg + "\" not recognized");
             }
         }
-        if ((relayArgs.size() != RelayArgCount) || (stunArgs.size() != StunArgCount) || (mediatorArgs.size() != MediatorArgCount)) {
-            throw new IllegalArgumentException("Parameters are missing!");
+
+        for(int i=0; i < RelayArgCount; i++) {
+            if(relayArgs.get(i).equals("")) {
+                throw new IllegalArgumentException("Parameters are missing!");
+            }
+        }
+        for(int i=0; i < StunArgCount; i++) {
+            if(stunArgs.get(i).equals("")) {
+                throw new IllegalArgumentException("Parameters are missing!");
+            }
+        }
+        for(int i=0; i < MediatorArgCount; i++) {
+            if(mediatorArgs.get(i).equals("")) {
+                throw new IllegalArgumentException("Parameters are missing!");
+            }
         }
     }
-
 
     private void shutdown() {
         try {
@@ -185,9 +177,6 @@ public class MasterServer {
             if (!executorService.awaitTermination(TERMINATION_TIME, TimeUnit.MILLISECONDS)) {
                 executorService.shutdownNow();
             }
-            stunServerFuture.cancel(true);
-            relayServerFuture.cancel(true);
-            mediatorServerFuture.cancel(true);
         } catch (Exception e) {
             executorService.shutdown();
             Thread.currentThread().interrupt();
@@ -209,18 +198,28 @@ public class MasterServer {
         return false;
     }
 
+    private void logInfo(String msg) {
+        System.out.println(msg);
+        logger.info(msg);
+    }
+
+    private void logError(String msg) {
+        System.err.println(msg);
+        logger.error(msg);
+    }
+
     private void processMediatorLifetime(String arg) {
         String[] splitted = arg.split(mediatorLifeTime + "=");
         String result = splitted[1];
-        logger.info("added max lifetime \"{}\" to mediatorArgs", result);
-        mediatorArgs.add(2, result);
+        logInfo("added max lifetime \"" + result + "\" to mediator arguments");
+        mediatorArgs.set(2, result);
     }
 
     private void processMediatorIteration(String arg) {
         String[] splitted = arg.split(mediatorIteration + "=");
         String result = splitted[1];
-        logger.info("added iteration time \"{}\" to mediatorArgs",result);
-        mediatorArgs.add(1, result);
+        logInfo("added iteration time \"" + result + "\" to mediator arguments");
+        mediatorArgs.set(1, result);
     }
 
     private void processMediatorPort(String arg) {
@@ -229,8 +228,8 @@ public class MasterServer {
         if(!isPort(result)) {
             throw new IllegalArgumentException();
         }
-        logger.info("added port \"{}\" to mediatorArgs", result);
-        mediatorArgs.add(0, result);
+        logInfo("added port \"" + result + "\" to mediator arguments");
+        mediatorArgs.set(0, result);
     }
 
     private void processRelayPort(String arg) {
@@ -239,8 +238,8 @@ public class MasterServer {
         if(!isPort(result)) {
             throw new IllegalArgumentException();
         }
-        logger.info("added port \"{}\" to relayArgs", result);
-        relayArgs.add(result);
+        logInfo("added port \"" + result + "\" to relay arguments");
+        relayArgs.set(0, result);
     }
 
     private void processStunSecondIP(String arg) {
@@ -249,8 +248,8 @@ public class MasterServer {
         if(!isIP(result)) {
             throw new IllegalArgumentException();
         }
-        logger.info("added second IP \"{}\" to stunArgs", result);
-        stunArgs.add(1, result);
+        logInfo("added second IP \"" + result + "\" to stun arguments");
+        stunArgs.set(1, result);
     }
 
     private void processStunFirstIP(String arg) {
@@ -259,8 +258,8 @@ public class MasterServer {
         if(!isIP(result)) {
             throw new IllegalArgumentException();
         }
-        logger.info("added first IP \"{}\" to stunArgs", result);
-        stunArgs.add(0, result);
+        logInfo("added first IP \"" + result + "\" to stun arguments");
+        stunArgs.set(0, result);
     }
 
     private void printHelp() {
@@ -273,11 +272,13 @@ public class MasterServer {
     }
 
     private void relayServerTask() {
-        relayServerFuture = executorService.submit(new Runnable() {
+        logInfo("Starting Relay Server");
+        executorService.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     RelayServer.main(relayArgs.toArray(new String[relayArgs.size()]));
+                    logInfo("Successfully started Relay Server");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -285,21 +286,27 @@ public class MasterServer {
         });
     }
 
+
+
     private void stunServerTask() {
-        stunServerFuture = executorService.submit(new Runnable() {
+        logInfo("Starting Stun Server");
+        executorService.submit(new Runnable() {
             @Override
             public void run() {
                 StunServer.main(stunArgs.toArray(new String[stunArgs.size()]));
+                logInfo("Successfully started Stun Server");
             }
         });
     }
 
     private void mediatorServerTask() {
-        mediatorServerFuture = executorService.submit(new Runnable() {
+        logInfo("Starting Mediator Server");
+        executorService.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     Mediator.main(mediatorArgs.toArray(new String[mediatorArgs.size()]));
+                    logInfo("Successfully started Mediator Server");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

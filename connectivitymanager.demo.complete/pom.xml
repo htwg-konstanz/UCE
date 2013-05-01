@@ -60,8 +60,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				<executions>
 					<execution>
 						<id>make-assembly</id>
-						<!-- phase needs to be verify to ensure the jar with its dependencies is builded -->
-						<phase>verify</phase>
+						<!-- phase needs to be install to ensure the jar with its dependencies is builded -->
+						<phase>install</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>

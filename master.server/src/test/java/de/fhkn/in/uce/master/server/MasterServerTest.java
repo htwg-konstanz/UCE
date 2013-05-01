@@ -64,6 +64,7 @@ public class MasterServerTest {
             msSuccess.run();
 
         } catch (Exception e) {
+            fail("Should not be here!");
         }
     }
 
@@ -79,6 +80,22 @@ public class MasterServerTest {
             msWrong.run();
 
         } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Test method for {@link MasterServer#run()} with all args but random order.
+     */
+    @Test
+    public final void testRun5() {
+        final String argsComplete[] = { "-StunSecondIP=127.0.0.3", "StunFirstIP=127.0.0.2", "RelayPort=15100", "MediatorLifeTime=1", "-MediatorPort=15101", "MediatorIteration=1"};
+
+        MasterServer msSuccess = new MasterServer(argsComplete);
+        try {
+            msSuccess.run();
+
+        } catch (Exception e) {
+            fail("Should not be here!");
         }
     }
 }

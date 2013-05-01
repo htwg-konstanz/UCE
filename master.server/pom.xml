@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-	    <artifactId>parent</artifactId>
+		<artifactId>parent</artifactId>
 		<groupId>de.fhkn.in.uce</groupId>
 		<version>1.0</version>
 		<relativePath>../parent/pom.xml</relativePath>
@@ -27,9 +27,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 	<artifactId>master.server</artifactId>
 	<packaging>jar</packaging>
-	<name>MasterServer</name>
+	<name>UCEMasterServer</name>
 
-	<description>This server contains the mediator with all plugins, a stun and relay server in one .zip- and .tar.gz-file.</description>
+	<description>This server contains a mediator with all plugins, a stun and relay server in one .zip- and .tar.gz-file.</description>
 
 	<properties>
 		<finalName>${project.artifactId}-${project.version}</finalName>
@@ -39,7 +39,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<finalName>${finalName}</finalName>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
@@ -48,7 +47,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
@@ -66,35 +64,38 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				<version>2.4</version>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
+						<id>make-jar-with-dependencies</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<archive>
+								<manifest>
+									<mainClass>de.fhkn.in.uce.master.server.MasterServer</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>make-assembly</id>
+						<phase>install</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>config/assembly-bin.xml</descriptor>
+							</descriptors>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<descriptors>
-						<descriptor>config/assembly-bin.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.10</version>
 			</plugin>
 		</plugins>
 	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.10</version>
-			</plugin>
-		</plugins>
-	</reporting>
-
 
 	<dependencies>
 		<dependency>
@@ -110,46 +111,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<dependency>
 			<groupId>de.fhkn.in.uce</groupId>
 			<artifactId>mediator</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>directconnection.mediator</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-            <groupId>de.fhkn.in.uce</groupId>
-            <artifactId>directconnection.message</artifactId>
-            <version>1.0</version>
-        </dependency>
-		<dependency>
-			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>holepunching.mediator</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-            <groupId>de.fhkn.in.uce</groupId>
-            <artifactId>holepunching.message</artifactId>
-            <version>1.0</version>
-        </dependency>
-		<dependency>
-			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>relaying.mediator</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-            <groupId>de.fhkn.in.uce</groupId>
-            <artifactId>relaying.message</artifactId>
-            <version>1.0</version>
-        </dependency>
-		<dependency>
-			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>reversal.mediator</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.fhkn.in.uce</groupId>
-			<artifactId>reversal.message</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>

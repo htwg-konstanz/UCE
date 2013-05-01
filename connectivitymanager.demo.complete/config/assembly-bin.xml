@@ -15,10 +15,10 @@
 
 	<files>
 		<file>
-			<!-- change the source path to your executable jar with its included dependencies -->
-			<!-- the path should be either relative or absolute -->
+			<!-- Change the source path to your executable jar with its included dependencies. -->
+			<!-- The path should be either relative or absolute. -->
 			<!-- If the file is not present the build will fail. -->
-			<source>../connectivitymanager.demo/target/connectivitymanager.demo-1.0-jar-with-dependencies.jar</source>
+			<source>${project.basedir}/../connectivitymanager.demo/target/connectivitymanager.demo-1.0-jar-with-dependencies.jar</source>
 			<lineEnding>keep</lineEnding>
 			<outputDirectory>/</outputDirectory>
 		</file>
@@ -26,7 +26,7 @@
 
 	<dependencySets>
 		<!-- move plugin jars to plugins/ -->
-		<!-- Please do not change this. -->
+		<!-- Please do not change this until you want to include your own plugins. -->
 		<dependencySet>
 			<outputDirectory>plugins/</outputDirectory>
 			<useProjectArtifact>false</useProjectArtifact>
