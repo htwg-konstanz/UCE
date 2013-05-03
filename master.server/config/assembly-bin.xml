@@ -20,6 +20,12 @@
 			<destName>${project.artifactId}-${project.version}.jar</destName>
 			<outputDirectory>/</outputDirectory>
 		</file>
+		
+		<!-- Place the master.server.properties file into / -->
+		<file>
+		    <source>${project.basedir}/config/master.server.properties</source>
+		    <outputDirectory>/config</outputDirectory>
+		</file>
 
 		<!-- Place plugins into /plugins. -->
 		<!-- This is needed for the mediator plugins -->
@@ -56,5 +62,4 @@
 			<outputDirectory>/plugins</outputDirectory>
 		</file>
 	</files>
-
 </assembly>

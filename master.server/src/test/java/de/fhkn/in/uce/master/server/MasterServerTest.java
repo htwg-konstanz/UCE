@@ -27,11 +27,11 @@ public class MasterServerTest {
      */
     @Test
     public final void testRun() {
-        final String argsEmpty[] = new String[0];
+        final String[] argsEmpty = new String[0];
 
-        MasterServer msNoArgs = new MasterServer(argsEmpty);
+        MasterServer msNoArgs = new MasterServer();
         try {
-            msNoArgs.run();
+            msNoArgs.run(argsEmpty);
         } catch (InterruptedException e) {
             fail("Should not be here!");
         }
@@ -42,11 +42,11 @@ public class MasterServerTest {
      */
     @Test
     public final void testRun2() {
-        final String argsPartial[] = {"-StunFirstIP=127.0.0.2", "StunSecondIP=127.0.0.3"};
+        final String[] argsPartial = {"-StunFirstIP=127.0.0.2", "StunSecondIP=127.0.0.3"};
 
-        MasterServer msPartialArgs = new MasterServer(argsPartial);
+        MasterServer msPartialArgs = new MasterServer();
         try {
-            msPartialArgs.run();
+            msPartialArgs.run(argsPartial);
         } catch(InterruptedException e) {
             fail("Should not be here!");
         }
@@ -57,11 +57,11 @@ public class MasterServerTest {
      */
     @Test
     public final void testRun3() {
-        final String argsComplete[] = {"StunFirstIP=127.0.0.2", "-StunSecondIP=127.0.0.3", "RelayPort=14100", "-MediatorPort=14101", "MediatorIteration=1", "MediatorLifeTime=1"};
+        final String[] argsComplete = {"StunFirstIP=127.0.0.2", "-StunSecondIP=127.0.0.3", "RelayPort=14100", "-MediatorPort=14101", "MediatorIteration=1", "MediatorLifeTime=1"};
 
-        MasterServer msSuccess = new MasterServer(argsComplete);
+        MasterServer msSuccess = new MasterServer();
         try {
-            msSuccess.run();
+            msSuccess.run(argsComplete);
 
         } catch (Exception e) {
             fail("Should not be here!");
@@ -73,11 +73,11 @@ public class MasterServerTest {
      */
     @Test
     public final void testRun4() {
-        final String argsComplete[] = {"", "-test=wrong", "blah"};
+        final String[] argsUndefined = {"", "-test=wrong", "blah"};
 
-        MasterServer msWrong = new MasterServer(argsComplete);
+        MasterServer msWrong = new MasterServer();
         try {
-            msWrong.run();
+            msWrong.run(argsUndefined);
 
         } catch (Exception e) {
         }
@@ -88,11 +88,11 @@ public class MasterServerTest {
      */
     @Test
     public final void testRun5() {
-        final String argsComplete[] = { "-StunSecondIP=127.0.0.3", "StunFirstIP=127.0.0.2", "RelayPort=15100", "MediatorLifeTime=1", "-MediatorPort=15101", "MediatorIteration=1"};
+        final String[] argsComplete = { "-StunSecondIP=127.0.0.3", "StunFirstIP=127.0.0.2", "RelayPort=15100", "MediatorLifeTime=1", "-MediatorPort=15101", "MediatorIteration=1"};
 
-        MasterServer msSuccess = new MasterServer(argsComplete);
+        MasterServer msSuccess = new MasterServer();
         try {
-            msSuccess.run();
+            msSuccess.run(argsComplete);
 
         } catch (Exception e) {
             fail("Should not be here!");

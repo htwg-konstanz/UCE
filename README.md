@@ -178,11 +178,23 @@ one release.
     the peers. You need to manually copy the NAT traversal jar files into
     the plugin directory for testing.
 
+*   connectivitymanger.demo.complete/
+
+    This is a bundle of the connectivitymanager demo and all related plugins for the demo.
+
 *	mediator/
 
     The mediator is a publicly available rendezvous server that handles peers,
     peer requests, and exchanges endpoints. As the connectivity manager it requires the
     presense of NAT traversal plugins for the messages it should handle.
+
+*	All-In-One-Mediator/
+
+    The All-In-One-Mediator contains a mediator and all provided plugins from UCE.
+
+*   master.server/
+
+    The master server is a bundle of the stun, relay and mediator server with all plugins for the mediator.
 
 *	directconnection/
 
@@ -261,10 +273,10 @@ are no plans from our side to extend this for support of further techniques.
     
         git clone git@github.com:htwg/UCE.git
 
-- Compile and package
+- Compile and install
 
         cd UCE/uce
-        mvn install package
+        mvn install
 
 ## Test the connectivity manager demo
 
@@ -305,8 +317,8 @@ implementation. It boils down to do sth like the following:
 
 - Cd into this directory, head to the pom.xml and change the following:
 
-		<artifactId>: Id of your bundle
-		<name>: Name of your bundle
+        <artifactId>: Id of your bundle
+        <name>: Name of your bundle
 
 - Edit the source path in the `<file>`-tag in config/assembly-bin.xml.
 
@@ -342,6 +354,87 @@ Edit the file `mediator.properties` like this:
 Afterwards you have to rebuild the connectivity manager and the demo.
 
 Similarly, you can also change the plugin directory location of the connectivity manager and the mediator. Just look into the appropriate resources directories, find the registry / techniqueregistry dirs and change the file `nattraversalregistry.properties`.
+
+## Run the master server
+
+- Build UCE as above.
+
+- Unpack the master.server-1.0-bin.[tar.gz, zip] archive in to your destination folder.
+
+- Cd into master.server-1.0.
+
+
+
+- Now you have four posibilities to run the master server:
+
+    1. Add your values into the provided properties file. (Currently under development)
+    
+    2. Set the values with system properties. (Currently under development)
+
+    3. Provide the values as command line arguments:
+        
+        [-?]ARGUMENT=VALUE
+
+    eg.
+        
+        -StunFirstIP=127.0.0.1  or  StunFirstIP=127.0.0.1
+
+    4. A mixture of these three.
+
+- Example of a correct start of the master server using command line arguments:
+
+    java -jar master.server-1.0.jar StunFirstIP=127.0.0.2 StunSecondIP=127.0.0.3 MediatorPort=14001 RelayPort=14000 MediatorLifeTime=1 MediatorIteration=1
+
+**NOTE**
+
+The properties will be read and overwritten in the following ascending order:
+
+    properties file < system properties < command line arguments
+
+To start the master server correctly the following arguments need to be set:
+    
+    StunFirstIP
+    StunSecondIP
+    RelayPort
+    MediatorPort
+    MediatorIteration
+    MediatorLifeTime
+
+## Plugin development
+
+If you want to use your own plugins, please provide them in the corresponding plugins/ folder in the mediator and connectivitymanager.demo.
+For the mediator it should look like this:
+
+    ./core-1.0.jar
+    ./jcip-annotations-1.0.jar
+    ./log4j-1.2.17.jar
+    ./mediator-1.0.jar
+    ./plugininterface-1.0.jar
+    ./slf4j-api-1.6.1.jar
+    ./slf4j-log4j12-1.6.6.jar
+    ./stun-1.0.jar
+    ./plugins/
+        directconnection.mediator-1.0.jar
+        directconnection.message-1.0.jar
+        holepunching.mediator-1.0.jar
+        holepunching.message-1.0.jar
+        relaying.mediator-1.0.jar
+        relaying.message-1.0.jar
+        reversal.mediator-1.0.jar
+        reversal.message-1.0.jar
+
+And for the demo it should look like this:
+
+    ./connectivitymanager.demo-1.0-jar-with-dependencies.jar
+    ./plugins/
+        directconnection.message-1.0.jar
+        directconnection-1.0.jar
+        holepunching.message-1.0.jar
+        holepunching-1.0.jar
+        relaying.message-1.0.jar
+        relaying-1.0.jar
+        reversal.message-1.0.jar
+        reversal-1.0.jar
 
 ## How it works
 
@@ -395,4 +488,4 @@ free to contact the project maintainer at any time.
     - Stefan Lohr: connection reversal, web hole punching, some demos
     - Alexander Diener: connectivity manager, STUN, refactoring to plugins
     - Ellen Wieland / Steven Boeckle: socket switching
-    - Robert Danczak: Configuration of bundles, CI
+    - Robert Danczak: Configuration of bundles, CI, MasterServer
