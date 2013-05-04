@@ -363,8 +363,6 @@ Similarly, you can also change the plugin directory location of the connectivity
 
 - Cd into master.server-1.0.
 
-
-
 - Now you have four posibilities to run the master server:
 
     1. Add your values into the provided properties file. (Currently under development)
@@ -383,7 +381,7 @@ Similarly, you can also change the plugin directory location of the connectivity
 
 - Example of a correct start of the master server using command line arguments:
 
-    java -jar master.server-1.0.jar StunFirstIP=127.0.0.2 StunSecondIP=127.0.0.3 MediatorPort=14001 RelayPort=14000 MediatorLifeTime=1 MediatorIteration=1
+        java -jar master.server-1.0.jar StunFirstIP=127.0.0.2 StunSecondIP=127.0.0.3 MediatorPort=14001 RelayPort=14000 MediatorLifeTime=1 MediatorIteration=1
 
 **NOTE**
 

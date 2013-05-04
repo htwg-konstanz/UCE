@@ -16,10 +16,33 @@
  */
 package de.fhkn.in.uce.master.server.util;
 
-public class SystemPropertyReader {
+import java.util.List;
 
-    public SystemPropertyReader() {
+import org.slf4j.Logger;
+
+import de.fhkn.in.uce.mediator.Mediator;
+import de.fhkn.in.uce.relaying.server.RelayServer;
+import de.fhkn.in.uce.stun.server.StunServer;
+
+/**
+ * This class reads the system properties and parses them to the
+ * corresponding arguments lists for {@link Mediator}, {@link StunServer} and
+ * {@link RelayServer}.
+ * Furthermore it extends {@link AbstractReader} for common functions.
+ *
+ * @author Robert Danczak
+ */
+public class SystemPropertyReader extends AbstractReader {
+
+    public SystemPropertyReader(Logger logger) {
         // TODO Auto-generated constructor stub
+        super(logger);
+    }
+
+    @Override
+    public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) {
+        // TODO Auto-generated method stub
+
     }
 
 }

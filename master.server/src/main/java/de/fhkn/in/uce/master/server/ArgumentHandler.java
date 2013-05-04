@@ -20,11 +20,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 
+import de.fhkn.in.uce.master.server.util.AbstractReader;
 import de.fhkn.in.uce.master.server.util.CmdReader;
 import de.fhkn.in.uce.master.server.util.FilePropertyReader;
 import de.fhkn.in.uce.master.server.util.SystemPropertyReader;
@@ -36,30 +35,15 @@ import de.fhkn.in.uce.master.server.util.SystemPropertyReader;
  */
 public class ArgumentHandler {
 
-    private Logger logger;
-
-    private final Pattern ipPattern =
-            Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
-
-    private final FilePropertyReader filePropsReader;
-    private final SystemPropertyReader sysPropsReader;
-    private final CmdReader cmdReader;
-
-    // possible command line args.
-    public static final String stunFirstIP = "StunFirstIP";
-    public static final String stunSecondIP = "StunSecondIP";
-    public static final String relayPort = "RelayPort";
-    public static final String mediatorPort = "MediatorPort";
-    public static final String mediatorIteration = "MediatorIteration";
-    public static final String mediatorLifeTime = "MediatorLifeTime";
+    private final Logger logger;
 
     private List<String> stunArgs;
     private List<String> relayArgs;
     private List<String> mediatorArgs;
 
-    private final int relayArgCount = 1;
-    private final int stunArgCount = 2;
-    private final int mediatorArgCount = 3;
+    private static final int relayArgCount = 1;
+    private static final int stunArgCount = 2;
+    private static final int mediatorArgCount = 3;
 
     /**
      * Creates the ArgumentHandler.
@@ -69,12 +53,8 @@ public class ArgumentHandler {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public ArgumentHandler(Logger logger) throws IOException {
+    public ArgumentHandler(Logger logger) {
         this.logger = logger;
-
-        filePropsReader = new FilePropertyReader();
-        sysPropsReader = new SystemPropertyReader();
-        cmdReader = new CmdReader();
 
         relayArgs = new ArrayList<String>(relayArgCount);
         for (int i = 0; i < relayArgCount; i++) {
@@ -103,6 +83,11 @@ public class ArgumentHandler {
     }
 
     public void parseArguments(String[] args) {
+        for(String arg : args) {
+            if (arg.contentEquals("?") || arg.contentEquals("-h") || arg.contentEquals("--help")) {
+                printHelp();
+            }
+        }
         try {
             setArgsFromPropertiesFile();
             setArgsFromSystemProperties();
@@ -112,52 +97,26 @@ public class ArgumentHandler {
             logError("Not all needed arguments are present!");
             printHelp();
             throw new IllegalArgumentException();
+        } catch (IOException e) {
+            // do nothing because we expect the arguments either via system properties
+            // or as command line args.
         }
     }
 
-    private void setArgsFromPropertiesFile() {
-
+    private void setArgsFromPropertiesFile() throws IOException {
+        FilePropertyReader filePropsReader = new FilePropertyReader(logger);
+        filePropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
     }
 
     private void setArgsFromSystemProperties() {
-
+        SystemPropertyReader sysPropsReader = new SystemPropertyReader(logger);
+        sysPropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
     }
 
-    private void setArgsFromCommandLine(final String[] args)
-            throws IllegalArgumentException {
-        for (String arg : args) {
-            if (arg.startsWith(stunFirstIP)
-                    || arg.startsWith("-" + stunFirstIP)) {
-                processStunFirstIP(arg);
-            }
-            else if (arg.startsWith(stunSecondIP)
-                    || arg.startsWith("-" + stunSecondIP)) {
-                processStunSecondIP(arg);
-            }
-            else if (arg.startsWith(relayPort)
-                    || arg.startsWith("-" + relayPort)) {
-                processRelayPort(arg);
-            }
-            else if (arg.startsWith(mediatorPort)
-                    || arg.startsWith("-" + mediatorPort)) {
-                processMediatorPort(arg);
-            }
-            else if (arg.startsWith(mediatorIteration)
-                    || arg.startsWith("-" + mediatorIteration)) {
-                processMediatorIteration(arg);
-            }
-            else if (arg.startsWith(mediatorLifeTime)
-                    || arg.startsWith("-" + mediatorLifeTime)) {
-                processMediatorLifetime(arg);
-            }
-            else if (arg.contentEquals("?") || arg.contentEquals("-h")
-                    || arg.contentEquals("--help")) {
-                printHelp();
-            }
-            else {
-                logInfo("Argument \"" + arg + "\" not recognized");
-            }
-        }
+    private void setArgsFromCommandLine(final String[] args) throws IllegalArgumentException {
+        CmdReader cmdReader = new CmdReader(logger, args);
+        cmdReader.readArguments(stunArgs, relayArgs, mediatorArgs);
+
     }
 
     private void checkArgs() {
@@ -178,92 +137,16 @@ public class ArgumentHandler {
         }
     }
 
-    private boolean isIP(String toCheck) {
-        toCheck = toCheck.trim();
-        Matcher m = ipPattern.matcher(toCheck);
-        return m.matches();
-    }
-
-    private boolean isPort(String port) {
-        port = port.trim();
-        int result = Integer.parseInt(port);
-        if ((result >= 1024) && (result < 65536)) {
-            return true;
-        }
-        return false;
-    }
-
-    private void logInfo(String msg) {
-        System.out.println(msg);
-        logger.info(msg);
-    }
-
     private void logError(String msg) {
         System.err.println(msg);
         logger.error(msg);
     }
 
-    private void processMediatorLifetime(String arg) {
-        String[] splitted = arg.split(mediatorLifeTime + "=");
-        String result = splitted[1];
-        logInfo("added max lifetime \"" + result + "\" to mediator arguments");
-        mediatorArgs.set(2, result);
-    }
-
-    private void processMediatorIteration(String arg) {
-        String[] splitted = arg.split(mediatorIteration + "=");
-        String result = splitted[1];
-        logInfo("added iteration time \"" + result + "\" to mediator arguments");
-        mediatorArgs.set(1, result);
-    }
-
-    private void processMediatorPort(String arg) {
-        String[] splitted = arg.split(mediatorPort + "=");
-        String result = splitted[1];
-        if (!isPort(result)) {
-            throw new IllegalArgumentException();
-        }
-        logInfo("added port \"" + result + "\" to mediator arguments");
-        mediatorArgs.set(0, result);
-    }
-
-    private void processRelayPort(String arg) {
-        String[] splitted = arg.split(relayPort + "=");
-        String result = splitted[1];
-        if (!isPort(result)) {
-            throw new IllegalArgumentException();
-        }
-        logInfo("added port \"" + result + "\" to relay arguments");
-        relayArgs.set(0, result);
-    }
-
-    private void processStunSecondIP(String arg) {
-        String[] splitted = arg.split(stunSecondIP + "=");
-        String result = splitted[1];
-        if (!isIP(result)) {
-            throw new IllegalArgumentException();
-        }
-        logInfo("added second IP \"" + result + "\" to stun arguments");
-        stunArgs.set(1, result);
-    }
-
-    private void processStunFirstIP(String arg) {
-        String[] splitted = arg.split(stunFirstIP + "=");
-        String result = splitted[1];
-        if (!isIP(result)) {
-            throw new IllegalArgumentException();
-        }
-        logInfo("added first IP \"" + result + "\" to stun arguments");
-        stunArgs.set(0, result);
-    }
-
     private void printHelp() {
-        String msg =
-                "Please provide the following arguments to start the server:\n"
-                        + stunFirstIP + "=, " + stunSecondIP + "=, "
-                        + relayPort + "=, " + mediatorPort + "=, "
-                        + mediatorIteration + "=, " + mediatorLifeTime + "=";
-        logger.error(msg);
-        System.err.println(msg);
+        String msg = "Please provide the following arguments to start the server:\n"
+                   + AbstractReader.stunFirstIP + "=, " + AbstractReader.stunSecondIP + "=, "
+                   + AbstractReader.relayPort + "=, " + AbstractReader.mediatorPort + "=, "
+                   + AbstractReader.mediatorIteration + "=, " + AbstractReader.mediatorLifeTime + "=";
+        logError(msg);
     }
 }
