@@ -34,7 +34,7 @@ import de.fhkn.in.uce.stun.server.StunServer;
  */
 public class SystemPropertyReader extends AbstractReader {
 
-    public SystemPropertyReader(Logger logger) {
+    public SystemPropertyReader(final Logger logger) {
         // TODO Auto-generated constructor stub
         super(logger);
     }

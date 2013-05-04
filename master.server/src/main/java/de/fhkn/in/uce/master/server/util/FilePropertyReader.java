@@ -40,7 +40,7 @@ public class FilePropertyReader extends AbstractReader {
     private Properties props;
     private FileInputStream fistream;
 
-    public FilePropertyReader(Logger logger) throws IOException {
+    public FilePropertyReader(final Logger logger) throws IOException {
         super(logger);
         props = new Properties();
         fistream = new FileInputStream("config/master.server.properties");

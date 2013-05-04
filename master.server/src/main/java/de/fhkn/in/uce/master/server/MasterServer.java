@@ -60,6 +60,7 @@ public class MasterServer {
      * Main method to create and start the master server.
      *
      * @param args
+     *            command line arguments.
      */
     public static void main(final String[] args) {
         MasterServer masterServer = new MasterServer();
@@ -74,6 +75,11 @@ public class MasterServer {
 
     /**
      * Starts the master server and its children stun, relay and mediator.
+     *
+     * @param args
+     *              command line arguments.
+     *
+     * @throws InterruptedException
      */
     public void run(final String[] args) throws InterruptedException {
         try {

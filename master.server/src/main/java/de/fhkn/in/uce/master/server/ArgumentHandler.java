@@ -41,9 +41,9 @@ public class ArgumentHandler {
     private List<String> relayArgs;
     private List<String> mediatorArgs;
 
-    private static final int relayArgCount = 1;
-    private static final int stunArgCount = 2;
-    private static final int mediatorArgCount = 3;
+    private static final int RELAY_ARG_COUNT = 1;
+    private static final int STUN_ARG_COUNT = 2;
+    private static final int MEDIATOR_ARG_COUNT = 3;
 
     /**
      * Creates the ArgumentHandler.
@@ -53,19 +53,19 @@ public class ArgumentHandler {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public ArgumentHandler(Logger logger) {
+    public ArgumentHandler(final Logger logger) {
         this.logger = logger;
 
-        relayArgs = new ArrayList<String>(relayArgCount);
-        for (int i = 0; i < relayArgCount; i++) {
+        relayArgs = new ArrayList<String>(RELAY_ARG_COUNT);
+        for (int i = 0; i < RELAY_ARG_COUNT; i++) {
             relayArgs.add("");
         }
-        stunArgs = new ArrayList<String>(stunArgCount);
-        for (int i = 0; i < stunArgCount; i++) {
+        stunArgs = new ArrayList<String>(STUN_ARG_COUNT);
+        for (int i = 0; i < STUN_ARG_COUNT; i++) {
             stunArgs.add("");
         }
-        mediatorArgs = new ArrayList<String>(mediatorArgCount);
-        for (int i = 0; i < mediatorArgCount; i++) {
+        mediatorArgs = new ArrayList<String>(MEDIATOR_ARG_COUNT);
+        for (int i = 0; i < MEDIATOR_ARG_COUNT; i++) {
             mediatorArgs.add("");
         }
     }
@@ -120,17 +120,17 @@ public class ArgumentHandler {
     }
 
     private void checkArgs() {
-        for (int i = 0; i < relayArgCount; i++) {
+        for (int i = 0; i < RELAY_ARG_COUNT; i++) {
             if (relayArgs.get(i).equals("")) {
                 throw new IllegalArgumentException("Parameters are missing!");
             }
         }
-        for (int i = 0; i < stunArgCount; i++) {
+        for (int i = 0; i < STUN_ARG_COUNT; i++) {
             if (stunArgs.get(i).equals("")) {
                 throw new IllegalArgumentException("Parameters are missing!");
             }
         }
-        for (int i = 0; i < mediatorArgCount; i++) {
+        for (int i = 0; i < MEDIATOR_ARG_COUNT; i++) {
             if (mediatorArgs.get(i).equals("")) {
                 throw new IllegalArgumentException("Parameters are missing!");
             }

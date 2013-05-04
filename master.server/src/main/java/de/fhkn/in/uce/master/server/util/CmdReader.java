@@ -36,7 +36,7 @@ public class CmdReader extends AbstractReader {
 
     private String[] args;
 
-    public CmdReader(Logger logger, final String[] args) {
+    public CmdReader(final Logger logger, final String[] args) {
         super(logger);
         this.args = args;
     }

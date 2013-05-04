@@ -29,7 +29,7 @@ public abstract class AbstractReader {
     public static final String mediatorIteration = "MediatorIteration";
     public static final String mediatorLifeTime = "MediatorLifeTime";
 
-    public AbstractReader(Logger logger) {
+    public AbstractReader(final Logger logger) {
         this.logger = logger;
     }
 
