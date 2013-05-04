@@ -17,7 +17,6 @@
 package de.fhkn.in.uce.master.server.util;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -25,7 +24,7 @@ public class FilePropertyReader {
 
     private Properties props;
 
-    public FilePropertyReader() throws FileNotFoundException, IOException {
+    public FilePropertyReader() throws IOException {
         props = new Properties();
         props.load(new FileInputStream("config/master.server.properties"));
     }

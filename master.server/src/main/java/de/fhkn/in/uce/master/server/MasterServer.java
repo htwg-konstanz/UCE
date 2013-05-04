@@ -38,8 +38,8 @@ public class MasterServer {
 
     private static final Logger logger = LoggerFactory.getLogger(MasterServer.class);
 
-    private final int EXECUTOR_THREADS = 3;
-    private final int TERMINATION_TIME = 100;
+    private final int executorThreads = 3;
+    private final int terminationTime = 100;
 
     private final ExecutorService executorService;
     private ArgumentHandler argHandler;
@@ -48,7 +48,7 @@ public class MasterServer {
      * Creates a master server.
      */
     public MasterServer() {
-        executorService = Executors.newFixedThreadPool(EXECUTOR_THREADS);
+        executorService = Executors.newFixedThreadPool(executorThreads);
         try {
             argHandler = new ArgumentHandler(logger);
         } catch (Exception e) {
@@ -93,8 +93,8 @@ public class MasterServer {
     private void shutdownExecutor() {
         try {
             executorService.shutdown();
-            logger.info("Force shutting down worker threads in {} ms", TERMINATION_TIME);
-            if (!executorService.awaitTermination(TERMINATION_TIME, TimeUnit.MILLISECONDS)) {
+            logger.info("Force shutting down worker threads in {} ms", terminationTime);
+            if (!executorService.awaitTermination(terminationTime, TimeUnit.MILLISECONDS)) {
                 executorService.shutdownNow();
             }
         } catch (Exception e) {

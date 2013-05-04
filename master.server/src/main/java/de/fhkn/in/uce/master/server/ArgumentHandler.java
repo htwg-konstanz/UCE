@@ -33,25 +33,25 @@ import de.fhkn.in.uce.master.server.util.SystemPropertyReader;
  * Class to handle arguments from file, system prpoerties and command line args.
  *
  * @author Robert Danczak
- *
  */
 public class ArgumentHandler {
 
     private Logger logger;
 
-    private final Pattern ipPattern = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+    private final Pattern ipPattern =
+            Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
     private final FilePropertyReader filePropsReader;
     private final SystemPropertyReader sysPropsReader;
     private final CmdReader cmdReader;
 
     // possible command line args.
-    public final String stunFirstIP = "StunFirstIP";
-    public final String stunSecondIP = "StunSecondIP";
-    public final String relayPort = "RelayPort";
-    public final String mediatorPort = "MediatorPort";
-    public final String mediatorIteration = "MediatorIteration";
-    public final String mediatorLifeTime = "MediatorLifeTime";
+    public static final String stunFirstIP = "StunFirstIP";
+    public static final String stunSecondIP = "StunSecondIP";
+    public static final String relayPort = "RelayPort";
+    public static final String mediatorPort = "MediatorPort";
+    public static final String mediatorIteration = "MediatorIteration";
+    public static final String mediatorLifeTime = "MediatorLifeTime";
 
     private List<String> stunArgs;
     private List<String> relayArgs;
@@ -66,11 +66,10 @@ public class ArgumentHandler {
      *
      * @param logger
      *            reference to a logger
-     *
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public ArgumentHandler(Logger logger) throws FileNotFoundException, IOException {
+    public ArgumentHandler(Logger logger) throws IOException {
         this.logger = logger;
 
         filePropsReader = new FilePropertyReader();
@@ -78,15 +77,15 @@ public class ArgumentHandler {
         cmdReader = new CmdReader();
 
         relayArgs = new ArrayList<String>(relayArgCount);
-        for(int i=0; i < relayArgCount; i++) {
+        for (int i = 0; i < relayArgCount; i++) {
             relayArgs.add("");
         }
         stunArgs = new ArrayList<String>(stunArgCount);
-        for(int i=0; i < stunArgCount; i++) {
+        for (int i = 0; i < stunArgCount; i++) {
             stunArgs.add("");
         }
         mediatorArgs = new ArrayList<String>(mediatorArgCount);
-        for(int i=0; i < mediatorArgCount; i++) {
+        for (int i = 0; i < mediatorArgCount; i++) {
             mediatorArgs.add("");
         }
     }
@@ -124,27 +123,35 @@ public class ArgumentHandler {
 
     }
 
-    private void setArgsFromCommandLine(final String[] args) throws IllegalArgumentException {
+    private void setArgsFromCommandLine(final String[] args)
+            throws IllegalArgumentException {
         for (String arg : args) {
-            if (arg.startsWith(stunFirstIP) || arg.startsWith("-" + stunFirstIP)) {
+            if (arg.startsWith(stunFirstIP)
+                    || arg.startsWith("-" + stunFirstIP)) {
                 processStunFirstIP(arg);
             }
-            else if (arg.startsWith(stunSecondIP) || arg.startsWith("-" + stunSecondIP)) {
+            else if (arg.startsWith(stunSecondIP)
+                    || arg.startsWith("-" + stunSecondIP)) {
                 processStunSecondIP(arg);
             }
-            else if (arg.startsWith(relayPort) || arg.startsWith("-" + relayPort)) {
+            else if (arg.startsWith(relayPort)
+                    || arg.startsWith("-" + relayPort)) {
                 processRelayPort(arg);
             }
-            else if (arg.startsWith(mediatorPort) || arg.startsWith("-" + mediatorPort)) {
+            else if (arg.startsWith(mediatorPort)
+                    || arg.startsWith("-" + mediatorPort)) {
                 processMediatorPort(arg);
             }
-            else if (arg.startsWith(mediatorIteration) || arg.startsWith("-" + mediatorIteration)) {
+            else if (arg.startsWith(mediatorIteration)
+                    || arg.startsWith("-" + mediatorIteration)) {
                 processMediatorIteration(arg);
             }
-            else if (arg.startsWith(mediatorLifeTime) || arg.startsWith("-" + mediatorLifeTime)) {
+            else if (arg.startsWith(mediatorLifeTime)
+                    || arg.startsWith("-" + mediatorLifeTime)) {
                 processMediatorLifetime(arg);
             }
-            else if (arg.contentEquals("?") || arg.contentEquals("-h") || arg.contentEquals("--help")) {
+            else if (arg.contentEquals("?") || arg.contentEquals("-h")
+                    || arg.contentEquals("--help")) {
                 printHelp();
             }
             else {
@@ -154,18 +161,18 @@ public class ArgumentHandler {
     }
 
     private void checkArgs() {
-        for(int i=0; i < relayArgCount; i++) {
-            if(relayArgs.get(i).equals("")) {
+        for (int i = 0; i < relayArgCount; i++) {
+            if (relayArgs.get(i).equals("")) {
                 throw new IllegalArgumentException("Parameters are missing!");
             }
         }
-        for(int i=0; i < stunArgCount; i++) {
-            if(stunArgs.get(i).equals("")) {
+        for (int i = 0; i < stunArgCount; i++) {
+            if (stunArgs.get(i).equals("")) {
                 throw new IllegalArgumentException("Parameters are missing!");
             }
         }
-        for(int i=0; i < mediatorArgCount; i++) {
-            if(mediatorArgs.get(i).equals("")) {
+        for (int i = 0; i < mediatorArgCount; i++) {
+            if (mediatorArgs.get(i).equals("")) {
                 throw new IllegalArgumentException("Parameters are missing!");
             }
         }
@@ -180,7 +187,7 @@ public class ArgumentHandler {
     private boolean isPort(String port) {
         port = port.trim();
         int result = Integer.parseInt(port);
-        if((result >= 1024) && (result < 65536)) {
+        if ((result >= 1024) && (result < 65536)) {
             return true;
         }
         return false;
@@ -213,7 +220,7 @@ public class ArgumentHandler {
     private void processMediatorPort(String arg) {
         String[] splitted = arg.split(mediatorPort + "=");
         String result = splitted[1];
-        if(!isPort(result)) {
+        if (!isPort(result)) {
             throw new IllegalArgumentException();
         }
         logInfo("added port \"" + result + "\" to mediator arguments");
@@ -223,7 +230,7 @@ public class ArgumentHandler {
     private void processRelayPort(String arg) {
         String[] splitted = arg.split(relayPort + "=");
         String result = splitted[1];
-        if(!isPort(result)) {
+        if (!isPort(result)) {
             throw new IllegalArgumentException();
         }
         logInfo("added port \"" + result + "\" to relay arguments");
@@ -233,7 +240,7 @@ public class ArgumentHandler {
     private void processStunSecondIP(String arg) {
         String[] splitted = arg.split(stunSecondIP + "=");
         String result = splitted[1];
-        if(!isIP(result)) {
+        if (!isIP(result)) {
             throw new IllegalArgumentException();
         }
         logInfo("added second IP \"" + result + "\" to stun arguments");
@@ -243,7 +250,7 @@ public class ArgumentHandler {
     private void processStunFirstIP(String arg) {
         String[] splitted = arg.split(stunFirstIP + "=");
         String result = splitted[1];
-        if(!isIP(result)) {
+        if (!isIP(result)) {
             throw new IllegalArgumentException();
         }
         logInfo("added first IP \"" + result + "\" to stun arguments");
@@ -251,10 +258,11 @@ public class ArgumentHandler {
     }
 
     private void printHelp() {
-        String msg = "Please provide the following arguments to start the server:\n"
-                   + stunFirstIP + "=, " + stunSecondIP + "=, " + relayPort
-                   + "=, " + mediatorPort + "=, " + mediatorIteration + "=, "
-                   + mediatorLifeTime + "=";
+        String msg =
+                "Please provide the following arguments to start the server:\n"
+                        + stunFirstIP + "=, " + stunSecondIP + "=, "
+                        + relayPort + "=, " + mediatorPort + "=, "
+                        + mediatorIteration + "=, " + mediatorLifeTime + "=";
         logger.error(msg);
         System.err.println(msg);
     }
