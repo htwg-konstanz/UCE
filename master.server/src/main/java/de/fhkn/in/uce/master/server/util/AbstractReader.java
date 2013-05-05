@@ -32,22 +32,25 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractReader {
 
-    protected static final Pattern ipPattern = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+    protected static final Pattern IPV4_PATTERN = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
     protected final Logger logger;
 
     // possible args.
-    protected static final String stunFirstIP = "StunFirstIP";
-    protected static final String stunSecondIP = "StunSecondIP";
-    protected static final String relayPort = "RelayPort";
-    protected static final String mediatorPort = "MediatorPort";
-    protected static final String mediatorIteration = "MediatorIteration";
-    protected static final String mediatorLifeTime = "MediatorLifeTime";
+    protected static final String STUN_FIRST_IP = "StunFirstIP";
+    protected static final String STUN_SECOND_IP = "StunSecondIP";
+    protected static final String RELAY_PORT = "RelayPort";
+    protected static final String MEDIATOR_PORT = "MediatorPort";
+    protected static final String MEDIATOR_ITERATION = "MediatorIteration";
+    protected static final String MEDIATOR_LIFETIME = "MediatorLifeTime";
 
     /**
      * Creates an AbstractReader.
+     *
+     * @param logger
+     *            where to log to.
      */
-    public AbstractReader(Logger logger) {
+    public AbstractReader(final Logger logger) {
         this.logger = logger;
     }
 
@@ -67,22 +70,48 @@ public abstract class AbstractReader {
      */
     public abstract void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) throws IllegalArgumentException;
 
+    /**
+     * Logs {@code msg} as info in logger and sysout.
+     *
+     * @param msg
+     *            what to log.
+     */
     protected void logInfo(final String msg) {
         System.out.println(msg);
         logger.info(msg);
     }
 
-    protected void logError(String msg) {
+    /**
+     * Logs {@code msg} as error in logger and syserr.
+     *
+     * @param msg
+     *            what to log.
+     */
+    protected void logError(final String msg) {
         System.err.println(msg);
         logger.error(msg);
     }
 
-    protected boolean isIP(final String toCheck) {
+    /**
+     * Checks if the given string is an IPv4 address.
+     *
+     * @param toCheck
+     *            String to check.
+     * @return true if IPv4 else false.
+     */
+    protected boolean isIPV4(final String toCheck) {
         String tmp = toCheck.trim();
-        Matcher m = ipPattern.matcher(tmp);
+        Matcher m = IPV4_PATTERN.matcher(tmp);
         return m.matches();
     }
 
+    /**
+     * Checks if the given string is a valid port in [1024;65536].
+     *
+     * @param port
+     *            String to check.
+     * @return true if port is between 1024 and 65536 else false.
+     */
     protected boolean isPort(final String port) {
         String tmp = port.trim();
         int result = Integer.parseInt(tmp);
@@ -92,6 +121,15 @@ public abstract class AbstractReader {
         return false;
     }
 
+    /**
+     * Checks if the given argument {@code arg} is valid and writes it to {@code mediatorArgs}.
+     *
+     * @param mediatorArgs
+     *            where to write the argument to.
+     * @param arg
+     *            which argument to write.
+     * @throws IllegalArgumentException
+     */
     protected void processMediatorLifeTime(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
             throw new IllegalArgumentException();
@@ -100,6 +138,15 @@ public abstract class AbstractReader {
         mediatorArgs.set(2, arg);
     }
 
+    /**
+     * Checks if the given argument {@code arg} is valid and writes it to {@code mediatorArgs}.
+     *
+     * @param mediatorArgs
+     *            where to write the argument to.
+     * @param arg
+     *            which argument to write.
+     * @throws IllegalArgumentException
+     */
     protected void processMediatorIteration(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
             throw new IllegalArgumentException();
@@ -108,6 +155,15 @@ public abstract class AbstractReader {
         mediatorArgs.set(1, arg);
     }
 
+    /**
+     * Checks if the given argument {@code arg} is a valid port and writes it to {@code mediatorArgs}.
+     *
+     * @param mediatorArgs
+     *            where to write the argument to.
+     * @param arg
+     *            which argument to write.
+     * @throws IllegalArgumentException
+     */
     protected void processMediatorPort(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || ("".equals(arg) || !isPort(arg))) {
             throw new IllegalArgumentException();
@@ -116,6 +172,15 @@ public abstract class AbstractReader {
         mediatorArgs.set(0, arg);
     }
 
+    /**
+     * Checks if the given argument {@code arg} is a valid port and writes it to {@code mediatorArgs}.
+     *
+     * @param relayArgs
+     *            where to write the argument to.
+     * @param arg
+     *            which argument to write.
+     * @throws IllegalArgumentException
+     */
     protected void processRelayPort(List<String> relayArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || ("".equals(arg) || !isPort(arg))) {
             throw new IllegalArgumentException();
@@ -124,16 +189,34 @@ public abstract class AbstractReader {
         relayArgs.set(0, arg);
     }
 
+    /**
+     * Checks if the given argument {@code arg} is a valid IPv4 and writes it to {@code mediatorArgs}.
+     *
+     * @param stunArgs
+     *            where to write the argument to.
+     * @param arg
+     *            which argument to write.
+     * @throws IllegalArgumentException
+     */
     protected void processStunSecondIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
-        if ((arg == null) || "".equals(arg) || !isIP(arg)) {
+        if ((arg == null) || "".equals(arg) || !isIPV4(arg)) {
             throw new IllegalArgumentException();
         }
         logInfo("added second IP \"" + arg + "\" to stun arguments");
         stunArgs.set(1, arg);
     }
 
+    /**
+     * Checks if the given argument {@code arg} is a valid IPv4 and writes it to {@code mediatorArgs}.
+     *
+     * @param stunArgs
+     *            where to write the argument to.
+     * @param arg
+     *            which argument to write.
+     * @throws IllegalArgumentException
+     */
     protected void processStunFirstIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
-        if ((arg == null) || "".equals(arg) || !isIP(arg)) {
+        if ((arg == null) || "".equals(arg) || !isIPV4(arg)) {
             throw new IllegalArgumentException();
         }
         logInfo("added first IP \"" + arg + "\" to stun arguments");
@@ -144,41 +227,41 @@ public abstract class AbstractReader {
      * @return the string "StunFirstIP"
      */
     public static String getStunFirstIP() {
-        return stunFirstIP;
+        return STUN_FIRST_IP;
     }
 
     /**
      * @return the string "StunSecondIP"
      */
     public static String getStunSecondIP() {
-        return stunSecondIP;
+        return STUN_SECOND_IP;
     }
 
     /**
      * @return the string "RelayPort"
      */
     public static String getRelayPort() {
-        return relayPort;
+        return RELAY_PORT;
     }
 
     /**
      * @return the string "MediatorPort"
      */
     public static String getMediatorPort() {
-        return mediatorPort;
+        return MEDIATOR_PORT;
     }
 
     /**
      * @return the string "MediatorIteration"
      */
     public static String getMediatorIteration() {
-        return mediatorIteration;
+        return MEDIATOR_ITERATION;
     }
 
     /**
      * @return the string "MediatorLifeTime"
      */
     public static String getMediatorLifeTime() {
-        return mediatorLifeTime;
+        return MEDIATOR_LIFETIME;
     }
 }

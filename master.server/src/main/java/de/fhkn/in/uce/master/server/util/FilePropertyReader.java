@@ -52,22 +52,22 @@ public class FilePropertyReader extends AbstractReader {
 
             while(tmp.hasMoreElements()) {
                 String key = tmp.nextElement().toString();
-                if(key.equals(stunFirstIP)) {
+                if(key.equals(STUN_FIRST_IP)) {
                     String value = props.getProperty(key);
                     processStunFirstIP(stunArgs, value);
-                } else if(key.equals(stunSecondIP)) {
+                } else if(key.equals(STUN_SECOND_IP)) {
                     String value = props.getProperty(key);
                     processStunSecondIP(stunArgs, value);
-                } else if(key.equals(relayPort)) {
+                } else if(key.equals(RELAY_PORT)) {
                     String value = props.getProperty(key);
                     processRelayPort(relayArgs, value);
-                } else if(key.equals(mediatorPort)) {
+                } else if(key.equals(MEDIATOR_PORT)) {
                     String value = props.getProperty(key);
                     processMediatorPort(mediatorArgs, value);
-                } else if(key.equals(mediatorIteration)) {
+                } else if(key.equals(MEDIATOR_ITERATION)) {
                     String value = props.getProperty(key);
                     processMediatorIteration(mediatorArgs, value);
-                } else if(key.equals(mediatorLifeTime)) {
+                } else if(key.equals(MEDIATOR_LIFETIME)) {
                     String value = props.getProperty(key);
                     processMediatorLifeTime(mediatorArgs, value);
                 } else {

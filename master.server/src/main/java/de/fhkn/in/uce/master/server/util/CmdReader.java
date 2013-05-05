@@ -47,22 +47,22 @@ public class CmdReader extends AbstractReader {
                 result = splitted[1];
             }
 
-            if (arg.startsWith(stunFirstIP) || arg.startsWith("-" + stunFirstIP)) {
+            if (arg.startsWith(STUN_FIRST_IP) || arg.startsWith("-" + STUN_FIRST_IP)) {
                 processStunFirstIP(stunArgs, result);
             }
-            else if (arg.startsWith(stunSecondIP) || arg.startsWith("-" + stunSecondIP)) {
+            else if (arg.startsWith(STUN_SECOND_IP) || arg.startsWith("-" + STUN_SECOND_IP)) {
                 processStunSecondIP(stunArgs, result);
             }
-            else if (arg.startsWith(relayPort) || arg.startsWith("-" + relayPort)) {
+            else if (arg.startsWith(RELAY_PORT) || arg.startsWith("-" + RELAY_PORT)) {
                 processRelayPort(relayArgs, result);
             }
-            else if (arg.startsWith(mediatorPort) || arg.startsWith("-" + mediatorPort)) {
+            else if (arg.startsWith(MEDIATOR_PORT) || arg.startsWith("-" + MEDIATOR_PORT)) {
                 processMediatorPort(mediatorArgs, result);
             }
-            else if (arg.startsWith(mediatorIteration) || arg.startsWith("-" + mediatorIteration)) {
+            else if (arg.startsWith(MEDIATOR_ITERATION) || arg.startsWith("-" + MEDIATOR_ITERATION)) {
                 processMediatorIteration(mediatorArgs, result);
             }
-            else if (arg.startsWith(mediatorLifeTime) || arg.startsWith("-" + mediatorLifeTime)) {
+            else if (arg.startsWith(MEDIATOR_LIFETIME) || arg.startsWith("-" + MEDIATOR_LIFETIME)) {
                 processMediatorLifeTime(mediatorArgs, result);
             }
             else {

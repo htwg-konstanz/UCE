@@ -99,8 +99,8 @@ public class ArgumentHandler {
      * @param args
      *            arguments from command line
      */
-    public void parseArguments(String[] args) {
-        for(String arg : args) {
+    public void parseArguments(final String[] args) {
+        for (String arg : args) {
             if (arg.contentEquals("?") || arg.contentEquals("-h") || arg.contentEquals("--help")) {
                 printHelp();
             }
