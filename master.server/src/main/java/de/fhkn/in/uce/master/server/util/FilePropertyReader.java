@@ -18,37 +18,67 @@ package de.fhkn.in.uce.master.server.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-
-import de.fhkn.in.uce.mediator.Mediator;
-import de.fhkn.in.uce.relaying.server.RelayServer;
-import de.fhkn.in.uce.stun.server.StunServer;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class tries to read from the properties file and parses the contents
- * to the corresponding arguments lists for {@link Mediator}, {@link StunServer}
- * and {@link RelayServer}.
+ * to the corresponding arguments lists for
+ * {@link de.fhkn.in.uce.mediator.Mediator Mediator},
+ * {@link de.fhkn.in.uce.stun.server.StunServer StunServer} and
+ * {@link de.fhkn.in.uce.relaying.server.RelayServer RelayServer}.
  * Furthermore it extends {@link AbstractReader} for common functions.
  *
  * @author Robert Danczak
  */
 public class FilePropertyReader extends AbstractReader {
 
-    private Properties props;
-    private FileInputStream fistream;
 
-    public FilePropertyReader(final Logger logger) throws IOException {
-        super(logger);
-        props = new Properties();
-        fistream = new FileInputStream("config/master.server.properties");
+    public FilePropertyReader() {
+        super(LoggerFactory.getLogger(FilePropertyReader.class));
     }
 
     @Override
-    public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) {
-        // TODO Auto-generated method stub
+    public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) throws IllegalArgumentException {
+        try {
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream("config/master.server.properties");
+
+            props.load(fis);
+            Enumeration<?> tmp = props.propertyNames();
+
+            while(tmp.hasMoreElements()) {
+                String key = tmp.nextElement().toString();
+                if(key.equals(stunFirstIP)) {
+                    String value = props.getProperty(key);
+                    processStunFirstIP(stunArgs, value);
+                } else if(key.equals(stunSecondIP)) {
+                    String value = props.getProperty(key);
+                    processStunSecondIP(stunArgs, value);
+                } else if(key.equals(relayPort)) {
+                    String value = props.getProperty(key);
+                    processRelayPort(relayArgs, value);
+                } else if(key.equals(mediatorPort)) {
+                    String value = props.getProperty(key);
+                    processMediatorPort(mediatorArgs, value);
+                } else if(key.equals(mediatorIteration)) {
+                    String value = props.getProperty(key);
+                    processMediatorIteration(mediatorArgs, value);
+                } else if(key.equals(mediatorLifeTime)) {
+                    String value = props.getProperty(key);
+                    processMediatorLifeTime(mediatorArgs, value);
+                } else {
+                    logInfo("Key \"" + key + "\" not recognized");
+                }
+            }
+
+            fis.close();
+        } catch (IOException e) {
+            logError("Config file not found!");
+        }
 
     }
 }

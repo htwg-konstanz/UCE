@@ -70,18 +70,35 @@ public class ArgumentHandler {
         }
     }
 
+    /**
+     * @return stun server arguments
+     */
     public List<String> getStunArgs() {
         return stunArgs;
     }
 
+    /**
+     * @return relay server arguments
+     */
     public List<String> getRelayArgs() {
         return relayArgs;
     }
 
+    /**
+     * @return mediator server arguments
+     */
     public List<String> getMediatorArgs() {
         return mediatorArgs;
     }
 
+    /**
+     * Parses arguments first from property file,
+     * then from system properties and
+     * at last from command line.
+     *
+     * @param args
+     *            arguments from command line
+     */
     public void parseArguments(String[] args) {
         for(String arg : args) {
             if (arg.contentEquals("?") || arg.contentEquals("-h") || arg.contentEquals("--help")) {
@@ -97,24 +114,21 @@ public class ArgumentHandler {
             logError("Not all needed arguments are present!");
             printHelp();
             throw new IllegalArgumentException();
-        } catch (IOException e) {
-            // do nothing because we expect the arguments either via system properties
-            // or as command line args.
         }
     }
 
-    private void setArgsFromPropertiesFile() throws IOException {
-        FilePropertyReader filePropsReader = new FilePropertyReader(logger);
+    private void setArgsFromPropertiesFile() throws IllegalArgumentException {
+        FilePropertyReader filePropsReader = new FilePropertyReader();
         filePropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
     }
 
-    private void setArgsFromSystemProperties() {
-        SystemPropertyReader sysPropsReader = new SystemPropertyReader(logger);
+    private void setArgsFromSystemProperties() throws IllegalArgumentException {
+        SystemPropertyReader sysPropsReader = new SystemPropertyReader();
         sysPropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
     }
 
     private void setArgsFromCommandLine(final String[] args) throws IllegalArgumentException {
-        CmdReader cmdReader = new CmdReader(logger, args);
+        CmdReader cmdReader = new CmdReader(args);
         cmdReader.readArguments(stunArgs, relayArgs, mediatorArgs);
 
     }
@@ -144,9 +158,9 @@ public class ArgumentHandler {
 
     private void printHelp() {
         String msg = "Please provide the following arguments to start the server:\n"
-                   + AbstractReader.stunFirstIP + "=, " + AbstractReader.stunSecondIP + "=, "
-                   + AbstractReader.relayPort + "=, " + AbstractReader.mediatorPort + "=, "
-                   + AbstractReader.mediatorIteration + "=, " + AbstractReader.mediatorLifeTime + "=";
+                   + AbstractReader.getStunFirstIP() + "=, " + AbstractReader.getStunSecondIP() + "=, "
+                   + AbstractReader.getRelayPort() + "=, " + AbstractReader.getMediatorPort() + "=, "
+                   + AbstractReader.getMediatorIteration() + "=, " + AbstractReader.getMediatorLifeTime() + "=";
         logError(msg);
     }
 }

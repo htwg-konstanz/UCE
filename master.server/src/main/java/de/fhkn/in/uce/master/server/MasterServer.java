@@ -49,11 +49,7 @@ public class MasterServer {
      */
     public MasterServer() {
         executorService = Executors.newFixedThreadPool(executorThreads);
-        try {
             argHandler = new ArgumentHandler(logger);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -68,8 +64,8 @@ public class MasterServer {
             masterServer.run(args);
         } catch (Exception e) {
             logger.error("An error occured during startup of the master server.");
-            e.printStackTrace();
             logger.error("Execption:", e);
+            e.printStackTrace();
         }
     }
 

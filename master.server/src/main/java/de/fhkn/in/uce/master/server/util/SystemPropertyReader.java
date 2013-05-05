@@ -18,29 +18,25 @@ package de.fhkn.in.uce.master.server.util;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-
-import de.fhkn.in.uce.mediator.Mediator;
-import de.fhkn.in.uce.relaying.server.RelayServer;
-import de.fhkn.in.uce.stun.server.StunServer;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class reads the system properties and parses them to the
- * corresponding arguments lists for {@link Mediator}, {@link StunServer} and
- * {@link RelayServer}.
+ * corresponding arguments lists for {@link de.fhkn.in.uce.mediator.Mediator Mediator},
+ * {@link de.fhkn.in.uce.stun.server.StunServer StunServer} and
+ * {@link de.fhkn.in.uce.relaying.server.RelayServer RelayServer}.
  * Furthermore it extends {@link AbstractReader} for common functions.
  *
  * @author Robert Danczak
  */
 public class SystemPropertyReader extends AbstractReader {
 
-    public SystemPropertyReader(final Logger logger) {
-        // TODO Auto-generated constructor stub
-        super(logger);
+    public SystemPropertyReader() {
+        super(LoggerFactory.getLogger(SystemPropertyReader.class));
     }
 
     @Override
-    public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) {
+    public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) throws IllegalArgumentException {
         // TODO Auto-generated method stub
 
     }

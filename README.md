@@ -369,7 +369,7 @@ Similarly, you can also change the plugin directory location of the connectivity
 
 - Now you have four posibilities to run the master server:
 
-    1. Add your values into the provided properties file. (Currently under development)
+    1. Add your values into the provided properties file.
     
     2. Set the values with system properties. (Currently under development)
 

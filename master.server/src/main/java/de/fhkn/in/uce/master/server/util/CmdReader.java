@@ -18,16 +18,13 @@ package de.fhkn.in.uce.master.server.util;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-
-import de.fhkn.in.uce.mediator.Mediator;
-import de.fhkn.in.uce.relaying.server.RelayServer;
-import de.fhkn.in.uce.stun.server.StunServer;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class reads the given command line arguments and parses them to the
- * corresponding arguments lists for {@link Mediator}, {@link StunServer} and
- * {@link RelayServer}.
+ * corresponding arguments lists for {@link de.fhkn.in.uce.mediator.Mediator Mediator},
+ * {@link de.fhkn.in.uce.stun.server.StunServer StunServer} and
+ * {@link de.fhkn.in.uce.relaying.server.RelayServer RelayServer}.
  * Furthermore it extends {@link AbstractReader} for common functions.
  *
  * @author Robert Danczak
@@ -36,31 +33,37 @@ public class CmdReader extends AbstractReader {
 
     private String[] args;
 
-    public CmdReader(final Logger logger, final String[] args) {
-        super(logger);
+    public CmdReader(final String[] args) {
+        super(LoggerFactory.getLogger(CmdReader.class));
         this.args = args;
     }
 
     @Override
-    public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) {
+    public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) throws IllegalArgumentException {
         for (String arg : args) {
+            String[] splitted = arg.split("=");
+            String result = "";
+            if(splitted.length > 1) {
+                result = splitted[1];
+            }
+
             if (arg.startsWith(stunFirstIP) || arg.startsWith("-" + stunFirstIP)) {
-                processStunFirstIP(stunArgs, arg);
+                processStunFirstIP(stunArgs, result);
             }
             else if (arg.startsWith(stunSecondIP) || arg.startsWith("-" + stunSecondIP)) {
-                processStunSecondIP(stunArgs, arg);
+                processStunSecondIP(stunArgs, result);
             }
             else if (arg.startsWith(relayPort) || arg.startsWith("-" + relayPort)) {
-                processRelayPort(relayArgs, arg);
+                processRelayPort(relayArgs, result);
             }
             else if (arg.startsWith(mediatorPort) || arg.startsWith("-" + mediatorPort)) {
-                processMediatorPort(mediatorArgs, arg);
+                processMediatorPort(mediatorArgs, result);
             }
             else if (arg.startsWith(mediatorIteration) || arg.startsWith("-" + mediatorIteration)) {
-                processMediatorIteration(mediatorArgs, arg);
+                processMediatorIteration(mediatorArgs, result);
             }
             else if (arg.startsWith(mediatorLifeTime) || arg.startsWith("-" + mediatorLifeTime)) {
-                processMediatorLifetime(mediatorArgs, arg);
+                processMediatorLifeTime(mediatorArgs, result);
             }
             else {
                 logInfo("Argument \"" + arg + "\" not recognized");
