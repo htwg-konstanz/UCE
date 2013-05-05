@@ -19,6 +19,10 @@ Universal Connection Establishment (UCE) is a framework for firewall and NAT tra
 techniques that is designed to provide universal IP connectivity with minimal administrative
 and configuration overhead.
 
+Current build status:
+
+[![Build Status](https://travis-ci.org/htwg/UCE.png?branch=master)](https://travis-ci.org/htwg/UCE)
+
 ## NAT introduction
 
 Network Address (and Port) Translation (NAT / NAPT) allows address sharing of public IP
