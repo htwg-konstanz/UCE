@@ -48,29 +48,35 @@ public class FilePropertyReader extends AbstractReader {
             FileInputStream fis = new FileInputStream("config/master.server.properties");
 
             props.load(fis);
-            Enumeration<?> tmp = props.propertyNames();
+            Enumeration<?> propEnumeration = props.propertyNames();
 
-            while(tmp.hasMoreElements()) {
-                String key = tmp.nextElement().toString();
-                if(key.equals(STUN_FIRST_IP)) {
+            while (propEnumeration.hasMoreElements()) {
+                String key = propEnumeration.nextElement().toString();
+                if (key.equals(STUN_FIRST_IP)) {
                     String value = props.getProperty(key);
                     processStunFirstIP(stunArgs, value);
-                } else if(key.equals(STUN_SECOND_IP)) {
+                }
+                else if (key.equals(STUN_SECOND_IP)) {
                     String value = props.getProperty(key);
                     processStunSecondIP(stunArgs, value);
-                } else if(key.equals(RELAY_PORT)) {
+                }
+                else if (key.equals(RELAY_PORT)) {
                     String value = props.getProperty(key);
                     processRelayPort(relayArgs, value);
-                } else if(key.equals(MEDIATOR_PORT)) {
+                }
+                else if (key.equals(MEDIATOR_PORT)) {
                     String value = props.getProperty(key);
                     processMediatorPort(mediatorArgs, value);
-                } else if(key.equals(MEDIATOR_ITERATION)) {
+                }
+                else if (key.equals(MEDIATOR_ITERATION)) {
                     String value = props.getProperty(key);
                     processMediatorIteration(mediatorArgs, value);
-                } else if(key.equals(MEDIATOR_LIFETIME)) {
+                }
+                else if (key.equals(MEDIATOR_LIFETIME)) {
                     String value = props.getProperty(key);
                     processMediatorLifeTime(mediatorArgs, value);
-                } else {
+                }
+                else {
                     logInfo("Key \"" + key + "\" not recognized");
                 }
             }

@@ -44,7 +44,8 @@ public class FilePropertyReaderTest {
     }
 
     /**
-     * Test method for {@link FilePropertyReader#readArguments(java.util.List, java.util.List, java.util.List)}.
+     * Test method for
+     * {@link FilePropertyReader#readArguments(java.util.List, java.util.List, java.util.List)}.
      */
     @Test
     public final void testReadArguments() {

@@ -16,7 +16,9 @@
  */
 package de.fhkn.in.uce.master.server.util;
 
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +39,47 @@ public class SystemPropertyReader extends AbstractReader {
 
     @Override
     public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+        SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null) {
+            try {
+                securityManager.checkPropertiesAccess();
+            } catch (SecurityException e) {
+                logError("Security manager prohibits access to system properties!");
+                logError(e.getMessage());
+                return;
+            }
+        }
 
+        Properties props = System.getProperties();
+
+        Enumeration<?> propEnumeration = props.propertyNames();
+
+        while (propEnumeration.hasMoreElements()) {
+            String key = propEnumeration.nextElement().toString();
+            if (key.equals(STUN_FIRST_IP)) {
+                String value = props.getProperty(key);
+                processStunFirstIP(stunArgs, value);
+            }
+            else if (key.equals(STUN_SECOND_IP)) {
+                String value = props.getProperty(key);
+                processStunSecondIP(stunArgs, value);
+            }
+            else if (key.equals(RELAY_PORT)) {
+                String value = props.getProperty(key);
+                processRelayPort(relayArgs, value);
+            }
+            else if (key.equals(MEDIATOR_PORT)) {
+                String value = props.getProperty(key);
+                processMediatorPort(mediatorArgs, value);
+            }
+            else if (key.equals(MEDIATOR_ITERATION)) {
+                String value = props.getProperty(key);
+                processMediatorIteration(mediatorArgs, value);
+            }
+            else if (key.equals(MEDIATOR_LIFETIME)) {
+                String value = props.getProperty(key);
+                processMediatorLifeTime(mediatorArgs, value);
+            }
+        }
     }
-
 }

@@ -371,7 +371,7 @@ Similarly, you can also change the plugin directory location of the connectivity
 
     1. Add your values into the provided properties file.
     
-    2. Set the values with system properties. (Currently under development)
+    2. Set the values with system properties.
 
     3. Provide the values as command line arguments:
         
