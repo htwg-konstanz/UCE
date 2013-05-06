@@ -16,8 +16,6 @@
  */
 package de.fhkn.in.uce.master.server.util;
 
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +50,6 @@ public class FilePropertyReaderTest {
         FilePropertyReader filePropReader = new FilePropertyReader();
         try {
             filePropReader.readArguments(stunArgs, relayArgs, mediatorArgs);
-            fail("Should not be here!");
         } catch (IllegalArgumentException e) {
         }
 

@@ -74,11 +74,9 @@ public class MasterServer {
      * Starts the master server and its children stun, relay and mediator.
      *
      * @param args
-     *              command line arguments.
-     *
-     * @throws InterruptedException
+     *            command line arguments.
      */
-    public void run(final String[] args) throws InterruptedException {
+    public void run(final String[] args) {
         try {
             argHandler.parseArguments(args);
         } catch (IllegalArgumentException e) {
@@ -91,7 +89,6 @@ public class MasterServer {
 
         shutdownExecutor();
     }
-
 
     private void shutdownExecutor() {
         try {

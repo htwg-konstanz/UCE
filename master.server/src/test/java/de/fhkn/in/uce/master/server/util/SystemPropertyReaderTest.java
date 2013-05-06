@@ -16,6 +16,8 @@
  */
 package de.fhkn.in.uce.master.server.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -49,8 +51,11 @@ public class SystemPropertyReaderTest {
      */
     @Test
     public final void testReadArguments1() {
+        List<String> emptyList = new ArrayList<String>();
+        emptyList.add("");
         SystemPropertyReader sysPropReader = new SystemPropertyReader();
         sysPropReader.readArguments(stunArgs, relayArgs, mediatorArgs);
+        assertEquals(emptyList, relayArgs);
     }
 
     /**
@@ -60,6 +65,8 @@ public class SystemPropertyReaderTest {
      */
     @Test
     public final void testReadArguments2() {
+        List<String> relayReference = new ArrayList<String>();
+        relayReference.add("10400");
         Properties props = new Properties();
         props.setProperty(AbstractReader.STUN_FIRST_IP, "127.0.0.2");
         props.setProperty(AbstractReader.STUN_SECOND_IP, "127.0.0.3");
@@ -71,6 +78,15 @@ public class SystemPropertyReaderTest {
         SystemPropertyReader sysPropReader = new SystemPropertyReader();
 
         sysPropReader.readArguments(stunArgs, relayArgs, mediatorArgs);
+
+        System.clearProperty(AbstractReader.STUN_FIRST_IP);
+        System.clearProperty(AbstractReader.STUN_SECOND_IP);
+        System.clearProperty(AbstractReader.RELAY_PORT);
+        System.clearProperty(AbstractReader.MEDIATOR_PORT);
+        System.clearProperty(AbstractReader.MEDIATOR_ITERATION);
+        System.clearProperty(AbstractReader.MEDIATOR_LIFETIME);
+
+        assertEquals(relayReference, relayArgs);
     }
 
     /**
