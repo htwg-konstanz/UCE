@@ -88,19 +88,4 @@ public class SystemPropertyReaderTest {
 
         assertEquals(relayReference, relayArgs);
     }
-
-    /**
-     * Test method for
-     * {@link SystemPropertyReader#readArguments(java.util.List, java.util.List, java.util.List)}
-     * with enabled security manager.
-     */
-    @Test
-    public final void testReadArguments3() {
-        System.setSecurityManager(new SecurityManager());
-
-        SystemPropertyReader sysPropReader = new SystemPropertyReader();
-        sysPropReader.readArguments(stunArgs, relayArgs, mediatorArgs);
-    }
-
-
 }
