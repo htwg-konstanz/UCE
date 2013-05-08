@@ -18,21 +18,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.fhkn.in.uce</groupId>
 	<artifactId>connectivitymanager.demo</artifactId>
-	<version>1.0</version>
 
 	<name>UCEConnectivityManagerDemo</name>
 	<description>Simple chat application which uses the UCE Connectivity Manager</description>
 	<url>http://ice.in.htwg-konstanz.de</url>
 
-	<licenses>
-		<license>
-			<name>GPL-3.0</name>
-			<comments>GNU General Public License, version 3</comments>
-			<url>http://www.opensource.org/licenses/gpl-3.0.html</url>
-		</license>
-	</licenses>
+	<parent>
+        <artifactId>parent</artifactId>
+        <groupId>de.fhkn.in.uce</groupId>
+        <version>1.0</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

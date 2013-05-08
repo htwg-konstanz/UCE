@@ -32,6 +32,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<description>This server contains a mediator with all plugins, a stun and relay server in one .zip- and .tar.gz-file.</description>
 
 	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 	</properties>
 
