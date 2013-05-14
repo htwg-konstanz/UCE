@@ -65,7 +65,7 @@ public class MasterServer {
             masterServer.run(args);
         } catch (Exception e) {
             logger.error("An error occured during startup of the master server.");
-            logger.error("Execption:", e);
+            logger.error("Execption: ", e);
             e.printStackTrace();
         }
     }
@@ -87,6 +87,11 @@ public class MasterServer {
         relayServerTask();
         mediatorServerTask();
 
+        //sleep one second before shuting down the executors
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
         shutdownExecutor();
     }
 

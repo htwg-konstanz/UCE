@@ -80,7 +80,6 @@ public class FilePropertyReader extends AbstractReader {
                     logInfo("Key \"" + key + "\" not recognized");
                 }
             }
-
             fis.close();
         } catch (IOException e) {
             logError("Config file not found!");

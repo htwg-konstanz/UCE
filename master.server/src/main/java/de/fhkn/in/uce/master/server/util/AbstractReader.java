@@ -16,9 +16,8 @@
  */
 package de.fhkn.in.uce.master.server.util;
 
+import java.net.InetAddress;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 
@@ -31,8 +30,6 @@ import org.slf4j.Logger;
  * @author Robert Danczak
  */
 public abstract class AbstractReader {
-
-    protected static final Pattern IPV4_PATTERN = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
     protected final Logger logger;
 
@@ -97,12 +94,20 @@ public abstract class AbstractReader {
      *
      * @param toCheck
      *            String to check.
-     * @return true if IPv4 else false.
+     * @return true if valid IP else false.
      */
-    protected boolean isIPV4(final String toCheck) {
+    protected boolean isIP(final String toCheck) {
         String tmp = toCheck.trim();
-        Matcher m = IPV4_PATTERN.matcher(tmp);
-        return m.matches();
+        if (!tmp.isEmpty()) {
+            try {
+                InetAddress.getByName(tmp);
+                return true;
+            } catch (Exception e) {
+                // return false if we get a UnknownHostException or a SecurityException.
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -165,7 +170,7 @@ public abstract class AbstractReader {
      * @throws IllegalArgumentException
      */
     protected void processMediatorPort(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
-        if ((arg == null) || ("".equals(arg) || !isPort(arg))) {
+        if ((arg == null) || "".equals(arg) || !isPort(arg)) {
             throw new IllegalArgumentException();
         }
         logInfo("added port \"" + arg + "\" to mediator arguments");
@@ -182,7 +187,11 @@ public abstract class AbstractReader {
      * @throws IllegalArgumentException
      */
     protected void processRelayPort(List<String> relayArgs, final String arg) throws IllegalArgumentException {
-        if ((arg == null) || ("".equals(arg) || !isPort(arg))) {
+        if ((arg == null) || "".equals(arg)) {
+            relayArgs.clear();
+            return;
+        }
+        else if (!isPort(arg)) {
             throw new IllegalArgumentException();
         }
         logInfo("added port \"" + arg + "\" to relay arguments");
@@ -199,7 +208,7 @@ public abstract class AbstractReader {
      * @throws IllegalArgumentException
      */
     protected void processStunSecondIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
-        if ((arg == null) || "".equals(arg) || !isIPV4(arg)) {
+        if ((arg == null) || "".equals(arg) || !isIP(arg)) {
             throw new IllegalArgumentException();
         }
         logInfo("added second IP \"" + arg + "\" to stun arguments");
@@ -216,7 +225,7 @@ public abstract class AbstractReader {
      * @throws IllegalArgumentException
      */
     protected void processStunFirstIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
-        if ((arg == null) || "".equals(arg) || !isIPV4(arg)) {
+        if ((arg == null) || "".equals(arg) || !isIP(arg)) {
             throw new IllegalArgumentException();
         }
         logInfo("added first IP \"" + arg + "\" to stun arguments");

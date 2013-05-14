@@ -98,11 +98,13 @@ public class ArgumentHandler {
      *
      * @param args
      *            arguments from command line
+     * @throws IllegalArgumentException
      */
-    public void parseArguments(final String[] args) {
+    public void parseArguments(final String[] args) throws IllegalArgumentException {
         for (String arg : args) {
             if (arg.contentEquals("?") || arg.contentEquals("-h") || arg.contentEquals("--help")) {
                 printHelp();
+                throw new IllegalArgumentException();
             }
         }
         try {
@@ -117,9 +119,13 @@ public class ArgumentHandler {
         }
     }
 
-    private void setArgsFromPropertiesFile() throws IllegalArgumentException {
+    private void setArgsFromPropertiesFile() {
         FilePropertyReader filePropsReader = new FilePropertyReader();
-        filePropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
+        try {
+            filePropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
     }
 
     private void setArgsFromSystemProperties() throws IllegalArgumentException {
@@ -134,11 +140,12 @@ public class ArgumentHandler {
     }
 
     private void checkArgs() {
-        for (int i = 0; i < RELAY_ARG_COUNT; i++) {
-            if (relayArgs.get(i).equals("")) {
-                throw new IllegalArgumentException("Parameters are missing!");
-            }
-        }
+    //removed check due to default value in relay server
+//        for (int i = 0; i < RELAY_ARG_COUNT; i++) {
+//            if (relayArgs.get(i).equals("")) {
+//                throw new IllegalArgumentException("Parameters are missing!");
+//            }
+//        }
         for (int i = 0; i < STUN_ARG_COUNT; i++) {
             if (stunArgs.get(i).equals("")) {
                 throw new IllegalArgumentException("Parameters are missing!");
@@ -159,7 +166,7 @@ public class ArgumentHandler {
     private void printHelp() {
         String msg = "Please provide the following arguments to start the server:\n"
                    + AbstractReader.getStunFirstIP() + "=, " + AbstractReader.getStunSecondIP() + "=, "
-                   + AbstractReader.getRelayPort() + "=, " + AbstractReader.getMediatorPort() + "=, "
+                   + AbstractReader.getRelayPort() + "=  (optional), " + AbstractReader.getMediatorPort() + "=, "
                    + AbstractReader.getMediatorIteration() + "=, " + AbstractReader.getMediatorLifeTime() + "=";
         logError(msg);
     }

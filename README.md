@@ -369,9 +369,15 @@ Similarly, you can also change the plugin directory location of the connectivity
 
 - Now you have four posibilities to run the master server:
 
-    1. Add your values into the provided properties file.
+    1. Add your values into the provided properties file (config/master.server.properties).
     
     2. Set the values with system properties.
+
+        -DARGUMENT=VALUE
+
+    eg.
+        
+        -DSTUNFIRSTIP=127.0.0.1
 
     3. Provide the values as command line arguments:
         
@@ -397,7 +403,7 @@ To start the master server correctly the following arguments need to be set:
     
     StunFirstIP
     StunSecondIP
-    RelayPort
+    RelayPort			(optional)
     MediatorPort
     MediatorIteration
     MediatorLifeTime
