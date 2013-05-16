@@ -64,6 +64,7 @@ public abstract class AbstractReader {
      * @param mediatorArgs
      *            Arguments for the mediator server.
      * @throws IllegalArgumentException
+     *             if arguments are invalid
      */
     public abstract void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) throws IllegalArgumentException;
 
@@ -127,13 +128,15 @@ public abstract class AbstractReader {
     }
 
     /**
-     * Checks if the given argument {@code arg} is valid and writes it to {@code mediatorArgs}.
+     * Checks if the given argument {@code arg} is valid and writes it to
+     * {@code mediatorArgs}.
      *
      * @param mediatorArgs
      *            where to write the argument to.
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
+     *             If argument {@code arg} is empty.
      */
     protected void processMediatorLifeTime(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
@@ -144,13 +147,15 @@ public abstract class AbstractReader {
     }
 
     /**
-     * Checks if the given argument {@code arg} is valid and writes it to {@code mediatorArgs}.
+     * Checks if the given argument {@code arg} is valid and writes it to
+     * {@code mediatorArgs}.
      *
      * @param mediatorArgs
      *            where to write the argument to.
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
+     *             If argument {@code arg} is empty.
      */
     protected void processMediatorIteration(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
@@ -161,13 +166,15 @@ public abstract class AbstractReader {
     }
 
     /**
-     * Checks if the given argument {@code arg} is a valid port and writes it to {@code mediatorArgs}.
+     * Checks if the given argument {@code arg} is a valid port and writes it to
+     * {@code mediatorArgs}.
      *
      * @param mediatorArgs
      *            where to write the argument to.
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
+     *             If argument {@code arg} is not a port or empty.
      */
     protected void processMediatorPort(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg) || !isPort(arg)) {
@@ -178,13 +185,15 @@ public abstract class AbstractReader {
     }
 
     /**
-     * Checks if the given argument {@code arg} is a valid port and writes it to {@code mediatorArgs}.
+     * Checks if the given argument {@code arg} is a valid port and writes it to
+     * {@code relayArgs}.
      *
      * @param relayArgs
      *            where to write the argument to.
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
+     *             If argument {@code arg} is not a port or empty.
      */
     protected void processRelayPort(List<String> relayArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
@@ -199,30 +208,15 @@ public abstract class AbstractReader {
     }
 
     /**
-     * Checks if the given argument {@code arg} is a valid IPv4 and writes it to {@code mediatorArgs}.
+     * Checks if the given argument {@code arg} is a valid IP and writes it to
+     * {@code stunArgs} in index 0.
      *
      * @param stunArgs
      *            where to write the argument to.
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
-     */
-    protected void processStunSecondIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
-        if ((arg == null) || "".equals(arg) || !isIP(arg)) {
-            throw new IllegalArgumentException();
-        }
-        logInfo("added second IP \"" + arg + "\" to stun arguments");
-        stunArgs.set(1, arg);
-    }
-
-    /**
-     * Checks if the given argument {@code arg} is a valid IPv4 and writes it to {@code mediatorArgs}.
-     *
-     * @param stunArgs
-     *            where to write the argument to.
-     * @param arg
-     *            which argument to write.
-     * @throws IllegalArgumentException
+     *             If argument {@code arg} is not an IP.
      */
     protected void processStunFirstIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg) || !isIP(arg)) {
@@ -230,6 +224,25 @@ public abstract class AbstractReader {
         }
         logInfo("added first IP \"" + arg + "\" to stun arguments");
         stunArgs.set(0, arg);
+    }
+
+    /**
+     * Checks if the given argument {@code arg} is a valid IP and writes it to
+     * {@code stunArgs} in index 1.
+     *
+     * @param stunArgs
+     *            where to write the argument to.
+     * @param arg
+     *            which argument to write.
+     * @throws IllegalArgumentException
+     *             If argument {@code arg} is not an IP.
+     */
+    protected void processStunSecondIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
+        if ((arg == null) || "".equals(arg) || !isIP(arg)) {
+            throw new IllegalArgumentException();
+        }
+        logInfo("added second IP \"" + arg + "\" to stun arguments");
+        stunArgs.set(1, arg);
     }
 
     /**

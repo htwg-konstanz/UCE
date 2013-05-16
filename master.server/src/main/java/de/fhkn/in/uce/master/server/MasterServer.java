@@ -37,7 +37,7 @@ import de.fhkn.in.uce.stun.server.StunServer;
  */
 public class MasterServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(MasterServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServer.class);
 
     private final int executorThreads = 3;
     private final int terminationTime = 100;
@@ -50,7 +50,7 @@ public class MasterServer {
      */
     public MasterServer() {
         executorService = Executors.newFixedThreadPool(executorThreads);
-            argHandler = new ArgumentHandler(logger);
+            argHandler = new ArgumentHandler(LOGGER);
     }
 
     /**
@@ -64,8 +64,8 @@ public class MasterServer {
         try {
             masterServer.run(args);
         } catch (Exception e) {
-            logger.error("An error occured during startup of the master server.");
-            logger.error("Execption: ", e);
+            LOGGER.error("An error occured during startup of the master server.");
+            LOGGER.error("Execption: ", e);
             e.printStackTrace();
         }
     }
@@ -99,7 +99,7 @@ public class MasterServer {
     private void shutdownExecutor() {
         try {
             executorService.shutdown();
-            logger.info("Force shutting down worker threads in {} ms", terminationTime);
+            LOGGER.info("Force shutting down worker threads in {} ms", terminationTime);
             if (!executorService.awaitTermination(terminationTime, TimeUnit.MILLISECONDS)) {
                 executorService.shutdownNow();
             }
@@ -111,7 +111,7 @@ public class MasterServer {
 
     private void logInfo(final String msg) {
         System.out.println(msg);
-        logger.info(msg);
+        LOGGER.info(msg);
     }
 
     private void relayServerTask() {

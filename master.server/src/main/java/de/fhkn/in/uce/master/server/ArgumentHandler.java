@@ -92,13 +92,14 @@ public class ArgumentHandler {
     }
 
     /**
-     * Parses arguments first from property file,
-     * then from system properties and
-     * at last from command line.
+     * Parses arguments first from property file, then from system properties
+     * and at last from command line.
      *
      * @param args
      *            arguments from command line
      * @throws IllegalArgumentException
+     *             If arguments are invalid or help with "?", "-h" or "--help"
+     *             is requested.
      */
     public void parseArguments(final String[] args) throws IllegalArgumentException {
         for (String arg : args) {
@@ -158,7 +159,7 @@ public class ArgumentHandler {
         }
     }
 
-    private void logError(String msg) {
+    private void logError(final String msg) {
         System.err.println(msg);
         logger.error(msg);
     }
