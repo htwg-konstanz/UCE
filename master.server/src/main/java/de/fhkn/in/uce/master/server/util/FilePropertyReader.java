@@ -37,6 +37,10 @@ import org.slf4j.LoggerFactory;
 public class FilePropertyReader extends AbstractReader {
 
 
+    /**
+     * Creates a file property reader to read from
+     * 'config/master.server.porperties'.
+     */
     public FilePropertyReader() {
         super(LoggerFactory.getLogger(FilePropertyReader.class));
     }

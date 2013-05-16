@@ -91,6 +91,7 @@ public class MasterServer {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
+            //do nothing
         }
         shutdownExecutor();
     }
@@ -108,7 +109,7 @@ public class MasterServer {
         }
     }
 
-    private void logInfo(String msg) {
+    private void logInfo(final String msg) {
         System.out.println(msg);
         logger.info(msg);
     }

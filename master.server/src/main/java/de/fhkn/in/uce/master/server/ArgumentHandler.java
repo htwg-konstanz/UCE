@@ -29,7 +29,7 @@ import de.fhkn.in.uce.master.server.util.FilePropertyReader;
 import de.fhkn.in.uce.master.server.util.SystemPropertyReader;
 
 /**
- * Class to handle arguments from file, system prpoerties and command line args.
+ * Class to handle arguments from file, system properties and command line args.
  *
  * @author Robert Danczak
  */

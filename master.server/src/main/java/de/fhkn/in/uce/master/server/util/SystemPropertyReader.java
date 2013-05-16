@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
  */
 public class SystemPropertyReader extends AbstractReader {
 
+    /**
+     * Creates a system property reader which processes the system properties.
+     */
     public SystemPropertyReader() {
         super(LoggerFactory.getLogger(SystemPropertyReader.class));
     }

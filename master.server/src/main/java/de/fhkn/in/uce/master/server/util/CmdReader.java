@@ -33,6 +33,12 @@ public class CmdReader extends AbstractReader {
 
     private String[] args;
 
+    /**
+     * Creates a command line reader and parses the given args.
+     *
+     * @param args
+     *            args to parse.
+     */
     public CmdReader(final String[] args) {
         super(LoggerFactory.getLogger(CmdReader.class));
         this.args = args;
@@ -43,7 +49,7 @@ public class CmdReader extends AbstractReader {
         for (String arg : args) {
             String[] splitted = arg.split("=");
             String result = "";
-            if(splitted.length > 1) {
+            if (splitted.length > 1) {
                 result = splitted[1];
             }
 
