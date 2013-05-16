@@ -496,4 +496,4 @@ free to contact the project maintainer at any time.
     - Stefan Lohr: connection reversal, web hole punching, some demos
     - Alexander Diener: connectivity manager, STUN, refactoring to plugins
     - Ellen Wieland / Steven Boeckle: socket switching
-    - Robert Danczak: Configuration of bundles, CI, MasterServer
+    - Robert Danczak: Configuration of bundles, CI with Travis and Jenkins, Master Server
