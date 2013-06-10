@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,26 +34,26 @@ import de.fhkn.in.uce.stun.message.Message;
  * Task that is waiting for forward endpoints messages and keep-live messages.
  * If a forward endpoints message arrives it starts the hole punching process.
  * If a keep-live messages it does nothing.
- * 
+ *
  * @author dmaier, Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 public final class MessageHandlerTask implements CancelableTask {
     @SuppressWarnings("unused")
-	private final Socket socketToMediator;
+    private final Socket socketToMediator;
     @SuppressWarnings("unused")
     private boolean cancelled = false;
     @SuppressWarnings("unused")
     private final HolePunchingUtil hpUtil;
-	private final ConnectionListener connectionListener;
+    private final ConnectionListener connectionListener;
     private final HolePuncher hp;
-    
+
     private final List<XorMappedAddress> endpoints;
     private final Token authentificationToken;
 
     /**
      * Creates a new {@link MessageHandlerTask}.
-     * 
+     *
      * @param socketToMediator
      *            connection to the mediator.
      * @param socketQueue

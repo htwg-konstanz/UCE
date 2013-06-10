@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2012 Thomas Zink, 
+    Copyright (c) 2012 Thomas Zink,
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * a server socket. If such a connection is established, it starts a task via the
  * executor framework to handle it. The server socket, executor and a factory
  * for handling tasks are configurable.
- * 
+ *
  * @author thomas zink, daniel maier
  */
 public class SocketListener extends Thread {
@@ -40,10 +40,10 @@ public class SocketListener extends Thread {
     private final ServerSocket server;
     private final ExecutorService executor;
     private final SocketTaskFactory tasks;
-    
+
     /**
      * Creates a new {@link SocketListener}.
-     * 
+     *
      * @param server
      *            the server socket on that this {@link ListenerThread} should
      *            wait for new connections
@@ -55,22 +55,22 @@ public class SocketListener extends Thread {
      *             if one of the parameters is null
      */
     public SocketListener(
-    		ServerSocket server,
-    		final ExecutorService executor,
+            ServerSocket server,
+            final ExecutorService executor,
             final SocketTaskFactory taskFactory) {
-        if (executor == null || taskFactory  == null || server == null) {
+        if ((executor == null) || (taskFactory  == null) || (server == null)) {
             throw new NullPointerException();
         }
         this.server = server;
         this.executor = executor;
         this.tasks = taskFactory;
     }
-    
-    
+
+
     /**
      * Creates a new {@link SocketListener}. The server socket is created by
      * the passed server socket factory.
-     * 
+     *
      * @param bindingPort
      *            the local port to that the server socket gets bound to
      * @param serverSocketFactory
@@ -87,10 +87,10 @@ public class SocketListener extends Thread {
      *             if one of the non-primitive parameters is null
      */
     public SocketListener(
-    		final int bindingPort,
-    		final ServerSocketFactory serverSocketFactory,
-    		final ExecutorService executor,
-    		final SocketTaskFactory taskFactory)
+            final int bindingPort,
+            final ServerSocketFactory serverSocketFactory,
+            final ExecutorService executor,
+            final SocketTaskFactory taskFactory)
             throws IOException {
         this(serverSocketFactory.createServerSocket(), executor, taskFactory);
         this.server.bind(new InetSocketAddress(bindingPort));
@@ -102,7 +102,7 @@ public class SocketListener extends Thread {
      * and then executes a task to handle it via the given executor. The task is
      * created by the {@link SocketTaskFactory} member and the accepted socket
      * gets handed over to it. Before the thread terminates the given
-     * executor is shutdown. 
+     * executor is shutdown.
      */
     @Override
     public final void run() {
@@ -126,11 +126,11 @@ public class SocketListener extends Thread {
     @Override
     public final void interrupt() {
         try {
-        	server.close();
-        } catch (IOException ignore) { 
-        	/* nop */
+            server.close();
+        } catch (IOException ignore) {
+            /* nop */
         } finally {
-        	super.interrupt();
+            super.interrupt();
         }
     }
 }

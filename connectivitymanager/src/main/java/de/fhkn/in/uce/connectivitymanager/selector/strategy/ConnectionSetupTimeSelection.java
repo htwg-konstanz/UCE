@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,7 +33,7 @@ import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
 
 public final class ConnectionSetupTimeSelection implements NATTraversalSelection {
     // tzn: there is no logging here curently
-	//private final Logger logger = LoggerFactory.getLogger(ConnectionSetupTimeSelection.class);
+    //private final Logger logger = LoggerFactory.getLogger(ConnectionSetupTimeSelection.class);
     private final DecisionTree decisionTree;
     private final Comparator<NATTraversalTechnique> comparator;
     private final NATTraversalRegistry registry;
@@ -131,36 +131,45 @@ public final class ConnectionSetupTimeSelection implements NATTraversalSelection
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
-        result = prime * result + ((decisionTree == null) ? 0 : decisionTree.hashCode());
-        result = prime * result + ((registry == null) ? 0 : registry.hashCode());
+        result = (prime * result) + ((comparator == null) ? 0 : comparator.hashCode());
+        result = (prime * result) + ((decisionTree == null) ? 0 : decisionTree.hashCode());
+        result = (prime * result) + ((registry == null) ? 0 : registry.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ConnectionSetupTimeSelection other = (ConnectionSetupTimeSelection) obj;
         if (comparator == null) {
-            if (other.comparator != null)
+            if (other.comparator != null) {
                 return false;
-        } else if (!comparator.equals(other.comparator))
+            }
+        } else if (!comparator.equals(other.comparator)) {
             return false;
+        }
         if (decisionTree == null) {
-            if (other.decisionTree != null)
+            if (other.decisionTree != null) {
                 return false;
-        } else if (!decisionTree.equals(other.decisionTree))
+            }
+        } else if (!decisionTree.equals(other.decisionTree)) {
             return false;
+        }
         if (registry == null) {
-            if (other.registry != null)
+            if (other.registry != null) {
                 return false;
-        } else if (!registry.equals(other.registry))
+            }
+        } else if (!registry.equals(other.registry)) {
             return false;
+        }
         return true;
     }
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2012 Alexander Diener, 
+    Copyright (c) 2012 Alexander Diener,
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import java.io.OutputStream;
 
 /**
  * The STUN message header is built as follows (according to RFC 5389):
- * 
+ *
  * <pre>
  *   0                   1                   2                   3
  *   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -35,53 +35,53 @@ import java.io.OutputStream;
  *  |                                                               |
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * The two most significant bits must be zero. The STUN message type contains
  * the message class and the method of the message. Message length contains the
  * size of the message without the header. The magic cookie is a fixed value
  * which is defined in the STUN RFC 5389. The transaction id is for matching
  * request/response messages.
- * 
+ *
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 public interface MessageHeader {
     /**
      * The magic cookie is a fixed value which is defined by RFC 5389.
      */
-    public final static int MAGIC_COOKIE = 0x2112A442;
+    public static final int MAGIC_COOKIE = 0x2112A442;
 
     /**
      * Returns the class of a message.
-     * 
+     *
      * @return the class of a message
      */
     MessageClass getMessageClass();
 
     /**
      * Returns the method of a message.
-     * 
+     *
      * @return the method of a message
      */
     MessageMethod getMethod();
 
     /**
      * Returns the length of the message without header.
-     * 
+     *
      * @return the length of the message without header.
      */
     int getLength();
 
     /**
      * Returns the transaction id of the message.
-     * 
+     *
      * @return the transaction id of the message.
      */
     byte[] getTransactionId();
 
     /**
      * Writes this STUN message header byte encoded to the given output stream.
-     * 
+     *
      * @param out
      *            the output stream to that the message gets written to
      * @throws IOException

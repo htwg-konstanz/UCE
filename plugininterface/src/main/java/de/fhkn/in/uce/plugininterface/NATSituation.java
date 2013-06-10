@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,9 +23,9 @@ import net.jcip.annotations.Immutable;
  * device on the client-side and the NAT device on the server-side. Multilevel
  * NAT devices are also represented by a NAT situation because for a public
  * reachable peer multilevel NATs behave like a single NAT.
- * 
+ *
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 @Immutable
 public final class NATSituation {
@@ -43,7 +43,7 @@ public final class NATSituation {
     /**
      * Creates a {@link NATSituation} with the given client and server
      * {@link NATBehavior}.
-     * 
+     *
      * @param clientNat
      *            the {@link NATBehavior} of the client
      * @param serviceNat
@@ -57,10 +57,10 @@ public final class NATSituation {
     /**
      * Creates a {@link NATSituation} with the given client and server
      * {@link NATFeatureRealization}s.
-     * 
+     *
      * @param clientMapping
      *            the {@link NATFeatureRealization} for the client NAT mapping
-     * 
+     *
      * @param clientFiltering
      *            the {@link NATFeatureRealization} for the client NAT filtering
      * @param serviceMapping
@@ -75,7 +75,7 @@ public final class NATSituation {
 
     /**
      * Returns the {@link NATBehavior} of the client NAT.
-     * 
+     *
      * @return the {@link NATBehavior} of the client NAT
      */
     public NATBehavior getClientNATBehavior() {
@@ -84,7 +84,7 @@ public final class NATSituation {
 
     /**
      * Returns the {@link NATBehavior} of the server NAT.
-     * 
+     *
      * @return the {@link NATBehavior} of the server NAT
      */
     public NATBehavior getServiceNATBehavior() {
@@ -95,8 +95,8 @@ public final class NATSituation {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.clientNat == null) ? 0 : this.clientNat.hashCode());
-        result = prime * result + ((this.serviceNat == null) ? 0 : this.serviceNat.hashCode());
+        result = (prime * result) + ((this.clientNat == null) ? 0 : this.clientNat.hashCode());
+        result = (prime * result) + ((this.serviceNat == null) ? 0 : this.serviceNat.hashCode());
         return result;
     }
 

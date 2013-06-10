@@ -1,15 +1,15 @@
 /**
  * Copyright (C) 2011 Daniel Maier
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -37,17 +37,17 @@ import de.fhkn.in.uce.core.concurrent.ThreadGroupThreadFactory;
  * Class to establish a hole punching connection to a given endpoint. Therefore
  * it uses up to four threads to connect to the given endpoints and to listen
  * for incoming connections.
- * 
+ *
  * @author Daniel Maier
- * 
+ *
  */
 public final class HolePuncher {
-    private final static Logger logger = LoggerFactory.getLogger(HolePuncher.class);
-    private final static Socket POISON_PILL = new Socket();
-    private final static long CONNECT_INTERVAL = 100;
-    private final static int SINGLE_CONNECTION_ATTEMPT_LIMIT = 5000;
-    private final static int AUTHENTICATION_READ_TIMEOUT = 2000;
-    private final static int TOTAL_TIME_LIMIT = 30000;
+    private static final Logger logger = LoggerFactory.getLogger(HolePuncher.class);
+    private static final Socket POISON_PILL = new Socket();
+    private static final long CONNECT_INTERVAL = 100;
+    private static final int SINGLE_CONNECTION_ATTEMPT_LIMIT = 5000;
+    private static final int AUTHENTICATION_READ_TIMEOUT = 2000;
+    private static final int TOTAL_TIME_LIMIT = 30000;
     private final ConnectionListener connectionListener;
     private final SocketAddress localBinding;
     protected final BlockingQueue<Socket> socketQueue;
@@ -55,7 +55,7 @@ public final class HolePuncher {
 
     /**
      * Creates a new HolePuncher.
-     * 
+     *
      * @param connectionListener
      *            ConnectionListener object to get incoming connections
      * @param localBinding
@@ -89,7 +89,7 @@ public final class HolePuncher {
      * {@link HolePuncher#HolePuncher(ConnectionListener, SocketAddress, BlockingQueue)
      * ) constructor}. If the no connection could be established an unconnected
      * socket is put into the {@link HolePuncher#socketQueue socketQueue}.
-     * 
+     *
      * @param privateIP
      *            IP of the private endpoint of the destination
      * @param privatePort
@@ -136,9 +136,9 @@ public final class HolePuncher {
     /**
      * Class that listens for incoming connections from the destination with the
      * help of the ConnectionListener.
-     * 
+     *
      * @author Daniel Maier
-     * 
+     *
      */
     private final class ListenerTask implements CancelableTask {
 
@@ -152,7 +152,7 @@ public final class HolePuncher {
         /**
          * Creates a new {@link ListenerTask} and registers for the given
          * originator on the {@link ConnectionListener} object.
-         * 
+         *
          * @param origin
          *            the remote endpoint of the desired connection.
          * @param sharedLock
@@ -197,8 +197,8 @@ public final class HolePuncher {
                     }
                     s.close();
                 } catch (final InterruptedException e) {
-                	// tzn: dead code
-                	/*try {
+                    // tzn: dead code
+                    /*try {
                         if (s != null) {
                             s.close();
                         }
@@ -239,9 +239,9 @@ public final class HolePuncher {
 
     /**
      * Class to establish a connection to the desired destination.
-     * 
+     *
      * @author Daniel Maier
-     * 
+     *
      */
     private final class ConnectorTask extends SocketUsingTask {
 
@@ -252,7 +252,7 @@ public final class HolePuncher {
 
         /**
          * Creates a new {@link ConnectorTask}.
-         * 
+         *
          * @param destination
          *            the destination to establish the connection.
          * @param sharedLock

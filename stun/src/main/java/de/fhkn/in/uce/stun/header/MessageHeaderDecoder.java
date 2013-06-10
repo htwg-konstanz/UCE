@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2012 Alexander Diener, 
+    Copyright (c) 2012 Alexander Diener,
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@ import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Class to decode byte encoded message headers.
- * 
+ *
  * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 public final class MessageHeaderDecoder {
-	// tzn: this should go into MessageHeader, it is header info anyway 
+    // tzn: this should go into MessageHeader, it is header info anyway
     private static final int HEADER_LENGTH = 20;
     private static final int LEADING_ZEROS_MASK = 0xC0000000;
     private static final int LEADING_ZEROS_SHIFT = 0x1E;
@@ -62,7 +62,7 @@ public final class MessageHeaderDecoder {
      * Creates a new {@link MessageHeaderDecoder} that uses additionally to the
      * {@link STUNMessageMethodDecoder} the given
      * <code>customMethodDecoders</code> to decode the method of the message.
-     * 
+     *
      * @param customMethodDecoders
      *            a list with decoders that gets used to decode custom methods
      * @throws NullPointerException
@@ -79,7 +79,7 @@ public final class MessageHeaderDecoder {
 
     /**
      * Decodes the given byte encoded message header.
-     * 
+     *
      * @param encoded
      *            the byte encoded message header
      * @return the decoded message header
@@ -163,9 +163,9 @@ public final class MessageHeaderDecoder {
 
     /**
      * A implementation of a {@link MessageHeader}.
-     * 
+     *
      * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
-     * 
+     *
      */
     public static final class MessageHeaderImpl implements MessageHeader {
 
@@ -176,7 +176,7 @@ public final class MessageHeaderDecoder {
 
         /**
          * Creates an object of {@link MessageHeaderImpl}.
-         * 
+         *
          * @param messageClass
          *            the {@link MessageClass}
          * @param method
@@ -197,7 +197,7 @@ public final class MessageHeaderDecoder {
 
         private void checkParameters(final MessageClass messageClass, final MessageMethod method, final int length,
                 final byte[] transactionId) {
-            if (method == null || messageClass == null || transactionId == null) {
+            if ((method == null) || (messageClass == null) || (transactionId == null)) {
                 throw new NullPointerException();
             }
             if (length < 0) {
@@ -237,7 +237,7 @@ public final class MessageHeaderDecoder {
             final int messageClassBits = this.messageClass.encode();
             // TODO is the bitwise addition of class and method correct?
             final int leading32bits = (0x0 << LEADING_ZEROS_SHIFT)
-                    | (messageClassBits + methodBits << MESSAGE_TYPE_SHIFT) | ((short) this.length);
+                    | ((messageClassBits + methodBits) << MESSAGE_TYPE_SHIFT) | ((short) this.length);
             dout.writeInt(leading32bits);
             dout.writeInt(MessageHeader.MAGIC_COOKIE);
             dout.write(this.transactionId);
@@ -254,10 +254,10 @@ public final class MessageHeaderDecoder {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + this.length;
-            result = prime * result + ((this.messageClass == null) ? 0 : this.messageClass.hashCode());
-            result = prime * result + ((this.method == null) ? 0 : this.method.hashCode());
-            result = prime * result + Arrays.hashCode(this.transactionId);
+            result = (prime * result) + this.length;
+            result = (prime * result) + ((this.messageClass == null) ? 0 : this.messageClass.hashCode());
+            result = (prime * result) + ((this.method == null) ? 0 : this.method.hashCode());
+            result = (prime * result) + Arrays.hashCode(this.transactionId);
             return result;
         }
 

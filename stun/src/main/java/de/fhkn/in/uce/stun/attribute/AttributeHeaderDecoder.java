@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,9 +29,9 @@ import de.fhkn.in.uce.stun.util.MessageFormatException;
 
 /**
  * Class to decode byte encoded attribute headers.
- * 
+ *
  * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 public final class AttributeHeaderDecoder {
     private final AttributeTypeDecoder commonAttributeTypeDecoder;
@@ -47,7 +47,7 @@ public final class AttributeHeaderDecoder {
     /**
      * Creates a new {@link AttributeHeaderDecoder} with the specified
      * {@link AttributeTypeDecoder} to decode custom attribute types.
-     * 
+     *
      * @param customAttributeTypeDecoder
      *            a list of {@link AttributeTypeDecoder} to decode custom
      *            attribute types
@@ -64,7 +64,7 @@ public final class AttributeHeaderDecoder {
 
     /**
      * Decodes the specified byte array to a {@link AttributeHeader} instance.
-     * 
+     *
      * @param encoded
      *            the byte encoded attribute header
      * @return the decoded attribute header
@@ -125,9 +125,9 @@ public final class AttributeHeaderDecoder {
     }
 
     @SuppressWarnings("unused")
-	private boolean isComprehensionOptional(final int typeBits) {
+    private boolean isComprehensionOptional(final int typeBits) {
         boolean result = false;
-        if (typeBits >= 0x8000 && typeBits <= 0xFFFF) {
+        if ((typeBits >= 0x8000) && (typeBits <= 0xFFFF)) {
             result = true;
         }
         return result;
@@ -135,9 +135,9 @@ public final class AttributeHeaderDecoder {
 
     /**
      * Implementation of a {@link AttributeHeader}.
-     * 
+     *
      * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
-     * 
+     *
      */
     static final class AttributeHeaderImpl implements AttributeHeader {
 
@@ -147,7 +147,7 @@ public final class AttributeHeaderDecoder {
         /**
          * Creates a new {@link AttributeHeaderImpl} with the specified
          * {@link AttributeType} and length.
-         * 
+         *
          * @param type
          *            the attribute type of this header
          * @param length
@@ -182,8 +182,8 @@ public final class AttributeHeaderDecoder {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + this.length;
-            result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
+            result = (prime * result) + this.length;
+            result = (prime * result) + ((this.type == null) ? 0 : this.type.hashCode());
             return result;
         }
 

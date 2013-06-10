@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -47,12 +47,12 @@ import de.fhkn.in.uce.stun.message.MessageWriter;
  * keep-live messages from the mediator. If a forward endpoints message arrives
  * it starts tries to establish a connection to the hole punching source with
  * the help of {@link HolePuncher}.
- * 
+ *
  * @author Daniel Maier, Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 public final class HolePunchingTarget {
-    private final static Logger logger = LoggerFactory.getLogger(HolePunchingTarget.class);
+    private static final Logger logger = LoggerFactory.getLogger(HolePunchingTarget.class);
     // private final SocketAddress mediatorSocketAddress;
     private final String targetId;
     private final BlockingQueue<Socket> socketQueue;
@@ -63,7 +63,7 @@ public final class HolePunchingTarget {
 
     /**
      * Creates a new HolePunchingTarget.
-     * 
+     *
      * @param mediatorSocketAddress
      *            endpoint of the mediator on that it listens for registration
      *            messages.
@@ -83,7 +83,7 @@ public final class HolePunchingTarget {
      * Starts the HolePunchingTarget. Strictly speaking it starts the
      * {@link MessageHandlerTask} after it has registered the target with the
      * mediator. It can be started only one time.
-     * 
+     *
      * @throws IOException
      *             if an I/O error occurs while registering with the mediator.
      * @throws IllegalStateException
@@ -100,7 +100,7 @@ public final class HolePunchingTarget {
     }
 
     @SuppressWarnings("unused")
-	private void sendRegisterMessage() throws IOException {
+    private void sendRegisterMessage() throws IOException {
         final Message registerMessage = MessageStaticFactory.newSTUNMessageInstance(STUNMessageClass.REQUEST,
                 STUNMessageMethod.REGISTER);
         // target id
@@ -121,7 +121,7 @@ public final class HolePunchingTarget {
     }
 
     @SuppressWarnings("unused")
-	private Message receiveMessage() throws IOException {
+    private Message receiveMessage() throws IOException {
         final MessageReader messageReader = MessageReader.createMessageReader();
         return messageReader.readSTUNMessage(this.socketToMediator.getInputStream());
     }
@@ -138,7 +138,7 @@ public final class HolePunchingTarget {
      * {@link UnregisterMessage} over a new socket connection to the mediator
      * and then closes the both connections to it. Then it stops the
      * {@link MessageHandlerTask}.
-     * 
+     *
      * @throws IOException
      *             if an I/O error occurs while sending
      *             {@link UnregisterMessage} to mediator or when closing the
@@ -157,7 +157,7 @@ public final class HolePunchingTarget {
     /**
      * Returns a socket thats connection is established via hole-punching to
      * this target. The method blocks until a connection is made.
-     * 
+     *
      * @return the new socket.
      * @throws IOException
      *             if an I/O error occurs when waiting for a connection.
