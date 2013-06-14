@@ -71,6 +71,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 					<descriptors>
 						<descriptor>config/assembly-bin.xml</descriptor>
 					</descriptors>
+					<archive>
+                        <manifest>
+                            <mainClass>de.fhkn.in.uce.relaying.server.RelayServer</mainClass>
+                        </manifest>
+                    </archive>
 				</configuration>
 				<executions>
 					<execution>
