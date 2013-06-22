@@ -16,6 +16,7 @@
  */
 package de.fhkn.in.uce.master.server.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CmdReader extends AbstractReader {
 
-    private String[] args;
+    private List<String> args;
 
     /**
      * Creates a command line reader and process the given args.
@@ -41,7 +42,7 @@ public class CmdReader extends AbstractReader {
      */
     public CmdReader(final String[] args) {
         super(LoggerFactory.getLogger(CmdReader.class));
-        this.args = args;
+        this.args = Arrays.asList(args);
     }
 
     @Override

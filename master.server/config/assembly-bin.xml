@@ -21,7 +21,7 @@
 			<outputDirectory>/</outputDirectory>
 		</file>
 		
-		<!-- Place the master.server.properties file into / -->
+		<!-- Place the master.server.properties file into /config -->
 		<file>
 		    <source>${project.basedir}/config/master.server.properties</source>
 		    <outputDirectory>/config</outputDirectory>

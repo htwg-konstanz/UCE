@@ -50,7 +50,7 @@ public class MasterServer {
      */
     public MasterServer() {
         executorService = Executors.newFixedThreadPool(executorThreads);
-            argHandler = new ArgumentHandler(LOGGER);
+        argHandler = new ArgumentHandler(LOGGER);
     }
 
     /**

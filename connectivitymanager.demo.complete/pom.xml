@@ -37,14 +37,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<finalName>${project.artifactId}-${project.version}</finalName>
 	</properties>
 
-	<licenses>
-		<license>
-			<name>GPL-3.0</name>
-			<comments>GNU General Public License, version 3</comments>
-			<url>http://www.opensource.org/licenses/gpl-3.0.html</url>
-		</license>
-	</licenses>
-
 	<build>
 		<finalName>${finalName}</finalName>
 		<plugins>

@@ -2,17 +2,13 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	
 	<id>bin</id>
-	
 	<formats>
 		<format>zip</format>
 		<format>tar.gz</format>
 	</formats>
-	
 	<includeBaseDirectory>true</includeBaseDirectory>
 	<includeSiteDirectory>false</includeSiteDirectory>
-
 	<files>
 		<file>
 			<!-- Change the source path to your executable jar with its included dependencies. -->
@@ -23,7 +19,6 @@
 			<outputDirectory>/</outputDirectory>
 		</file>
 	</files>
-
 	<dependencySets>
 		<!-- move plugin jars to plugins/ -->
 		<!-- Please do not change this until you want to include your own plugins. -->
