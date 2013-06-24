@@ -55,33 +55,38 @@ public class FilePropertyReader extends AbstractReader {
             Enumeration<?> propEnumeration = props.propertyNames();
 
             while (propEnumeration.hasMoreElements()) {
-                String key = propEnumeration.nextElement().toString();
-                if (key.equals(STUN_FIRST_IP)) {
-                    String value = props.getProperty(key);
-                    processStunFirstIP(stunArgs, value);
-                }
-                else if (key.equals(STUN_SECOND_IP)) {
-                    String value = props.getProperty(key);
-                    processStunSecondIP(stunArgs, value);
-                }
-                else if (key.equals(RELAY_PORT)) {
-                    String value = props.getProperty(key);
-                    processRelayPort(relayArgs, value);
-                }
-                else if (key.equals(MEDIATOR_PORT)) {
-                    String value = props.getProperty(key);
-                    processMediatorPort(mediatorArgs, value);
-                }
-                else if (key.equals(MEDIATOR_ITERATION)) {
-                    String value = props.getProperty(key);
-                    processMediatorIteration(mediatorArgs, value);
-                }
-                else if (key.equals(MEDIATOR_LIFETIME)) {
-                    String value = props.getProperty(key);
-                    processMediatorLifeTime(mediatorArgs, value);
-                }
-                else {
-                    logInfo("Key \"" + key + "\" not recognized");
+                try {
+                    String key = propEnumeration.nextElement().toString();
+                    if (key.equals(STUN_FIRST_IP)) {
+                        String value = props.getProperty(key);
+                        processStunFirstIP(stunArgs, value);
+                    }
+                    else if (key.equals(STUN_SECOND_IP)) {
+                        String value = props.getProperty(key);
+                        processStunSecondIP(stunArgs, value);
+                    }
+                    else if (key.equals(RELAY_PORT)) {
+                        String value = props.getProperty(key);
+                        processRelayPort(relayArgs, value);
+                    }
+                    else if (key.equals(MEDIATOR_PORT)) {
+                        String value = props.getProperty(key);
+                        processMediatorPort(mediatorArgs, value);
+                    }
+                    else if (key.equals(MEDIATOR_ITERATION)) {
+                        String value = props.getProperty(key);
+                        processMediatorIteration(mediatorArgs, value);
+                    }
+                    else if (key.equals(MEDIATOR_LIFETIME)) {
+                        String value = props.getProperty(key);
+                        processMediatorLifeTime(mediatorArgs, value);
+                    }
+                    else {
+                        logInfo("Key \"" + key + "\" not recognized");
+                    }
+                } catch (IllegalArgumentException e) {
+                    logError("FilePropertyReader: Argument \"" + e.getMessage() + "\" is empty or invalid");
+                    continue;
                 }
             }
             fis.close();

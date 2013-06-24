@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.master.server.util;
+package de.fhkn.in.uce.master.server.server.util;
 
 import static org.junit.Assert.fail;
 
@@ -23,6 +23,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import de.fhkn.in.uce.master.server.util.AbstractReader;
+import de.fhkn.in.uce.master.server.util.CmdReader;
 
 public class CmdReaderTest {
 
@@ -63,12 +66,17 @@ public class CmdReaderTest {
      */
     @Test
     public final void testReadArguments2() {
-        final String[] argsComplete = {"StunFirstIP=127.0.0.2", "-StunSecondIP=127.0.0.3", "RelayPort=14100", "-MediatorPort=14101", "MediatorIteration=1", "MediatorLifeTime=1"};
+        final String[] argsComplete = {AbstractReader.STUN_FIRST_IP + "=127.0.0.2",
+                                       AbstractReader.STUN_SECOND_IP + "=127.0.0.3",
+                                       AbstractReader.RELAY_PORT + "=14100",
+                                       AbstractReader.MEDIATOR_PORT + "=14101",
+                                       AbstractReader.MEDIATOR_ITERATION + "=1",
+                                       AbstractReader.MEDIATOR_LIFETIME + "=1"};
 
         CmdReader cmdReaderCompleteArgs = new CmdReader(argsComplete);
         try {
             cmdReaderCompleteArgs.readArguments(stunArgs, relayArgs, mediatorArgs);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             fail("Should not be here!");
         }
     }
@@ -78,12 +86,12 @@ public class CmdReaderTest {
      */
     @Test
     public final void testReadArguments3() {
-        final String[] argsUndefined = {"", "-test=wrong", "blah"};
+        final String[] argsUndefined = {"", "-test=wrong", "blah", AbstractReader.STUN_FIRST_IP + "=wrong"};
 
         CmdReader cmdReaderUndefinedArgs = new CmdReader(argsUndefined);
         try {
             cmdReaderUndefinedArgs.readArguments(stunArgs, relayArgs, mediatorArgs);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             fail("Should not be here!");
         }
     }
@@ -93,13 +101,17 @@ public class CmdReaderTest {
      */
     @Test
     public final void testReadArguments4() {
-        final String[] argsComplete = { "-StunSecondIP=127.0.0.3", "StunFirstIP=127.0.0.2", "RelayPort=15100", "MediatorLifeTime=1", "-MediatorPort=15101", "MediatorIteration=1"};
+        final String[] argsComplete = { AbstractReader.STUN_FIRST_IP + "=127.0.0.3",
+                                        AbstractReader.STUN_SECOND_IP + "=127.0.0.2",
+                                        AbstractReader.RELAY_PORT + "=15100",
+                                        AbstractReader.MEDIATOR_LIFETIME + "=1",
+                                        AbstractReader.MEDIATOR_PORT + "=15101",
+                                        AbstractReader.MEDIATOR_ITERATION + "=1"};
 
         CmdReader cmdReaderCompleteArgs = new CmdReader(argsComplete);
         try {
             cmdReaderCompleteArgs.readArguments(stunArgs, relayArgs, mediatorArgs);
-
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             fail("Should not be here!");
         }
     }

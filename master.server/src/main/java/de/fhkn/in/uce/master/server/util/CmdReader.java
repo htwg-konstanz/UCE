@@ -48,32 +48,37 @@ public class CmdReader extends AbstractReader {
     @Override
     public void readArguments(List<String> stunArgs, List<String> relayArgs, List<String> mediatorArgs) throws IllegalArgumentException {
         for (String arg : args) {
-            String[] splitted = arg.split("=");
-            String result = "";
-            if (splitted.length > 1) {
-                result = splitted[1];
-            }
+            try {
+                String[] splitted = arg.split("=");
+                String result = "";
+                if (splitted.length > 1) {
+                    result = splitted[1];
+                }
 
-            if (arg.startsWith(STUN_FIRST_IP) || arg.startsWith("-" + STUN_FIRST_IP)) {
-                processStunFirstIP(stunArgs, result);
-            }
-            else if (arg.startsWith(STUN_SECOND_IP) || arg.startsWith("-" + STUN_SECOND_IP)) {
-                processStunSecondIP(stunArgs, result);
-            }
-            else if (arg.startsWith(RELAY_PORT) || arg.startsWith("-" + RELAY_PORT)) {
-                processRelayPort(relayArgs, result);
-            }
-            else if (arg.startsWith(MEDIATOR_PORT) || arg.startsWith("-" + MEDIATOR_PORT)) {
-                processMediatorPort(mediatorArgs, result);
-            }
-            else if (arg.startsWith(MEDIATOR_ITERATION) || arg.startsWith("-" + MEDIATOR_ITERATION)) {
-                processMediatorIteration(mediatorArgs, result);
-            }
-            else if (arg.startsWith(MEDIATOR_LIFETIME) || arg.startsWith("-" + MEDIATOR_LIFETIME)) {
-                processMediatorLifeTime(mediatorArgs, result);
-            }
-            else {
-                logInfo("Argument \"" + arg + "\" not recognized");
+                if (arg.startsWith(STUN_FIRST_IP) || arg.startsWith("-" + STUN_FIRST_IP)) {
+                    processStunFirstIP(stunArgs, result);
+                }
+                else if (arg.startsWith(STUN_SECOND_IP) || arg.startsWith("-" + STUN_SECOND_IP)) {
+                    processStunSecondIP(stunArgs, result);
+                }
+                else if (arg.startsWith(RELAY_PORT) || arg.startsWith("-" + RELAY_PORT)) {
+                    processRelayPort(relayArgs, result);
+                }
+                else if (arg.startsWith(MEDIATOR_PORT) || arg.startsWith("-" + MEDIATOR_PORT)) {
+                    processMediatorPort(mediatorArgs, result);
+                }
+                else if (arg.startsWith(MEDIATOR_ITERATION) || arg.startsWith("-" + MEDIATOR_ITERATION)) {
+                    processMediatorIteration(mediatorArgs, result);
+                }
+                else if (arg.startsWith(MEDIATOR_LIFETIME) || arg.startsWith("-" + MEDIATOR_LIFETIME)) {
+                    processMediatorLifeTime(mediatorArgs, result);
+                }
+                else {
+                    logInfo("Argument \"" + arg + "\" not recognized");
+                }
+            } catch (IllegalArgumentException e) {
+                logError("CmdReader: Argument \"" + e.getMessage() + "\" is empty or invalid");
+                continue;
             }
         }
     }

@@ -136,11 +136,11 @@ public abstract class AbstractReader {
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
-     *             If argument {@code arg} is empty.
+     *             If argument {@code arg} is null or empty.
      */
     protected void processMediatorLifeTime(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(MEDIATOR_LIFETIME);
         }
         logInfo("added max lifetime \"" + arg + "\" to mediator arguments");
         mediatorArgs.set(2, arg);
@@ -155,11 +155,11 @@ public abstract class AbstractReader {
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
-     *             If argument {@code arg} is empty.
+     *             If argument {@code arg} is null or empty.
      */
     protected void processMediatorIteration(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(MEDIATOR_ITERATION);
         }
         logInfo("added iteration time \"" + arg + "\" to mediator arguments");
         mediatorArgs.set(1, arg);
@@ -174,11 +174,11 @@ public abstract class AbstractReader {
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
-     *             If argument {@code arg} is not a port or empty.
+     *             If argument {@code arg} is null, empty or not a port.
      */
     protected void processMediatorPort(List<String> mediatorArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg) || !isPort(arg)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(MEDIATOR_PORT);
         }
         logInfo("added port \"" + arg + "\" to mediator arguments");
         mediatorArgs.set(0, arg);
@@ -186,14 +186,14 @@ public abstract class AbstractReader {
 
     /**
      * Checks if the given argument {@code arg} is a valid port and writes it to
-     * {@code relayArgs}.
+     * {@code relayArgs}. If the argument is null or empty, no value will be written.
      *
      * @param relayArgs
      *            where to write the argument to.
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
-     *             If argument {@code arg} is not a port or empty.
+     *             If argument {@code arg} is not a port.
      */
     protected void processRelayPort(List<String> relayArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg)) {
@@ -201,7 +201,7 @@ public abstract class AbstractReader {
             return;
         }
         else if (!isPort(arg)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(RELAY_PORT);
         }
         logInfo("added port \"" + arg + "\" to relay arguments");
         relayArgs.set(0, arg);
@@ -216,11 +216,11 @@ public abstract class AbstractReader {
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
-     *             If argument {@code arg} is not an IP.
+     *             If argument {@code arg} is null, empty or not an IP.
      */
     protected void processStunFirstIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg) || !isIP(arg)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(STUN_FIRST_IP);
         }
         logInfo("added first IP \"" + arg + "\" to stun arguments");
         stunArgs.set(0, arg);
@@ -235,11 +235,11 @@ public abstract class AbstractReader {
      * @param arg
      *            which argument to write.
      * @throws IllegalArgumentException
-     *             If argument {@code arg} is not an IP.
+     *             If argument {@code arg} is null, empty or not an IP.
      */
     protected void processStunSecondIP(List<String> stunArgs, final String arg) throws IllegalArgumentException {
         if ((arg == null) || "".equals(arg) || !isIP(arg)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(STUN_SECOND_IP);
         }
         logInfo("added second IP \"" + arg + "\" to stun arguments");
         stunArgs.set(1, arg);

@@ -1,4 +1,4 @@
-package de.fhkn.in.uce.master;
+package de.fhkn.in.uce.master.server;
 
 import org.junit.Test;
 

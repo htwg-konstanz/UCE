@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.master.server.util;
+package de.fhkn.in.uce.master.server.server.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,9 @@ import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import de.fhkn.in.uce.master.server.util.AbstractReader;
+import de.fhkn.in.uce.master.server.util.SystemPropertyReader;
 
 public class SystemPropertyReaderTest {
 
@@ -61,10 +65,29 @@ public class SystemPropertyReaderTest {
     /**
      * Test method for
      * {@link SystemPropertyReader#readArguments(java.util.List, java.util.List, java.util.List)}
-     * with all system properties.
+     * with wrong properties.
      */
     @Test
     public final void testReadArguments2() {
+        System.setProperty(AbstractReader.STUN_FIRST_IP, "wrong");
+
+        SystemPropertyReader sysPropReader = new SystemPropertyReader();
+        try {
+            sysPropReader.readArguments(stunArgs, relayArgs, mediatorArgs);
+        } catch(IllegalArgumentException e) {
+            fail("Should not be here!");
+        }
+
+        System.clearProperty(AbstractReader.STUN_FIRST_IP);
+    }
+
+    /**
+     * Test method for
+     * {@link SystemPropertyReader#readArguments(java.util.List, java.util.List, java.util.List)}
+     * with all system properties.
+     */
+    @Test
+    public final void testReadArguments3() {
         List<String> relayReference = new ArrayList<String>();
         relayReference.add("10400");
         Properties props = new Properties();

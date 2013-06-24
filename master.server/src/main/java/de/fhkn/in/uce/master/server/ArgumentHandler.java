@@ -108,10 +108,10 @@ public class ArgumentHandler {
                 throw new IllegalArgumentException();
             }
         }
+        setArgsFromPropertiesFile();
+        setArgsFromSystemProperties();
+        setArgsFromCommandLine(args);
         try {
-            setArgsFromPropertiesFile();
-            setArgsFromSystemProperties();
-            setArgsFromCommandLine(args);
             checkArgs();
         } catch (IllegalArgumentException e) {
             logError("Not all needed arguments are present!");
@@ -122,11 +122,7 @@ public class ArgumentHandler {
 
     private void setArgsFromPropertiesFile() {
         FilePropertyReader filePropsReader = new FilePropertyReader();
-        try {
-            filePropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
+        filePropsReader.readArguments(stunArgs, relayArgs, mediatorArgs);
     }
 
     private void setArgsFromSystemProperties() throws IllegalArgumentException {
@@ -137,7 +133,6 @@ public class ArgumentHandler {
     private void setArgsFromCommandLine(final String[] args) throws IllegalArgumentException {
         CmdReader cmdReader = new CmdReader(args);
         cmdReader.readArguments(stunArgs, relayArgs, mediatorArgs);
-
     }
 
     private void checkArgs() {
@@ -166,9 +161,12 @@ public class ArgumentHandler {
 
     private void printHelp() {
         String msg = "Please provide the following arguments to start the server:\n"
-                   + AbstractReader.getStunFirstIP() + "=, " + AbstractReader.getStunSecondIP() + "=, "
-                   + AbstractReader.getRelayPort() + "=  (optional), " + AbstractReader.getMediatorPort() + "=, "
-                   + AbstractReader.getMediatorIteration() + "=, " + AbstractReader.getMediatorLifeTime() + "=";
+                + AbstractReader.getStunFirstIP() + ",\n"
+                + AbstractReader.getStunSecondIP() + ",\n"
+                + AbstractReader.getRelayPort() + "  (optional),\n"
+                + AbstractReader.getMediatorPort() + ",\n"
+                + AbstractReader.getMediatorIteration() + ",\n"
+                + AbstractReader.getMediatorLifeTime();
         logError(msg);
     }
 }
