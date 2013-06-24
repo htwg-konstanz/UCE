@@ -284,10 +284,12 @@ are no plans from our side to extend this for support of further techniques.
 
 ## Test the connectivity manager demo
 
-- Copy the connectivitymanager.demo.complete-1.0-bin.[tar.gz, zip] archive to a target and source machine.
+- Copy the connectivitymanager.demo.complete-1.0-bin.[tar.gz, zip] archive from connectivitymanager.demo.complete\target to a target and source machine.
   Both or one of them can be behind a NAT device.
 
 - Unpack both.
+
+- Cd into connectivitymanager.demo.complete-1.0
 
 - On the _target_ machine run:
 
