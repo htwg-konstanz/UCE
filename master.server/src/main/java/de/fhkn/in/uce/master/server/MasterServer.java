@@ -97,10 +97,12 @@ public class MasterServer {
     }
 
     private void shutdownExecutor() {
+        logInfo("Shutting down executor threads.");
         try {
             executorService.shutdown();
-            LOGGER.info("Force shutting down worker threads in {} ms", terminationTime);
+            logInfo("Trying to force shutting down worker threads in " + terminationTime + "ms.");
             if (!executorService.awaitTermination(terminationTime, TimeUnit.MILLISECONDS)) {
+                logInfo("Force now to shutdown worker threads.");
                 executorService.shutdownNow();
             }
         } catch (Exception e) {
