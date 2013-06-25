@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.fhkn.in.uce.master.server.server.util;
+package de.fhkn.in.uce.master.server.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
