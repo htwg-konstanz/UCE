@@ -79,7 +79,7 @@ public final class DirectconnectionMetaData implements NATTraversalTechniqueMeta
 
     @Override
     public long getTimeout() {
-        return this.timoutInSeconds * 1000;
+        return this.timoutInSeconds * 1000L;
     }
 
     @Override

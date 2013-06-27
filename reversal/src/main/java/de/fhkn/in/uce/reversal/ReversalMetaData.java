@@ -89,7 +89,7 @@ public final class ReversalMetaData implements NATTraversalTechniqueMetaData {
 
     @Override
     public long getTimeout() {
-        return this.timeoutInSeconds * 1000;
+        return this.timeoutInSeconds * 1000L;
     }
 
     @Override

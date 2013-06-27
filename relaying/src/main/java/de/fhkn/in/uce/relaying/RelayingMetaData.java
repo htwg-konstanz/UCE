@@ -78,7 +78,7 @@ public final class RelayingMetaData implements NATTraversalTechniqueMetaData {
 
     @Override
     public long getTimeout() {
-        return this.timeoutInSeconds * 1000;
+        return this.timeoutInSeconds * 1000L;
     }
 
     @Override
