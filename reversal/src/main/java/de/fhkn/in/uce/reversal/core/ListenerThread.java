@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,12 +31,12 @@ import de.fhkn.in.uce.stun.message.MessageReader;
 /**
  * Class which contains the listener thread of the connection reversal target.
  * This class is used by ConnectionReversalTarget class as listener thread.
- * 
+ *
  * Listens for connection request and keep alive messages. Incoming connection
  * request sockets are added to blockingSocketQueue. The content of
  * blockingSocketQueue can be read by calling the accept- Method of
  * {@link ReversalTarget}.
- * 
+ *
  * @author thomas zink, stefan lohr, Alexander Diener
  *         (aldiener@htwg-konstanz.de)
  */
@@ -49,7 +49,7 @@ public final class ListenerThread extends Thread {
      * Constructor of the ListenerThread which is used by
      * ConnectionReversalTarget for receiving and handling incoming messages for
      * the mediator.
-     * 
+     *
      * @param datagramSocket
      *            Socket for receiving messages from mediator
      * @param blockingSocketQueue
@@ -104,7 +104,7 @@ public final class ListenerThread extends Thread {
     }
 
     /**
-     * Private method for handling connection requests
+     * Private method for handling connection requests.
      */
     private void handleConnectionRequestMessage(final Message connectionRequestMessage) {
         final XorMappedAddress targetAddress = connectionRequestMessage.getAttribute(XorMappedAddress.class);

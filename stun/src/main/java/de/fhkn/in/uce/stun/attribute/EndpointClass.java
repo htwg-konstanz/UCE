@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,9 +31,9 @@ import de.fhkn.in.uce.stun.util.MessageFormatException;
  * The {@link EndpointClass} is an implementation of {@link Attribute} and
  * represents the class of a endpoint. The attribute is used in the Universal
  * Connection Establishment context to categorize endpoints.
- * 
+ *
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 public final class EndpointClass implements Attribute {
     private final int length;
@@ -42,7 +42,7 @@ public final class EndpointClass implements Attribute {
     /**
      * Creates a new attribute of type {@link EndpointClass} with the given
      * {@link EndpointCategory}.
-     * 
+     *
      * @param edpointCategory
      */
     public EndpointClass(final EndpointCategory edpointCategory) {
@@ -52,7 +52,7 @@ public final class EndpointClass implements Attribute {
 
     /**
      * Returns the {@link EndpointCategory} of the endpoint.
-     * 
+     *
      * @return
      */
     public EndpointCategory getEndpointCategory() {
@@ -83,7 +83,7 @@ public final class EndpointClass implements Attribute {
     /**
      * Creates a {@link EndpointCategory} from the given encoded attribute and
      * header.
-     * 
+     *
      * @param encoded
      *            the encoded {@link EndpointClass} attribute
      * @param header
@@ -107,9 +107,9 @@ public final class EndpointClass implements Attribute {
 
     /**
      * Enum to represent different types of endpoints.
-     * 
+     *
      * @author Daniel Maier
-     * 
+     *
      */
     public static enum EndpointCategory {
         /**
@@ -117,11 +117,11 @@ public final class EndpointClass implements Attribute {
          */
         UNDEFINED(0x0),
         /**
-         * Endpoint is a private endpoint (behind NAT)
+         * Endpoint is a private endpoint (behind NAT).
          */
         PRIVATE(0x1),
         /**
-         * Endpoint is a public endpoint (visible from outside)
+         * Endpoint is a public endpoint (visible from outside).
          */
         PUBLIC(0x2),
         /**
@@ -130,7 +130,7 @@ public final class EndpointClass implements Attribute {
          */
         RELAY(0x3),
         /**
-         * Endpoint is an endpoint for connection reversal
+         * Endpoint is an endpoint for connection reversal.
          */
         CONNECTION_REVERSAL(0x4);
 
@@ -146,7 +146,7 @@ public final class EndpointClass implements Attribute {
 
         /**
          * Creates a new {@link EndpointClass}.
-         * 
+         *
          * @param encoded
          *            the encoded representation of the endpoint.
          */
@@ -156,7 +156,7 @@ public final class EndpointClass implements Attribute {
 
         /**
          * Returns the byte encoded {@link EndpointClass}.
-         * 
+         *
          * @return
          */
         int encode() {
@@ -165,7 +165,7 @@ public final class EndpointClass implements Attribute {
 
         /**
          * Decodes the {@link EndpointClass}.
-         * 
+         *
          * @param encoded
          *            the byte encoded {@link EndpointClass}
          * @return the decoded {@link EndpointClass}

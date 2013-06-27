@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -37,7 +37,7 @@ import de.fhkn.in.uce.stun.util.MessageFormatException;
  * the STUN message header. The IPv6 endpoint is encoded with the magic cookie
  * and the transaction id of the STUN message. The attributes is defined as
  * follows:
- * 
+ *
  * <pre>
  *  0                   1                   2                   3
  *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -47,9 +47,9 @@ import de.fhkn.in.uce.stun.util.MessageFormatException;
  * |                X-Address (Variable)
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 public final class XorMappedAddress implements Attribute {
     private static final int IPV4_FAMILY = 0x01;
@@ -64,7 +64,7 @@ public final class XorMappedAddress implements Attribute {
 
     /**
      * Creates a {@link XorMappedAddress} attribute for a IPv4 endpoint.
-     * 
+     *
      * @param endpoint
      *            the IPv4 endpoint
      */
@@ -74,7 +74,7 @@ public final class XorMappedAddress implements Attribute {
 
     /**
      * Creates a {@link XorMappedAddress} attribute for a IPv6 endpoint.
-     * 
+     *
      * @param endpoint
      *            the IPv6 endpoint
      * @param transactionId
@@ -109,7 +109,7 @@ public final class XorMappedAddress implements Attribute {
 
     /**
      * Returns the endpoint.
-     * 
+     *
      * @return the endpoint
      */
     public InetSocketAddress getEndpoint() {
@@ -149,7 +149,7 @@ public final class XorMappedAddress implements Attribute {
     /**
      * Creates a {@link XorMappedAddress} from the given encoded attribute and
      * header.
-     * 
+     *
      * @param encoded
      *            the encoded {@link XorMappedAddress} attribute
      * @param header
@@ -226,30 +226,37 @@ public final class XorMappedAddress implements Attribute {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
-        result = prime * result + ipFamily;
-        result = prime * result + length;
+        result = (prime * result) + ((endpoint == null) ? 0 : endpoint.hashCode());
+        result = (prime * result) + ipFamily;
+        result = (prime * result) + length;
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         XorMappedAddress other = (XorMappedAddress) obj;
         if (endpoint == null) {
-            if (other.endpoint != null)
+            if (other.endpoint != null) {
                 return false;
-        } else if (!endpoint.equals(other.endpoint))
+            }
+        } else if (!endpoint.equals(other.endpoint)) {
             return false;
-        if (ipFamily != other.ipFamily)
+        }
+        if (ipFamily != other.ipFamily) {
             return false;
-        if (length != other.length)
+        }
+        if (length != other.length) {
             return false;
+        }
         return true;
     }
 }

@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2012 Alexander Diener,
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,7 +39,7 @@ import de.fhkn.in.uce.stun.message.MessageStaticFactory;
 
 @Immutable
 final class DeterminingTcpNatFiltering implements DeterminingNATFeatureRealization {
-    private final static int DEFAULT_TIMEOUT_WAITING_FOR_STUN_SERVER_RESPONSE_IN_MILLIS = (int) 39.5 * 1000;
+    private static final int DEFAULT_TIMEOUT_WAITING_FOR_STUN_SERVER_RESPONSE_IN_MILLIS = (int) 39.5 * 1000;
     private final Logger logger = LoggerFactory.getLogger(DeterminingTcpNatFiltering.class);
     private final InetSocketAddress primaryStunServerAddress;
     private final MessageReader messageReader;
@@ -93,7 +93,7 @@ final class DeterminingTcpNatFiltering implements DeterminingNATFeatureRealizati
             this.logger.error("Exception while executing tests for determining tcp filtering behavior", e);
         } finally {
             try {
-                if (null != toStunServer && toStunServer.isConnected()) {
+                if ((null != toStunServer) && toStunServer.isConnected()) {
                     toStunServer.close();
                 }
             } catch (IOException e) {
