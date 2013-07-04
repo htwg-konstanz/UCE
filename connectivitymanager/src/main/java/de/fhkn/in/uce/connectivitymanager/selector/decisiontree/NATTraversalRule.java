@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2012 Alexander Diener, 
+    Copyright (c) 2012 Alexander Diener,
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ import de.fhkn.in.uce.plugininterface.NATTraversalTechnique;
  * traversal techniques which can be used to traverse the described NAT device.
  * The scope of this class is to provide a rule for learning decision trees to
  * generate a tree out of {@code NATTraversalRule}s.
- * 
+ *
  * @author Alexander Diener (aldiener@htwg-konstanz.de)
- * 
+ *
  */
 @Immutable
 public final class NATTraversalRule {
@@ -39,7 +39,7 @@ public final class NATTraversalRule {
 
     /**
      * The public constructor for creating {@code NATTraversalRule}.
-     * 
+     *
      * @param natSituation
      *            The situation which describes the NAT devices.
      * @param appropriateTraversalTechniques
@@ -54,7 +54,7 @@ public final class NATTraversalRule {
 
     /**
      * Getter for the NAT situation.
-     * 
+     *
      * @return the behavior of the NAT devices on client and service side.
      */
     public NATSituation getNATSituation() {
@@ -64,11 +64,22 @@ public final class NATTraversalRule {
     /**
      * Getter for the appropriate NAT traversal techniques. The techniques are
      * in an arbitrary order and it the order of the elements is unpredictable.
-     * 
+     *
      * @return the NAT traversal techniques for the described NAT devices.
      */
     public List<NATTraversalTechnique> getAppropriateTraversalTechniques() {
         return this.appropriateTraversalTechniques;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((natSituation == null) ? 0 : natSituation.hashCode());
+        for(NATTraversalTechnique technique: appropriateTraversalTechniques) {
+            result = (prime * result) + ((technique == null) ? 0 : technique.hashCode());
+        }
+        return result;
     }
 
     @Override
@@ -93,7 +104,7 @@ public final class NATTraversalRule {
             }
         }
 
-        return count == list1.size() && count == list2.size();
+        return (count == list1.size()) && (count == list2.size());
     }
 
     @Override

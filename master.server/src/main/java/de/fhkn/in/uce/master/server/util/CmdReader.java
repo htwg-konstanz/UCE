@@ -35,7 +35,7 @@ public class CmdReader extends AbstractReader {
     private List<String> args;
 
     /**
-     * Creates a command line reader and process the given args.
+     * Creates a command line reader and processes the given args.
      *
      * @param args
      *            args to parse.

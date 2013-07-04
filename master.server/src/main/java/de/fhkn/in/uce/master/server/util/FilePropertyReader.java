@@ -39,7 +39,7 @@ public class FilePropertyReader extends AbstractReader {
 
     /**
      * Creates a file property reader to read from
-     * 'config/master.server.porperties' and process them.
+     * 'config/master.server.porperties' and processes them.
      */
     public FilePropertyReader() {
         super(LoggerFactory.getLogger(FilePropertyReader.class));
