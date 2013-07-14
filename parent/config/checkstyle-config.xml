@@ -168,7 +168,6 @@
         <!-- See http://checkstyle.sf.net/config_coding.html -->
 <!-- Allow tertiary operators like "? :" -->
         <!--<module name="AvoidInlineConditionals"/>-->
-        <module name="DoubleCheckedLocking"/>    <!-- MY FAVOURITE -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
 <!-- Allow same locale variables and parameters. -->
