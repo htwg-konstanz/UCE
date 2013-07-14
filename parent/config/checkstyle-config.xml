@@ -83,6 +83,8 @@
 
     <module name="TreeWalker">
 
+        <property name="cacheFile" value="${checkstyle.cache.file}"/>
+        
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
 <!-- Changed documentation scope of methods to package and runtime exceptions
