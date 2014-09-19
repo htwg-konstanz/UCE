@@ -57,7 +57,11 @@ final class PluginLoaderImpl implements PluginLoader {
     }
 
     private void checkLoadedPlugins() {
+    	logger.debug("Checking loaded plugins.");
         Iterator<HandleMessage> iterator = this.serviceLoader.iterator();
+        if (!iterator.hasNext()) {
+        	throw new RuntimeException("No message handler plugins found.");
+        }
         while (iterator.hasNext()) {
             HandleMessage handleMessage = (HandleMessage) iterator.next();
             logger.debug("Found plugin for handling connection requests for encoding {}", handleMessage //$NON-NLS-1$
