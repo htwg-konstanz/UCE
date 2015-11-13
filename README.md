@@ -15,6 +15,8 @@
 
 # [UCE - Universal Connection Establishment](http://ice.in.htwg-konstanz.de/)
 
+**THIS PROJECT IS NO LONGER MAINTAINED.**
+
 Universal Connection Establishment (UCE) is a framework for firewall and NAT traversal
 techniques that is designed to provide universal IP connectivity with minimal administrative
 and configuration overhead.
@@ -488,13 +490,17 @@ free to contact the project maintainer at any time.
 
 ## Credits
 
-*	Lead / Maintainer:
+*   Maintainer:
+    
+    none, project concluded in 2013
+
+*	Lead:
 
     Thomas Zink, tzink {at-sign} htwg-konstanz {a dot} de
 
 *	Contributors:
 
-    - Daniel Maier: former lead and all initial code
+    - Daniel Maier: former lead and all initial code (see UCE_deprecated)
     - Stefan Lohr: connection reversal, web hole punching, some demos
     - Alexander Diener: connectivity manager, STUN, refactoring to plugins
     - Ellen Wieland / Steven Boeckle: socket switching
